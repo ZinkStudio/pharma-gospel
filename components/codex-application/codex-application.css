@@ -1,0 +1,31 @@
+:host {
+    display: block;
+}
+
+#app {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
+header cds-header {
+    --cds-interactive-01: var(--pc-primary);
+    --cds-focus: var(--pc-primary);
+}
+
+header cds-header~cds-side-nav {
+    block-size: calc(100% - 3rem);
+    margin-block-start: 3rem;
+}
+
+main {
+    margin: 0 auto;
+    padding: 64px 32px;
+    width: 100%;
+    max-width: 2560px;
+    /* Ou la valeur fixe de votre choix si --pc-content-max-width vaut 100% */
+    box-sizing: border-box;
+
+    --cds-interactive-01: var(--pc-primary);
+    --cds-focus: var(--pc-primary);
+}

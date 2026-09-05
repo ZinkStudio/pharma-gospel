@@ -1,0 +1,62 @@
+:root, :root[data-theme="light"], :root.cds--white, :root.cds--g10 {
+    color-scheme: light;
+
+    --pc-primary: #006D44;
+    --pc-primary-dark: #004F32;
+    --pc-primary-hover: #005A38;
+    --pc-primary-light: #E6F4EE;
+
+    --pc-background: #FFFFFF;
+    --pc-surface: #FFFFFF;
+    --pc-surface-hover: #F8F8F8;
+
+    --pc-border: #E0E0E0;
+    --pc-border-strong: #C6C6C6;
+
+    --pc-text: #161616;
+    --pc-text-secondary: #525252;
+    --pc-text-muted: #8D8D8D;
+
+    --pc-header-background: #161616;
+    --pc-header-height: 64px;
+
+    --pc-content-max-width: 100%;
+}
+
+:root[data-theme="dark"], :root.cds--g90, :root.cds--g100 {
+    color-scheme: dark;
+
+    --pc-primary: #24a148;
+    --pc-primary-dark: #0e6027;
+    --pc-primary-hover: #3ddbd9; /* ou vert clair adapté */
+    --pc-primary-light: #122318;
+
+    --pc-background: #161616;
+    --pc-surface: #262626;
+    --pc-surface-hover: #353535;
+
+    --pc-border: #393939;
+    --pc-border-strong: #525252;
+
+    --pc-text: #f4f4f4;
+    --pc-text-secondary: #c6c6c6;
+    --pc-text-muted: #8d8d8d;
+
+    --pc-header-background: #000000;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family:
+        IBM Plex Sans,
+        Helvetica Neue,
+        Arial,
+        sans-serif;
+    background: var(--pc-background);
+    color: var(--pc-text);
+}

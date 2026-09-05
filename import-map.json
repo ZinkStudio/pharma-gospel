@@ -1,0 +1,11 @@
+
+    {
+        "imports": {
+            "/lit/": "./services/lit@3.3.3/lit-all.min.js",
+            "/carbon/": "./services/carbon@2.24.0/js/",
+            "/components/": "./components/",
+            "/services/": "./services/",
+            "/styles/": "./styles/",
+            "/views/": "./views/"
+        }
+    }
