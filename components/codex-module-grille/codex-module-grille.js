@@ -40,7 +40,6 @@ export class CodexModuleGrille extends BaseLit {
 
   connectedCallback() {
     super.connectedCallback();
-    // Écoute l'événement de recherche émis par n'importe quel composant de recherche parent/frère
     window.addEventListener('codex-search-input', this._boundOnSearch);
   }
 
@@ -71,17 +70,16 @@ export class CodexModuleGrille extends BaseLit {
 
     assignedElements.forEach(el => {
       if (el.tagName.toLowerCase() === 'codex-module') {
-        const title = (el.getAttribute('title') || el.title || '').toLowerCase();
-        const description = (el.getAttribute('description') || '').toLowerCase();
-        const searchAttr = (el.getAttribute('data-search') || '').toLowerCase();
-        const category = (el.getAttribute('data-category') || '').toLowerCase();
+        // Récupération sécurisée depuis les propriétés JS ou les attributs HTML de l'élément
+        const title = (el.title || el.getAttribute('title') || '').toLowerCase();
+        const description = (el.description || el.getAttribute('description') || '').toLowerCase();
+        const category = (el.category || el.getAttribute('category') || '').toLowerCase();
+        const searchKeywords = (el.search || el.getAttribute('search') || '').toLowerCase();
 
-        // Correspondance si la requête est vide ou présente dans l'un des champs clés
-        const matches = !query || 
-          title.includes(query) || 
-          description.includes(query) || 
-          searchAttr.includes(query) || 
-          category.includes(query);
+        // Union de tous les champs pour le filtrage global
+        const fullText = `${title} ${description} ${category} ${searchKeywords}`;
+
+        const matches = !query || fullText.includes(query);
 
         if (matches) {
           el.removeAttribute('hidden');
