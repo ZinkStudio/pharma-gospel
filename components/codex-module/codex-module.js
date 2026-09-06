@@ -10,7 +10,8 @@ export class CodexModule extends BaseLit {
     variant: { type: String },
     category: { type: String },
     search: { type: String },
-    href: { type: String }
+    href: { type: String },
+    target: { type: String }
   };
 
   static styles = css`
@@ -110,6 +111,7 @@ export class CodexModule extends BaseLit {
     this.category = '';
     this.search = '';
     this.href = '';
+    this.target = '';
   }
 
   render() {
@@ -129,6 +131,7 @@ export class CodexModule extends BaseLit {
         <a 
           class="module" 
           href="${this.href}"
+          target="${this.target || '_self'}"
           data-category="${this.category || ''}"
           data-search="${this.search || ''}">
           ${content}

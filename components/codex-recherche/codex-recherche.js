@@ -47,6 +47,7 @@ export const defaultStyles = css`
       text-decoration: none;
     }
   `;
+
 export const ibmStyles = css`
   .ibm-search-results {
     position: absolute;
@@ -117,7 +118,7 @@ export class CodexRecherche extends BaseLit {
     super.connectedCallback();
     this._loadIndex();
 
-    // Fermer les suggestions au clic en dehors
+    // Écouteur global pour fermer les suggestions au clic en dehors
     this._boundOutsideClick = (e) => {
       if (!this.shadowRoot.contains(e.target)) {
         this._isDropdownOpen = false;
@@ -125,6 +126,28 @@ export class CodexRecherche extends BaseLit {
       }
     };
     document.addEventListener('click', this._boundOutsideClick);
+  }
+
+  // Nouvelle méthode pour intercepter le clic sur le bouton de réinitialisation d'IBM
+  _handleCdsClick(e) {
+    // Vérifie si le clic provient du bouton "close-button" via le composedPath()
+    const path = e.composedPath();
+    const isCloseButtonClicked = path.some(el =>
+      el.nodeType === Node.ELEMENT_NODE && el.getAttribute('part') === 'close-button'
+    );
+
+    if (isCloseButtonClicked) {
+      // Le bouton de nettoyage a été cliqué, on force la réinitialisation immédiate
+      this.emit('codex-search-input', { query: '' });
+      this._isDropdownOpen = false;
+      this.results = [];
+
+      // Optionnel : s'assurer que la valeur interne du input est bien vidée
+      const cdsSearch = this.shadowRoot.querySelector('cds-search');
+      if (cdsSearch) {
+        cdsSearch.value = '';
+      }
+    }
   }
 
   disconnectedCallback() {
@@ -142,7 +165,14 @@ export class CodexRecherche extends BaseLit {
   }
 
   _handleInput(e) {
-    const query = e.target.value.toLowerCase().trim();
+    let query = '';
+    if (e.target && typeof e.target.value === 'string') {
+      query = e.target.value;
+    } else if (e.detail && e.detail.value !== undefined) {
+      query = e.detail.value;
+    }
+
+    query = query.toLowerCase().trim();
 
     // 1. Événement pour filtrer la grille en temps réel
     this.emit('codex-search-input', { query });
@@ -191,15 +221,16 @@ export class CodexRecherche extends BaseLit {
   _renderDesignIBM() {
     return html`
       <cds-search
-      autocomplete="off"
-      expandable="true"
-      size="md"
-      type="text"
-      role="searchbox"      
-      label-text="Rechercher un module..."
-      placeholder="Rechercher un module..."
-      close-button-label-text="Vider la recherche"
-      @input="${this._handleInput}"></cds-search>
+        autocomplete="off"
+        expandable="true"
+        size="md"
+        type="text"
+        role="searchbox"      
+        label-text="Rechercher un module..."
+        placeholder="Rechercher un module..."
+        close-button-label-text="Vider la recherche"
+        @input="${this._handleInput}"
+        @click="${this._handleCdsClick}"></cds-search>
       <ul class="ibm-search-results" ?hidden="${!this._isDropdownOpen}">
           ${this.results.length === 0
         ? html`<li><span>Aucun résultat trouvé.</span></li>`
