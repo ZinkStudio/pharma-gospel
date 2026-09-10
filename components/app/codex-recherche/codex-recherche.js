@@ -157,7 +157,7 @@ export class CodexRecherche extends BaseLit {
 
   async _loadIndex() {
     try {
-      const res = await fetch('./components/codex-recherche/search-index.json');
+      const res = await fetch('./components/app/codex-recherche/search-index.json');
       this.searchIndex = await res.json();
     } catch (err) {
       console.error("[CodexRecherche] Erreur chargement index:", err);

@@ -1,6 +1,5 @@
 import { html, css, LitElement, BaseLit } from '/lit';
-
-const iconPath = new URL('../../services/carbon@2.24.0/svg/', import.meta.url).href;
+const iconPath = new URL('../../../vendor/carbon@2.24.0/svg/', import.meta.url).href;
 
 export class CodexModule extends BaseLit {
   static properties = {
