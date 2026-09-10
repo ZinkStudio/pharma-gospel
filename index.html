@@ -5,17 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pharma Gospel</title>
-    <link rel="stylesheet" href="./services/carbon@2.24.0/css/plex-sans.css" />
-    <link rel="stylesheet" href="./services/carbon@2.24.0/css/styles@1.113.0.min.css">
+    <link rel="stylesheet" href="./vendor/carbon@2.24.0/css/plex-sans.css" />
+    <link rel="stylesheet" href="./vendor/carbon@2.24.0/css/styles@1.113.0.min.css">
     <link rel="stylesheet" href="./styles/global.css">
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
     <title>Pharma-Gospel</title>
     <script type="importmap">
         {
             "imports": {
-                "lit": "./vendor/lit@3.3.3/lit-all.min.js",
-                "lit/": "./vendor/lit@3.3.3/",
-                "@carbon/web-components/": "./vendor/carbon/js/",
+                "/lit": "./vendor/lit@3.3.3/index.js",
+                "@carbon/web-components/": "./vendor/carbon@2.24.0/js/",
+                "@carbon/styles/": "./vendor/carbon@2.24.0/css/",
+                "@carbon/svg/": "./vendor/carbon@2.24.0/svg/",
 
                 "@core/": "./core/",
                 "@services/": "./services/",

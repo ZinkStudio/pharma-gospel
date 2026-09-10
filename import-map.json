@@ -1,9 +1,9 @@
 {
     "imports": {
-        "lit": "./vendor/lit@3.3.3/lit-all.min.js",
-        "lit/": "./vendor/lit@3.3.3/",
-        "@carbon/web-components/": "./vendor/carbon/js/",
-
+        "/lit": "./vendor/lit@3.3.3/lit-all.min.js",
+        "@carbon/web-components/": "./vendor/carbon@2.24.0/js/",
+        "@carbon/styles/": "./vendor/carbon@2.24.0/css/",
+        "@carbon/svg/": "./vendor/carbon@2.24.0/svg/",
         "@core/": "./core/",
         "@services/": "./services/",
         "@assistants/": "./assistants/",
