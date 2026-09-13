@@ -1,16 +1,15 @@
 /**
- * Moteur de rendu vectoriel basé sur pdfmake
+ * Moteur de rendu vectoriel basé sur pdfmake (v0.2.10)
  */
 export class PdfMakeEngine {
   static isLoaded = false;
 
   /**
-   * Charge dynamiquement les scripts pdfmake et leurs polices virtuelles (VFS)
+   * Charge dynamiquement les scripts pdfmake et les polices virtuelles (VFS)
    */
   static async loadDependencies() {
     if (this.isLoaded && window.pdfMake) return;
 
-    // CDN fallback ou scripts locaux selon ton arborescence statique
     const pdfMakeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js';
     const vfsFontsUrl = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/vfs_fonts.js';
 
@@ -21,7 +20,7 @@ export class PdfMakeEngine {
   }
 
   /**
-   * Convertit une definition pdfmake en Blob PDF
+   * Convertit une définition pdfmake en Blob PDF
    * @param {Object} docDefinition 
    * @returns {Promise<Blob>}
    */
@@ -39,9 +38,9 @@ export class PdfMakeEngine {
   }
 
   /**
-   * Construit une grille d'étiquettes vectorielle (remplace l'ancien rendu DOM)
-   * @param {Array} items - Tableau d'objets (ex: [{ title: '...', code: '...' }])
-   * @param {Object} config - Options de grille (columns, margin, etc.)
+   * Construit la définition d'une planche d'étiquettes en grille vectorielle
+   * @param {Array} items - Données des étiquettes
+   * @param {Object} config - Options de mise en page (columns, pageSize, margins)
    */
   static buildGridDefinition(items, config = {}) {
     const columnsCount = config.columns || 3;
@@ -49,7 +48,6 @@ export class PdfMakeEngine {
     let currentRow = [];
 
     items.forEach((item, index) => {
-      // Cellule représentant une étiquette
       currentRow.push({
         stack: [
           { text: item.title || '', style: 'labelTitle' },
@@ -59,9 +57,7 @@ export class PdfMakeEngine {
         margin: [2, 4, 2, 4]
       });
 
-      // Fin de ligne atteint ou dernier élément
       if (currentRow.length === columnsCount || index === items.length - 1) {
-        // Complétion des cellules vides pour garder un tableau régulier
         while (currentRow.length < columnsCount) {
           currentRow.push({ text: '' });
         }
@@ -99,7 +95,7 @@ export class PdfMakeEngine {
       const script = document.createElement('script');
       script.src = src;
       script.onload = () => resolve();
-      script.onerror = () => reject(new Error(`Échec du chargement : ${src}`));
+      script.onerror = () => reject(new Error(`Échec du chargement du script : ${src}`));
       document.head.appendChild(script);
     });
   }
