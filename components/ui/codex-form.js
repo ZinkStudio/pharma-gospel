@@ -27,38 +27,47 @@ export class CodexForm extends BaseComponent {
   }
 
   /**
-   * Extrait la totalité des données du formulaire (Polymorphe : Natif, CodexField, Carbon)
+   * Extrait la totalité des données du formulaire (Natif, CodexField, Carbon)
    * @returns {Object}
    */
   getData() {
     const data = {};
-
-    // 1. Extraction via FormData standard pour les formulaires / inputs natifs et Form-Associated
-    const form = this.$('#internal-form');
-    if (form) {
-      const nativeData = new FormData(form);
-      for (let [key, val] of nativeData.entries()) {
-        data[key] = val;
-      }
-    }
-
-    // 2. Découverte et surcouche polymorphe pour les Web Components personnalisés et Carbon
     const controls = this.querySelectorAll('[name]');
+
     controls.forEach(control => {
       const name = control.getAttribute('name');
-      if (!name) return;
+      if (!name || control.disabled) return;
 
+      const tagName = control.tagName.toLowerCase();
       let value = undefined;
 
-      // Cas A: CodexField
-      if (control.tagName.toLowerCase() === 'codex-field') {
+      // 1. Composants Carbon (cds-*)
+      if (tagName.startsWith('cds-')) {
+        if (tagName.endsWith('-checkbox') || tagName.endsWith('-toggle')) {
+          value = control.checked ?? control.hasAttribute('checked');
+        } else {
+          value = control.value ?? control.getAttribute('value');
+        }
+      } 
+      // 2. CodexField
+      else if (tagName === 'codex-field') {
         value = control.value;
       } 
-      // Cas B: Composants Carbon (cds-combo-box, cds-dropdown, cds-input...)
-      else if (control.tagName.toLowerCase().startsWith('cds-')) {
-        value = control.value || control.getAttribute('value');
+      // 3. Inputs natifs spéciaux (checkbox / radio)
+      else if (control.type === 'checkbox') {
+        if (!data[name]) data[name] = [];
+        if (control.checked) {
+          data[name].push(control.value || true);
+        }
+        return;
+      } else if (control.type === 'radio') {
+        if (control.checked) {
+          value = control.value;
+        } else {
+          return;
+        }
       } 
-      // Cas C: Éléments natifs ou Custom Elements génériques
+      // 4. Custom Elements génériques ou Natifs
       else if ('value' in control) {
         value = control.value;
       } else {
@@ -74,16 +83,53 @@ export class CodexForm extends BaseComponent {
   }
 
   /**
-   * Déclenche la soumission du formulaire et émet l'événement 'codex-form-submit'
+   * Effectue un contrôle rapide de validité sur tous les contrôles enfants
+   * @returns {boolean}
+   */
+  checkValidity() {
+    const controls = this.querySelectorAll('[name]');
+    let isValid = true;
+
+    controls.forEach(control => {
+      if (typeof control.checkValidity === 'function') {
+        if (!control.checkValidity()) isValid = false;
+      }
+    });
+
+    return isValid;
+  }
+
+  /**
+   * Déclenche la soumission du formulaire et émet 'codex-form-submit'
    */
   submit() {
     const data = this.getData();
 
     this.dispatchEvent(new CustomEvent('codex-form-submit', {
-      detail: data,
+      detail: {
+        values: data,
+        isValid: this.checkValidity()
+      },
       bubbles: true,
       composed: true
     }));
+  }
+
+  /**
+   * Réinitialise tous les champs du formulaire
+   */
+  reset() {
+    const form = this.$('#internal-form');
+    if (form) form.reset();
+
+    const controls = this.querySelectorAll('[name]');
+    controls.forEach(control => {
+      const tagName = control.tagName.toLowerCase();
+      if (tagName.startsWith('cds-') || tagName === 'codex-field') {
+        if ('value' in control) control.value = '';
+        if ('checked' in control) control.checked = false;
+      }
+    });
   }
 
   /**
@@ -93,12 +139,16 @@ export class CodexForm extends BaseComponent {
   setValues(valuesData = {}) {
     Object.entries(valuesData).forEach(([name, value]) => {
       const control = this.querySelector(`[name="${name}"]`);
-      if (control) {
-        if ('value' in control) {
-          control.value = value;
-        } else {
-          control.setAttribute('value', value);
-        }
+      if (!control) return;
+
+      const tagName = control.tagName.toLowerCase();
+
+      if (tagName.startsWith('cds-') && (tagName.endsWith('-checkbox') || tagName.endsWith('-toggle'))) {
+        control.checked = Boolean(value);
+      } else if ('value' in control) {
+        control.value = value;
+      } else {
+        control.setAttribute('value', value);
       }
     });
   }

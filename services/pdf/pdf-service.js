@@ -1,13 +1,15 @@
-// /services/pdf/pdf-service.js
 import { PdfMakeEngine } from './engines/pdfmake-engine.js';
 import { PdfLibEngine } from './engines/pdf-lib-engine.js';
 import { downloadBlob, shareBlob, canShareFiles } from '../../utils/export-utils.js';
 
+/**
+ * Service centralisé de gestion des PDF pour pharma-gospel
+ */
 export class PDFService {
   /**
-   * Génère un PDF vectoriel à partir d'une définition pdfmake
-   * @param {Object} docDefinition - Structure JSON du document pdfmake
-   * @param {Object} options - Action ('download', 'share', 'preview'), filename, etc.
+   * Génère un PDF vectoriel à partir d'une structure JSON pdfmake
+   * @param {Object} docDefinition 
+   * @param {Object} options - { action: 'download'|'share'|'preview', filename: string }
    */
   static async generateDocument(docDefinition, options = {}) {
     const blob = await PdfMakeEngine.renderToBlob(docDefinition);
@@ -15,9 +17,9 @@ export class PDFService {
   }
 
   /**
-   * Génère une planche d'étiquettes vectorielle sous forme de grille pdfmake
-   * @param {Array} items - Données des étiquettes
-   * @param {Object} gridConfig - Configuration de la grille (colonnes, marges, dimensions)
+   * Génère une planche d'étiquettes vectorielles
+   * @param {Array} items 
+   * @param {Object} gridConfig 
    * @param {Object} options 
    */
   static async generateGrid(items, gridConfig, options = {}) {
@@ -27,7 +29,7 @@ export class PDFService {
   }
 
   /**
-   * Remplit un formulaire PDF existant (AcroForm) ou applique des modifications binaires
+   * Remplit un formulaire PDF binaire existant (AcroForm)
    */
   static async fillForm(pdfUrl, fieldData, options = {}) {
     const blob = await PdfLibEngine.fillAndRender(pdfUrl, fieldData, options);
@@ -35,7 +37,7 @@ export class PDFService {
   }
 
   /**
-   * Gestion centralisée des sorties (Téléchargement, Blob URL, Partage Web API)
+   * Gestion centralisée du téléchargement, du partage natif et des URLs Blob
    */
   static async _handleOutput(blob, options) {
     const filename = options.filename || 'document.pdf';
