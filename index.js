@@ -8,6 +8,14 @@ import '@components/app/codex-recherche/codex-recherche.js';
 import '@components/app/codex-module-grille/codex-module-grille.js';
 import '@components/app/codex-module/codex-module.js';
 
+import '@components/ui/codex-form.js';
+import '@components/ui/codex-field.js';
+import '@components/ui/codex-step-flow.js';
+import '@components/ui/codex-crop-editor.js';
+
+import '@views/nir/codex-calcul-nir.js';
+
+
 import '@carbon/web-components/accordion.min.js'
 import '@carbon/web-components/settings-a9cb5e4b.js'
 import '@carbon/web-components/property-4de26c93.js'

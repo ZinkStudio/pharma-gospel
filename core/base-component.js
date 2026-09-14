@@ -1,5 +1,6 @@
 import { importer } from './dynamic-importer.js';
 import { assistantEngine } from './assistant-engine.js';
+import { missiveBus } from '../services/missive-bus.js';
 
 /**
  * BaseComponent
@@ -12,6 +13,16 @@ export class BaseComponent extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
   }
+
+  /**
+   * Helper d'émission de missives et notifications universel
+   */
+  notify = {
+    success: (text) => missiveBus.success(text),
+    warning: (text) => missiveBus.warning(text),
+    error: (text) => missiveBus.error(text),
+    info: (text) => missiveBus.info(text)
+  };
 
   /**
    * Hook natif du cycle de vie des Web Components
@@ -69,7 +80,7 @@ export class BaseComponent extends HTMLElement {
    * @returns {Element | null}
    */
   $(query) {
-    return this.shadowRoot.querySelector(query);
+    return this.shadowRoot ? this.shadowRoot.querySelector(query) : null;
   }
 
   /**
@@ -78,6 +89,6 @@ export class BaseComponent extends HTMLElement {
    * @returns {NodeListOf<Element>}
    */
   $$(query) {
-    return this.shadowRoot.querySelectorAll(query);
+    return this.shadowRoot ? this.shadowRoot.querySelectorAll(query) : [];
   }
 }
