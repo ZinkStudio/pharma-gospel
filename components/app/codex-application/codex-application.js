@@ -8,11 +8,11 @@ export class CodexApplication extends BaseLit {
     return html`
       <div id="app">
         <header>
-          <cds-header aria-label="Pharma Codex">
+          <cds-header aria-label="Pharma Gospel">
             <cds-header-menu-button button-label-active="Close menu"
               button-label-inactive="Open menu"></cds-header-menu-button>
-            <cds-header-name href="/" prefix="Pharma">[Codex]</cds-header-name>
-            <cds-header-nav menu-bar-label="Pharma [Codex]">
+            <cds-header-name href="/" prefix="Pharma">[Gospel]</cds-header-name>
+            <cds-header-nav menu-bar-label="Pharma [Gospel]">
               <cds-header-nav-item href="#views/officine/officine.html">Officine</cds-header-nav-item>
               <cds-header-nav-item href="#views/atelier/atelier.html">Atelier</cds-header-nav-item>
             </cds-header-nav>

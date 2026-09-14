@@ -1,4 +1,5 @@
 import { html, css, LitElement, BaseLit } from '/lit';
+import { missiveBus } from '@services/missive-bus.js';
 
 const TYPE_TO_ICON = {
   info: 'fr-icon-info-fill',
@@ -114,7 +115,25 @@ export class CodexMissives extends BaseLit {
   };
 
   static styles = [commonStyles, defaultStyles, ibmStyles];
+  
+  connectedCallback() {
+    super.connectedCallback?.();
 
+    this._onMissive = (e) => {
+      const { type, text, message } = e.detail || {};
+      const msgText = text || message;
+      if (msgText) {
+        this.addMessage(type || 'info', msgText);
+      }
+    };
+
+    missiveBus.addEventListener('missive', this._onMissive);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback?.();
+    missiveBus.removeEventListener('missive', this._onMissive);
+  }
   constructor() {
     super();
     this.design = '';
@@ -245,7 +264,7 @@ export class CodexMissives extends BaseLit {
           <path d="M4 6V8H6V28a2 2 0 002 2H24a2 2 0 002-2V8h2V6zM8 28V8H24V28zM12 2H20V4H12z"></path>
           </svg>            
           </cds-header-global-action>` : ``
-          }
+      }
 
           ${hasMessages ? displayMessages.map(m => html`
                 <cds-inline-notification

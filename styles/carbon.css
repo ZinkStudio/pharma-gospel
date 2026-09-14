@@ -1,0 +1,63 @@
+/* ==========================================================================
+   Mapping des tokens IBM Carbon vers le Design System Pharma-Codex
+   ========================================================================== */
+
+:root {
+    /* Dynamic Carbon Overrides */
+    --cds-interactive-01: var(--pc-primary);
+    --cds-interactive-02: var(--pc-primary-hover);
+    --cds-link-01: var(--pc-primary);
+    --cds-focus: var(--pc-primary);
+
+    /* Buttons */
+    --cds-button-primary: var(--pc-primary);
+    --cds-button-primary-background: var(--pc-primary);
+    --cds-button-primary-hover: var(--pc-primary-hover);
+    --cds-button-primary-active: var(--pc-primary-dark);
+    --cds-button-secondary: var(--pc-surface);
+    --cds-button-secondary-background: var(--pc-surface);
+    --cds-button-secondary-hover: var(--pc-surface-hover);
+    --cds-button-secondary-color: var(--pc-text);
+
+    /* Inputs & Form Controls */
+    --cds-field-01: var(--pc-surface);
+    --cds-field-02: var(--pc-surface);
+    --cds-text-01: var(--pc-text);
+    --cds-text-02: var(--pc-text-secondary);
+    --cds-border-subtle-01: var(--pc-border);
+    --cds-border-strong-01: var(--pc-border-strong);
+}
+
+/* Mapping spécifique pour les composants CDS */
+cds-button[kind="primary"] {
+    --cds-button-primary-background: var(--pc-primary);
+    --cds-button-primary-hover: var(--pc-primary-hover);
+    --cds-button-primary-active: var(--pc-primary-dark);
+}
+
+cds-text-input {
+    --cds-field-01: var(--pc-surface);
+    --cds-text-01: var(--pc-text);
+    --cds-text-02: var(--pc-text-secondary);
+}
+
+/* ==========================================================================
+   Ajustements Dark Mode automatiques
+   ========================================================================== */
+
+:root[data-theme="dark"],
+:root.cds--g90,
+:root.cds--g100 {
+    /* Tokens Carbon ajustés pour le dark theme */
+    --cds-field-01: #262626;
+    --cds-field-02: #353535;
+    --cds-text-01: #f4f4f4;
+    --cds-text-02: #c6c6c6;
+    --cds-border-subtle-01: #393939;
+    --cds-border-strong-01: #6f6f6f;
+}
+
+/* Application du fond et du contrat de couleur au Body */
+body {
+    transition: background-color 0.2s ease, color 0.2s ease;
+}

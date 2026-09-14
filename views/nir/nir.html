@@ -1,10 +1,23 @@
-<codex-calcul-nir 
-  imports="nir-validator,luhn-check" 
-  assistants="clipboard,pdf">
-  
-  <codex-form id="calcul-nir">
-    <codex-field name="nirWithoutKey" label="Numéro Sécurité Sociale (13 chiffres)" required></codex-field>
-    <button type="submit">Calculer la clé</button>
-  </codex-form>
+<codex-calcul-nir>
+  <section class="view-shell">
+    <h1 class="view-title">Calcul de la clé d'un numéro de sécurité sociale français (NIR)</h1>
+    <p class="view-lead">
+      Les codes corses 2A et 2B sont remplacés par 19 et 18.<br>
+      Après validation le numéro et la clé seront copiés dans le presse-papier
+    </p>
 
+    <codex-form id="form-nir">
+      <cds-stack gap="7">
+        <cds-text-input name="nir" label="Numéro de sécurité sociale (NIR)" value="1890512345645">
+        </cds-text-input>
+
+        <cds-text-input name="cle" label="Clé" readonly>
+        </cds-text-input>
+
+        <div class="view-actions" style="margin-top: 1.5rem;">
+          <cds-button type="submit" kind="primary">Calculer la clé</cds-button>
+        </div>
+      </cds-stack>
+    </codex-form>
+  </section>
 </codex-calcul-nir>
