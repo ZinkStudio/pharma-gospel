@@ -31,7 +31,7 @@ export const PDF_PRESETS = {
 async function getHtml2Pdf() {
   if (window.html2pdf) return window.html2pdf;
   try {
-    const mod = await import('../vendor/html2pdf.bundle.min.js');
+    const mod = await import('../vendor/pdf/html2pdf.bundle.min@0.10.1.js');
     return mod.default || window.html2pdf;
   } catch (err) {
     console.error('[pdf-utils] Impossible de charger html2pdf.bundle.min.js', err);
