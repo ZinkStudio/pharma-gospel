@@ -1,16 +1,12 @@
 /**
- * Assistant Clipboard Paste & Drop (Générique)
- * Capture les fichiers collés ou glissés sur un composant hôte,
- * avec filtrage configurable par types MIME et extensions.
+ * Assistant FileDropPaste
+ * Capture les fichiers collés (Ctrl+V) ou glissés-déposés sur un composant hôte.
+ * Émet l'événement CustomEvent 'files-captured'.
  */
 export default class FileDropPasteAssistant {
   /**
    * @param {HTMLElement} host - Le composant Web hôte
    * @param {Object} options
-   * @param {string[]} [options.acceptMime=['image/*', 'application/pdf']] - Types MIME autorisés
-   * @param {string[]} [options.acceptExtensions=['.pdf', '.heic', '.png', '.jpg', '.jpeg']] - Extensions autorisées
-   * @param {string} [options.dragClass='dragover'] - Classe CSS ajoutée sur la zone lors du drag
-   * @param {boolean} [options.multiple=false] - Accepter plusieurs fichiers simultanément
    */
   constructor(host, options = {}) {
     this.host = host;
@@ -28,10 +24,8 @@ export default class FileDropPasteAssistant {
   #init() {
     const target = this.host.shadowRoot || this.host;
 
-    // Coller (Paste)
     this.host.addEventListener('paste', (e) => this.#handlePaste(e));
 
-    // Drag & Drop UI & Data
     target.addEventListener('dragover', (e) => {
       e.preventDefault();
       this.host.classList.add(this.options.dragClass);
@@ -39,7 +33,6 @@ export default class FileDropPasteAssistant {
 
     target.addEventListener('dragleave', (e) => {
       e.preventDefault();
-      // Retrait de la classe si on quitte réellement l'élément hôte
       if (!this.host.contains(e.relatedTarget)) {
         this.host.classList.remove(this.options.dragClass);
       }
@@ -85,34 +78,27 @@ export default class FileDropPasteAssistant {
     }
   }
 
-  /**
-   * Vérifie si le fichier correspond aux filtres MIME ou extension.
-   */
   #isAccepted(file) {
     const fileName = file.name.toLowerCase();
     const fileType = file.type.toLowerCase();
 
-    // 1. Verification par extension
     const hasValidExtension = this.options.acceptExtensions.some(ext => fileName.endsWith(ext.toLowerCase()));
     if (hasValidExtension) return true;
 
-    // 2. Verification par Type MIME (support wildcard image/*)
-    const hasValidMime = this.options.acceptMime.some(mime => {
+    return this.options.acceptMime.some(mime => {
       if (mime.endsWith('/*')) {
         const baseMime = mime.replace('/*', '');
         return fileType.startsWith(baseMime);
       }
       return fileType === mime;
     });
-
-    return hasValidMime;
   }
 
   #emitCaptured(files) {
     this.host.dispatchEvent(new CustomEvent('files-captured', {
       detail: {
         files: files,
-        file: files[0] // Rétrocompatibilité si un seul fichier attendu
+        file: files[0]
       },
       bubbles: true,
       composed: true

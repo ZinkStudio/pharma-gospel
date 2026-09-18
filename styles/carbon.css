@@ -1,63 +1,98 @@
 /* ==========================================================================
-   Mapping des tokens IBM Carbon vers le Design System Pharma-Codex
+   Mapping des tokens IBM Carbon (v11 — @carbon/web-components 2.24.0)
+   vers le Design System Pharma-Codex/Gospel
+   ==========================================================================
+   Les noms de tokens ci-dessous ont été vérifiés par extraction directe du
+   bundle compilé (vendor/carbon@2.24.0/css/styles@1.113.0.min.css), pas
+   depuis la documentation (qui référence encore des noms v10 obsolètes,
+   ex: --cds-interactive-01, --cds-text-01, --cds-link-01 — ces variables
+   n'existent plus en v11 et ne font rien si on les override).
+
+   Principe : on ne remappe que les tokens dont la valeur Carbon par défaut
+   appartient à la famille du bleu (#0f62fe et nuances). Tout le reste
+   (secondaire gris, danger rouge, tags, syntaxe de code, IA/chat) garde
+   le comportement Carbon natif — cf. demande "garder le style Carbon de
+   base, juste vert à la place du bleu".
    ========================================================================== */
 
 :root {
-    /* Dynamic Carbon Overrides */
-    --cds-interactive-01: var(--pc-primary);
-    --cds-interactive-02: var(--pc-primary-hover);
-    --cds-link-01: var(--pc-primary);
-    --cds-focus: var(--pc-primary);
+    /* --- Interactifs / marque : famille bleue -> vert de marque --- */
+    --cds-interactive: var(--pc-primary);
+    --cds-background-brand: var(--pc-primary);
+    --cds-border-interactive: var(--pc-primary);
+    --cds-icon-interactive: var(--pc-primary);
 
-    /* Buttons */
+    --cds-focus: var(--pc-primary);
+    --cds-focus-inverse: var(--pc-primary);
+
+    --cds-link-primary: var(--pc-primary);
+    --cds-link-primary-hover: var(--pc-primary-hover);
+    --cds-link-secondary: var(--pc-primary-hover);
+    --cds-link-inverse: var(--pc-primary);
+    --cds-link-inverse-hover: var(--pc-primary-hover);
+
+    /* Teinte "surbrillance" (fond de ligne active/sélectionnée) : bleu très
+       foncé par défaut -> on prend le vert foncé, pas le vert principal */
+    --cds-highlight: var(--pc-primary-dark);
+
+    /* --- Bouton primaire --- */
     --cds-button-primary: var(--pc-primary);
-    --cds-button-primary-background: var(--pc-primary);
     --cds-button-primary-hover: var(--pc-primary-hover);
     --cds-button-primary-active: var(--pc-primary-dark);
-    --cds-button-secondary: var(--pc-surface);
-    --cds-button-secondary-background: var(--pc-surface);
-    --cds-button-secondary-hover: var(--pc-surface-hover);
-    --cds-button-secondary-color: var(--pc-text);
 
-    /* Inputs & Form Controls */
+    /* --- Bouton tertiaire (contour bleu par défaut, même famille) --- */
+    --cds-button-tertiary: var(--pc-primary);
+    --cds-button-tertiary-hover: var(--pc-primary-hover);
+    --cds-button-tertiary-active: var(--pc-primary-dark);
+
+    /* --- Champs, bordures, textes neutres -> tokens app --- */
+    /* (aucun de ces tokens n'est bleu par défaut ; on les relie simplement
+       aux couleurs neutres de l'app pour une cohérence globale) */
+    --cds-field: var(--pc-surface);
     --cds-field-01: var(--pc-surface);
     --cds-field-02: var(--pc-surface);
-    --cds-text-01: var(--pc-text);
-    --cds-text-02: var(--pc-text-secondary);
+    --cds-field-hover: var(--pc-surface-hover);
+    --cds-field-hover-01: var(--pc-surface-hover);
+
+    --cds-border-subtle: var(--pc-border);
     --cds-border-subtle-01: var(--pc-border);
+    --cds-border-strong: var(--pc-border-strong);
     --cds-border-strong-01: var(--pc-border-strong);
-}
 
-/* Mapping spécifique pour les composants CDS */
-cds-button[kind="primary"] {
-    --cds-button-primary-background: var(--pc-primary);
-    --cds-button-primary-hover: var(--pc-primary-hover);
-    --cds-button-primary-active: var(--pc-primary-dark);
-}
+    --cds-text-primary: var(--pc-text);
+    --cds-text-secondary: var(--pc-text-secondary);
 
-cds-text-input {
-    --cds-field-01: var(--pc-surface);
-    --cds-text-01: var(--pc-text);
-    --cds-text-02: var(--pc-text-secondary);
+    /* --- Bouton secondaire, danger, etc. : VOLONTAIREMENT NON TOUCHÉS ---
+       --cds-button-secondary reste au gris Carbon natif (#393939).
+       C'était justement le bug : il était fixé à --pc-surface (blanc),
+       d'où le blanc sur blanc. Ne pas le redéfinir ici = comportement
+       Carbon de base restauré. */
 }
 
 /* ==========================================================================
-   Ajustements Dark Mode automatiques
-   ========================================================================== */
+   Ajustements Dark Mode
+   ========================================================================== 
+   Rien à faire ici : --pc-primary, --pc-primary-hover, --pc-primary-dark,
+   --pc-surface, --pc-border, --pc-text, etc. changent déjà de valeur sous
+   :root[data-theme="dark"] / .cds--g90 dans global.css. Les règles ci-dessus
+   héritent donc automatiquement du bon jeu de couleurs en sombre.
 
+   Point d'attention (à valider) : nativement, Carbon utilise un focus
+   ring et une icône interactive BLANCS (pas bleus) sur le thème g90, pour
+   un contraste maximal sur fond sombre. En les remappant vers
+   --pc-primary ci-dessus, le focus/l'icône interactive deviennent verts
+   même en mode sombre — cohérent avec la marque, mais avec un contraste
+   légèrement inférieur au blanc pur. Si ce n'est pas voulu, il suffit de
+   ré-neutraliser ces deux lignes dans le bloc dark ci-dessous. */
+
+/*
 :root[data-theme="dark"],
-:root.cds--g90,
-:root.cds--g100 {
-    /* Tokens Carbon ajustés pour le dark theme */
-    --cds-field-01: #262626;
-    --cds-field-02: #353535;
-    --cds-text-01: #f4f4f4;
-    --cds-text-02: #c6c6c6;
-    --cds-border-subtle-01: #393939;
-    --cds-border-strong-01: #6f6f6f;
+:root.cds--g90 {
+    --cds-focus: #ffffff;
+    --cds-icon-interactive: #ffffff;
 }
+*/
 
-/* Application du fond et du contrat de couleur au Body */
 body {
     transition: background-color 0.2s ease, color 0.2s ease;
 }

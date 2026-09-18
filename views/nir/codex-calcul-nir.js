@@ -58,20 +58,13 @@ export class CodexCalculNir extends BaseComponent {
     if (cleInput) cleInput.value = cle;
 
     const nirComplet = `${raw}${cle}`;
-    let copieReussie = false;
 
-    try {
-      await navigator.clipboard.writeText(nirComplet);
-      copieReussie = true;
-    } catch {
-      copieReussie = false;
+    // Utilisation directe de l'assistant attaché
+    if (this.copyToClipboard) {
+      await this.copyToClipboard(nirComplet, `Clé calculée : ${cle} (copié dans le presse-papier)`);
+    } else {
+      this.notify.success(`Clé calculée : ${cle}`);
     }
-
-    const message = copieReussie
-      ? `Clé calculée : ${cle} (copié dans le presse-papier)`
-      : `Clé calculée : ${cle}`;
-
-    this.notify.success(message);
   }
 }
 

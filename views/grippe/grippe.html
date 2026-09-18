@@ -1,0 +1,106 @@
+<codex-doc-grippe assistants="masks" services="pdf">
+  <section class="view-shell">
+    <header class="view-header">
+      <h2>🦠 Bon de Prise en Charge – Vaccination Grippale</h2>
+      <p class="view-description">
+        Génération automatique du bon de prise en charge et d'injection de la vaccination anti-grippale (610d).
+      </p>
+    </header>
+
+    <div class="callouts-container grid-2-cols">
+      <div class="callout callout-info">
+        <div class="callout-title">🚀 Workflow optimisé</div>
+        <ol class="callout-list">
+          <li><strong>Scannez</strong> le DataMatrix du vaccin (remplissage auto du lot)</li>
+          <li><strong>Complétez</strong> les informations du bénéficiaire</li>
+          <li><strong>Générez</strong> le bon pré-rempli ou imprimez-le directement</li>
+        </ol>
+      </div>
+
+      <div class="callout callout-secondary">
+        <div class="callout-title">📄 Téléchargement</div>
+        <p>Pour une utilisation papier manuelle, vous pouvez obtenir le modèle officiel vierge.</p>
+        <a class="btn btn-secondary btn-sm" href="./views/grippe/pdf/610d-vierge.pdf" download>
+          Télécharger le PDF vierge
+        </a>
+      </div>
+    </div>
+
+    <form id="formGrippe" class="form-section">
+      <fieldset class="form-group">
+        <legend class="form-legend">Informations du bénéficiaire</legend>
+        
+        <div class="form-grid">
+          <cds-text-input name="nom" label="Nom" required></cds-text-input>
+          <cds-text-input name="prenom" label="Prénom" required></cds-text-input>
+          
+          <cds-text-input 
+            name="dateNaissance" 
+            label="Date de naissance" 
+            placeholder="JJ/MM/AAAA" 
+            data-mask="date" 
+            required>
+          </cds-text-input>
+          
+          <!-- Masque NIR / Sécurité sociale -->
+          <cds-text-input 
+            name="immatriculation" 
+            label="N° d'immatriculation (NIR)" 
+            placeholder="1 85 05 75 123 456 78" 
+            data-mask="nir" 
+            required>
+          </cds-text-input>
+
+          <!-- Masque Code Organisme CPAM -->
+          <cds-text-input 
+            name="codeOrganisme" 
+            label="Code organisme" 
+            placeholder="01 131 0421" 
+            data-mask="code-organisme" 
+            required>
+          </cds-text-input>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-group">
+        <legend class="form-legend">Vaccin, Lot et Injection</legend>
+        
+        <div class="form-grid">
+          <div class="grid-col-full">
+            <cds-text-input 
+              name="datamatrix" 
+              label="🔍 Scanner le DataMatrix (GS1)" 
+              placeholder="0134009...10ABC..." 
+              helper-text="Format: 01(EAN)17(Date)10(Lot)">
+            </cds-text-input>
+            <div id="datamatrix-feedback" class="scan-feedback"></div>
+          </div>
+
+          <cds-text-input name="lot" label="📦 N° de Lot" placeholder="Ex: XJ1012" required></cds-text-input>
+
+          <cds-select name="specialite" label="Spécialité délivrée" required>
+            <cds-select-item value="Influvac">Influvac</cds-select-item>
+            <cds-select-item value="Vaxigrip">Vaxigrip</cds-select-item>
+            <cds-select-item value="Flucelvax">Flucelvax</cds-select-item>
+            <cds-select-item value="Fluad">Fluad</cds-select-item>
+            <cds-select-item value="Efluelda">Efluelda</cds-select-item>
+          </cds-select>
+
+          <div class="checkbox-container">
+            <cds-checkbox name="avecInjection" label-text="Prendre en charge l'injection (Volet 2)" checked></cds-checkbox>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Générer le bon PDF</button>
+      </div>
+    </form>
+
+    <!-- Zone de prévisualisation PDF -->
+    <div id="previewContainer" class="pdf-preview-container hidden">
+      <h3>📄 Document généré</h3>
+      <iframe id="pdfPreview" class="pdf-iframe"></iframe>
+    </div>
+  </section>
+</codex-doc-grippe>

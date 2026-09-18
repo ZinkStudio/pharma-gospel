@@ -48,10 +48,10 @@
     "route": "#views/applications/calculazen/calculazen.html"
   },
   {
-    "id": "calculanir",
+    "id": "nir",
     "title": "Calcul clé sécu",
-    "keywords": "calculanir, utilitaire, outils, gestion, calcul, assistant, numéro, secu, vitale, nir, ins, cle, clé",
-    "route": "#views/applications/calculanir/calculanir.html"
+    "keywords": "nir, utilitaire, outils, gestion, calcul, assistant, numéro, secu, vitale, ins, cle, clé",
+    "route": "#views/nir/nir.html"
   },
   {
     "id": "renouvellement",
@@ -99,7 +99,7 @@
     "id": "ordonnancier",
     "title": "Ordonnancier IDE",
     "keywords": "infirmerie, ordonnancier, ordonnance, pansemant, ide",
-    "route": "#views/infirmerie/ordonnancier/ordonnancier.html"
+    "route": "#views/ordonnancier/ordonnancier.html"
   },
   {
     "id": "Vaccination",

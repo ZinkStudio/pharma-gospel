@@ -5,8 +5,19 @@
   <meta charset="UTF-8">
   <title>Redirection…</title>
   <script>
-    var redirectUrl = '/' + location.pathname + location.search + location.hash;
-    window.location.replace('/index.html#' + redirectUrl);
+    // Nombre de segments de chemin à conserver pour retrouver la racine du site.
+    // 0 = site servi à la racine du domaine (ex: https://mondomaine.fr/)
+    // 1 = site servi dans un sous-dossier (ex: https://user.github.io/pharma-gospel/)
+    var ROOT_SEGMENTS_TO_KEEP = 1;
+
+    var segments = location.pathname.split('/').filter(Boolean);
+    var rootSegments = segments.slice(0, ROOT_SEGMENTS_TO_KEEP);
+    var routeSegments = segments.slice(ROOT_SEGMENTS_TO_KEEP);
+
+    var basePath = '/' + rootSegments.join('/') + (rootSegments.length ? '/' : '');
+    var route = routeSegments.join('/') + location.search + location.hash;
+
+    window.location.replace(basePath + 'index.html#' + route);
   </script>
 </head>
 
