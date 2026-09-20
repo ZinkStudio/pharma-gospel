@@ -1,0 +1,58 @@
+<codex-calculazen>
+  <section class="view-shell">
+    <h1 class="view-title">CalculaZen</h1>
+    <p class="view-lead">Le calcul tranquille au comptoir...même à 19h59.</p>
+
+    <cds-content-switcher id="calculazen-switcher" value="remise">
+      <cds-content-switcher-item value="remise" target="panel-remise">
+        Remise avec unités gratuites
+      </cds-content-switcher-item>
+      <cds-content-switcher-item value="boite" target="panel-boite">
+        Calcul du nombre de boîtes
+      </cds-content-switcher-item>
+    </cds-content-switcher>
+
+    <div id="panel-remise">
+      <codex-form id="form-remise">
+        <cds-stack gap="7">
+          <p class="view-lead">Détermine le pourcentage de remise réel.</p>
+
+          <cds-number-input name="unitesPayantes" label="Unités payantes" min="0" max="9999" step="1" value="0">
+          </cds-number-input>
+          <cds-number-input name="prixUnitaire" label="Prix unitaire (€)" min="0" max="99999" step="0.01" value="0">
+          </cds-number-input>
+          <cds-number-input name="remisePourcent" label="Remise sur payantes (%)" min="0" max="100" step="0.01"
+            value="0">
+          </cds-number-input>
+          <cds-number-input name="unitesGratuites" label="Unités gratuites" min="0" max="9999" step="1" value="0">
+          </cds-number-input>
+
+          <div class="view-actions">
+            <cds-button type="submit" kind="primary">Calculer le pourcentage de remise</cds-button>
+          </div>
+        </cds-stack>
+      </codex-form>
+    </div>
+
+    <div id="panel-boite" hidden>
+      <codex-form id="form-boite">
+        <cds-stack gap="7">
+          <p class="view-lead">Détermine le nombre de boîtes à délivrer.</p>
+
+          <cds-number-input name="unitePrise" label="Unités par prise" min="0" max="9999" step="1" value="0">
+          </cds-number-input>
+          <cds-number-input name="nombrePrise" label="Nombre de prises" min="0" max="9999" step="1" value="0">
+          </cds-number-input>
+          <cds-number-input name="dureePrise" label="Durée en jours" min="0" max="9999" step="1" value="0">
+          </cds-number-input>
+          <cds-number-input name="unitesBoite" label="Unités par boîte" min="1" max="9999" step="1" value="1">
+          </cds-number-input>
+
+          <div class="view-actions">
+            <cds-button type="submit" kind="primary">Calculer le nombre de boîtes</cds-button>
+          </div>
+        </cds-stack>
+      </codex-form>
+    </div>
+  </section>
+</codex-calculazen>

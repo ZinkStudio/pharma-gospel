@@ -15,8 +15,8 @@ import '@components/ui/codex-crop-editor.js';
 
 import '@views/nir/codex-calcul-nir.js';
 import '@views/ordonnancier/codex-ordonnancier.js';
-import '@views/grippe/codex-doc-grippe.js';
-
+import '@views/calculazen/codex-calculazen.js';
+import '@views/renouvellement/codex-renouvellement.js';
 
 import '@carbon/web-components/accordion.min.js'
 import '@carbon/web-components/settings-a9cb5e4b.js'

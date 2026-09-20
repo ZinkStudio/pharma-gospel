@@ -45,7 +45,7 @@
     "id": "calculazen",
     "title": "Calculs au comptoir",
     "keywords": "calculazen, utilitaire, outils, gestion, calcul, assistant, remise, posologie, boites, boîtes, délivrance",
-    "route": "#views/applications/calculazen/calculazen.html"
+    "route": "#views/calculazen/calculazen.html"
   },
   {
     "id": "nir",
@@ -57,7 +57,7 @@
     "id": "renouvellement",
     "title": "Renouvellement (R1,R2..)",
     "keywords": "renouvellement, utilitaire, outils, gestion, calcul, assistant, jours, feries, fériés, attente, date, vacances",
-    "route": "#views/applications/renouvellement/renouvellement.html"
+    "route": "#views/renouvellement/renouvellement.html"
   },
   {
     "id": "datamatrix",
