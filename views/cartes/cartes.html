@@ -1,0 +1,48 @@
+<codex-cartes>
+  <section class="view-shell">
+    <h1 class="view-title">Cartes infirmiers</h1>
+    <p class="view-lead">
+      Annuaire des infirmiers à domicile. Générez des cartes de contact prêtes à imprimer,
+      télécharger ou transmettre par mail.
+    </p>
+
+    <div class="view-actions" style="align-items:flex-end; justify-content:space-between;">
+      <codex-field label="Filtrer par genre" style="min-width: 220px;">
+        <select name="genre" id="cartes-filtre-genre">
+          <option value="">Tous</option>
+          <option value="F">Femmes</option>
+          <option value="H">Hommes</option>
+        </select>
+      </codex-field>
+
+      <div class="view-actions" style="margin-top:0;">
+        <cds-button id="cartes-btn-apercu" kind="tertiary" size="sm" type="button">👁 Aperçu</cds-button>
+        <cds-button id="cartes-btn-pdf-tout" kind="secondary" size="sm" type="button">⬇ Télécharger tout</cds-button>
+        <cds-button id="cartes-btn-pdf-filtre" kind="primary" size="sm" type="button">⬇ Télécharger la sélection</cds-button>
+      </div>
+    </div>
+
+    <div class="view-table-wrap">
+      <table class="view-table">
+        <caption>Liste des infirmiers à domicile</caption>
+        <thead>
+          <tr>
+            <th scope="col">Nom</th>
+            <th scope="col">Genre</th>
+            <th scope="col">Téléphone</th>
+            <th scope="col">Mail</th>
+            <th scope="col">Secteur</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="cartes-liste">
+          <tr>
+            <td colspan="6">Chargement…</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="cartes-preview"></div>
+  </section>
+</codex-cartes>

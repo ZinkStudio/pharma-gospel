@@ -87,7 +87,7 @@
     "id": "cartes",
     "title": "Cartes Infirmiers",
     "keywords": "infirmerie, cartes, ide, infirmier, infirmière, domicile",
-    "route": "#views/infirmerie/cartes/cartes.html"
+    "route": "#views/cartes/cartes.html"
   },
   {
     "id": "facture",

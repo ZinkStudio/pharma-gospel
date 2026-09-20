@@ -1,6 +1,6 @@
 /**
- * Service d'export PDF et d'impression pour Pharma-Codex.
- * Basé sur html2pdf.js avec isolation en Sandbox et support des templates DSFR.
+ * Service d'export PDF et d'impression pour Pharma-Gospel.
+ * Basé sur html2pdf.js avec isolation en Sandbox.
  */
 
 // Presets de configuration
@@ -65,6 +65,11 @@ export async function exportToPdf(element, filename = 'document.pdf', customOpti
 
   const html2pdf = await getHtml2Pdf();
 
+  // `action: 'blob'` retourne le PDF en mémoire (Blob) au lieu de déclencher
+  // le téléchargement — utile pour alimenter un <pdf-preview-element> avant
+  // que l'utilisateur ne décide de télécharger ou d'imprimer.
+  const { action, ...html2pdfOptions } = customOptions;
+
   // Création du conteneur d'isolation (Sandbox)
   const sandbox = document.createElement('div');
   sandbox.style.cssText = `
@@ -102,12 +107,19 @@ export async function exportToPdf(element, filename = 'document.pdf', customOpti
     }
   };
 
-  const finalOptions = mergeOptions(defaultOptions, customOptions);
+  const finalOptions = mergeOptions(defaultOptions, html2pdfOptions);
 
   try {
     // Petit délai d'attente pour le calcul des styles
     await new Promise(resolve => setTimeout(resolve, 250));
-    await html2pdf().set(finalOptions).from(sandbox.firstElementChild).save();
+    const worker = html2pdf().set(finalOptions).from(sandbox.firstElementChild);
+
+    if (action === 'blob') {
+      return await worker.outputPdf('blob');
+    }
+
+    await worker.save();
+    return null;
   } catch (error) {
     console.error('[pdf-utils] Erreur lors de la génération du PDF :', error);
     throw error;
@@ -117,7 +129,8 @@ export async function exportToPdf(element, filename = 'document.pdf', customOpti
 }
 
 /**
- * Imprime un élément HTML dans une fenêtre popup configurée avec le DSFR.
+ * Imprime un élément HTML dans une fenêtre popup isolée (styles passés via
+ * printOptions.styles, aucune dépendance externe).
  * @param {HTMLElement} element 
  * @param {Object} [printOptions={}]
  */
@@ -138,11 +151,6 @@ export function printElement(element, printOptions = {}) {
   titleEl.textContent = title;
   head.appendChild(titleEl);
 
-  const linkDsfr = doc.createElement('link');
-  linkDsfr.rel = 'stylesheet';
-  linkDsfr.href = './dsfr-v1.14.2/dist/dsfr.min.css';
-  head.appendChild(linkDsfr);
-
   const styleEl = doc.createElement('style');
   styleEl.textContent = `
     @media print {
@@ -159,9 +167,12 @@ export function printElement(element, printOptions = {}) {
 
   doc.documentElement.replaceWith(html);
 
-  linkDsfr.onload = () => {
+  // Laisse le temps au navigateur de calculer les styles avant d'imprimer
+  // (remplace l'ancien déclenchement via l'onload de la feuille DSFR, qui
+  // n'existe plus dans ce projet).
+  setTimeout(() => {
     printWindow.focus();
     printWindow.print();
     setTimeout(() => printWindow.close(), 500);
-  };
+  }, 250);
 }
