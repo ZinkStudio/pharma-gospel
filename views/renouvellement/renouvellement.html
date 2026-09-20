@@ -1,0 +1,80 @@
+<codex-renouvellement assistants="clipboard-copy">
+  <cds-content-switcher id="renouvellement-switcher" value="renouvellement">
+    <cds-content-switcher-item value="renouvellement" target="panel-renouvellement">
+      Renouvellement R1, R2...
+    </cds-content-switcher-item>
+    <cds-content-switcher-item value="feries" target="panel-feries">
+      Jours fériés
+    </cds-content-switcher-item>
+  </cds-content-switcher>
+
+  <div id="panel-renouvellement">
+    <section class="view-shell">
+      <h1 class="view-title">Renouvellement (R1, R2...)</h1>
+      <p class="view-lead">
+        Planifie les dates de renouvellement à partir d'une date initiale, en évitant soigneusement
+        les dimanches et les jours fériés.
+      </p>
+
+      <codex-form id="form-renouvellement">
+        <cds-stack gap="7">
+          <codex-field label="Date initiale">
+            <input type="date" name="dateInitiale" data-init="aujourdhui" required>
+          </codex-field>
+
+          <cds-number-input name="nombreRenouvellements" label="Nombre de renouvellements" min="1" max="52" step="1"
+            value="5">
+          </cds-number-input>
+
+          <cds-number-input name="intervalleRenouvellement" label="Intervalle entre chaque renouvellement (jours)"
+            min="7" max="365" step="1" value="22">
+          </cds-number-input>
+
+          <div class="view-actions">
+            <cds-button type="submit" kind="primary">Générer les dates</cds-button>
+          </div>
+        </cds-stack>
+      </codex-form>
+
+      <div class="view-table-wrap">
+        <table class="view-table">
+          <caption>Dates de renouvellement générées</caption>
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Date</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="renouvellementTable"></tbody>
+        </table>
+      </div>
+
+      <p class="view-lead" id="infoRenouvellement">
+        Renouvellement possible si la dernière facturation est antérieure ou égale au :
+        <strong id="dateDerniereFacturation"></strong>
+      </p>
+    </section>
+  </div>
+
+  <div id="panel-feries" hidden>
+    <section class="view-shell">
+      <h2 class="view-subtitle">Jours fériés de l'année</h2>
+      <div class="view-table-wrap">
+        <table class="view-table">
+          <caption>Jours fériés</caption>
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Dénomination</th>
+              <th scope="col">Jour</th>
+            </tr>
+          </thead>
+          <tbody id="joursFeries"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div id="modalesContainer"></div>
+</codex-renouvellement>
