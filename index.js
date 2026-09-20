@@ -17,6 +17,7 @@ import '@views/nir/codex-calcul-nir.js';
 import '@views/ordonnancier/codex-ordonnancier.js';
 import '@views/calculazen/codex-calculazen.js';
 import '@views/renouvellement/codex-renouvellement.js';
+import '@views/cartes/codex-cartes.js';
 
 import '@carbon/web-components/accordion.min.js'
 import '@carbon/web-components/settings-a9cb5e4b.js'

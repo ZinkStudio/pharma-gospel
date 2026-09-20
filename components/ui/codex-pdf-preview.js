@@ -1,6 +1,5 @@
 // /static/js/components/pdf-preview-element.js
-import { LitElement, html, css } from 'lit';
-import { PDFService } from '../../services/pdf/pdf-service.js';
+import { LitElement, html, css } from '/lit';
 
 export class PdfPreviewElement extends LitElement {
     static properties = {
