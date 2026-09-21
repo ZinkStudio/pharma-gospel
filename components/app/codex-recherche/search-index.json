@@ -75,7 +75,7 @@
     "id": "ordoscan",
     "title": "Ordoscan - Nettoyage d'ordonnance photo",
     "keywords": "ordoscan, photo, ordonnance, scan, recadrage, perspective, fond, arriere-plan",
-    "route": "#views/applications/ordoscan/ordoscan.html"
+    "route": "#views/ordoscan/ordoscan.html"
   },
   {
     "id": "infirmerie",
