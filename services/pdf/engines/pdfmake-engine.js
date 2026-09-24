@@ -10,8 +10,8 @@ export class PdfMakeEngine {
   static async loadDependencies() {
     if (this.isLoaded && window.pdfMake) return;
 
-    const pdfMakeUrl = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js';
-    const vfsFontsUrl = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/vfs_fonts.js';
+    const pdfMakeUrl = new URL('../../../vendor/pdf/pdfmake@0.2.10.js', import.meta.url).href;
+    const vfsFontsUrl = new URL('../../../vendor/pdf/pdfmake-vfs_font@0.2.10.js', import.meta.url).href;
 
     await this._loadScript(pdfMakeUrl);
     await this._loadScript(vfsFontsUrl);

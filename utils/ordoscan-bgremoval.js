@@ -1,8 +1,10 @@
 // /static/js/assistants/assistant-ordoscan-bgremoval.js
 
 const IMGLY_VERSION = '1.5.8';
-const IMGLY_MODULE_URL = `https://esm.sh/@imgly/background-removal@${IMGLY_VERSION}?bundle`;
-const IMGLY_PUBLIC_PATH = `https://staticimgly.com/@imgly/background-removal-data/${IMGLY_VERSION}/dist/`;
+// const IMGLY_MODULE_URL = `https://esm.sh/@imgly/background-removal@${IMGLY_VERSION}?bundle`;
+// const IMGLY_PUBLIC_PATH = `https://staticimgly.com/@imgly/background-removal-data/${IMGLY_VERSION}/dist/`;
+const IMGLY_MODULE_URL = new URL(`../vendor/imgly@1.5.8/background-removal.mjs`, import.meta.url).href; // Chargement local pour éviter les problèmes de CORS et de CDN
+const IMGLY_PUBLIC_PATH = new URL(`../vendor/imgly@1.5.8/dist/`, import.meta.url).href;
 
 let _imglyModulePromise = null;
 function loadImgly() {
@@ -93,7 +95,7 @@ export default class OrdoscanBgRemovalAssistant {
     const rawPng = await removeImageBackground(imageBlob, onProgress);
     const adjustedPng = alphaStrength !== 50 ? await applyAlphaStrength(rawPng, alphaStrength) : rawPng;
     const finalJpeg = await compositeOnWhite(adjustedPng);
-    
+
     return {
       rawPng,
       adjustedPng,
