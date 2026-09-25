@@ -9,7 +9,7 @@
 
 const PDFJS_URL = new URL('../../vendor/pdfjs@6.3.289/pdf.min.js', import.meta.url).href;
 const PDFJS_WORKER_URL = new URL('../../vendor/pdfjs@6.3.289/pdf.worker.min.js', import.meta.url).href;
-const LIBHEIF_URL = new URL('../../vendor/libheif-js@1.23.2/libheif-bundle.mjs', import.meta.url).href;
+const LIBHEIF_URL = new URL('../../vendor/libheif-js@1.23.2/libheif-bundle.js', import.meta.url).href;
 
 let pdfjsModulePromise = null;
 function loadPdfJs() {

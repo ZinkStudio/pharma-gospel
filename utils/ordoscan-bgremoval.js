@@ -34,13 +34,14 @@ export async function preloadBackgroundRemoval(onProgress) {
   }
 }
 
-export async function removeImageBackground(imageBlob, onProgress) {
+export async function removeImageBackground(imageBlob, onProgress, model = 'medium') {
   const mod = await loadImgly();
   const removeBackground = resolveFn(mod, 'removeBackground');
 
   return await removeBackground(imageBlob, {
     publicPath: IMGLY_PUBLIC_PATH,
-    progress: onProgress
+    progress: onProgress,
+    model // 'small' (~40 Mo, plus rapide) ou 'medium' (~80 Mo, par défaut, meilleure qualité)
   });
 }
 
