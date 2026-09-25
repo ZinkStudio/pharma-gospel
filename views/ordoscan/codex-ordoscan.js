@@ -9,9 +9,7 @@ const MAX_LONG_SIDE = 2600;
 
 const FORMATS = {
   'scanner-portrait': { width: 1240, height: 1754, label: 'portrait-scanner' },
-  'scanner-paysage': { width: 1754, height: 1240, label: 'paysage-scanner' },
-  'ecran-portrait': { width: 794, height: 1123, label: 'portrait-ecran' },
-  'ecran-paysage': { width: 1123, height: 794, label: 'paysage-ecran' }
+  'ecran-portrait': { width: 794, height: 1123, label: 'portrait-ecran' }
 };
 
 export class CodexOrdoscan extends BaseComponent {
@@ -273,11 +271,12 @@ async #runBackgroundRemoval() {
     const startTime = performance.now();
 
     try {
+        const modele = this.querySelector('#ordoscan-model-switcher')?.value || 'small';
         const croppedBlob = await this.#canvasToBlob(this._croppedCanvas, 'image/jpeg', 0.95);
         const transparentPng = await removeImageBackground(croppedBlob, (key, current, total) => {
             const percent = total ? Math.round((current / total) * 100) : 0;
             progress.textContent = `⏳ Traitement en cours (${key})… (${percent}%)`;
-        });
+        }, modele);
 
         // ⏱️ Fin du chronomètre
         const endTime = performance.now();

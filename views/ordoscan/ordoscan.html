@@ -42,6 +42,14 @@
             <p id="ordoscan-bg-progress" class="view-lead" hidden>⏳ Traitement en cours…</p>
           </div>
 
+          <div class="ordoscan-fieldset">
+            <p class="view-subtitle">Modèle de suppression de fond</p>
+            <cds-content-switcher id="ordoscan-model-switcher" value="small">
+              <cds-content-switcher-item value="small">Rapide (small, ~40 Mo)</cds-content-switcher-item>
+              <cds-content-switcher-item value="medium">Qualité (medium, ~80 Mo)</cds-content-switcher-item>
+            </cds-content-switcher>
+          </div>
+
           <fieldset class="ordoscan-fieldset">
             <legend class="view-subtitle">Formats à télécharger</legend>
             <label class="ordoscan-checkbox">
@@ -49,16 +57,8 @@
               Portrait scanner (1240 × 1754 px)
             </label>
             <label class="ordoscan-checkbox">
-              <input type="checkbox" name="format" value="scanner-paysage">
-              Paysage scanner (1754 × 1240 px)
-            </label>
-            <label class="ordoscan-checkbox">
               <input type="checkbox" name="format" value="ecran-portrait">
               Écran / Web portrait (794 × 1123 px)
-            </label>
-            <label class="ordoscan-checkbox">
-              <input type="checkbox" name="format" value="ecran-paysage">
-              Écran / Web paysage (1123 × 794 px)
             </label>
           </fieldset>
 
