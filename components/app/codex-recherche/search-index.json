@@ -78,6 +78,12 @@
     "route": "#views/ordoscan/ordoscan.html"
   },
   {
+    "id": "endossaire",
+    "title": "Endossaire - Apposer un tampon",
+    "keywords": "endossaire, tampon, cachet, signature, pdf, apposer",
+    "route": "#views/endossaire/endossaire.html"
+  },
+  {
     "id": "infirmerie",
     "title": "Module Infirmerie",
     "keywords": "dashboard, infirmerie, soins, patients, dossiers, facture, ordonnance, ordonnancier, ide",

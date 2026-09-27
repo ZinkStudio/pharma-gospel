@@ -1,0 +1,80 @@
+<link rel="stylesheet" href="./views/endossaire/endossaire.css">
+<codex-endossaire assistants="file-drop-paste">
+  <section class="view-shell">
+    <h1 class="view-title">Endossaire</h1>
+    <p class="view-lead">Apposez un tampon sur une image ou un PDF, page par page, puis exportez le résultat.</p>
+
+    <!-- ===== PHASE IMPORT ===== -->
+    <div id="endossaire-phase-import">
+      <div class="ordoscan-dropzone" id="endossaire-dropzone" tabindex="0" role="button"
+        aria-label="Zone d'import : cliquer, glisser-déposer ou coller un fichier">
+        <p>📥 Glissez un PDF ou une image ici, <strong>cliquez</strong> pour en choisir un,</p>
+        <p>ou <strong>collez</strong> une image copiée (Ctrl+V / Cmd+V).</p>
+      </div>
+      <input type="file" id="endossaire-fileinput" accept="application/pdf,image/*" hidden>
+    </div>
+
+    <!-- ===== PHASE ÉDITION ===== -->
+    <div id="endossaire-phase-edit" hidden>
+      <div class="endossaire-toolbar view-actions">
+        <cds-button id="endossaire-btn-prev" kind="ghost" size="sm" type="button">◀</cds-button>
+        <span id="endossaire-page-label" class="view-subtitle">Page 1 / 1</span>
+        <cds-button id="endossaire-btn-next" kind="ghost" size="sm" type="button">▶</cds-button>
+
+        <label style="margin-left:1rem; font-size:0.85rem; color:var(--pc-text-secondary);">
+          Zoom
+          <select id="endossaire-zoom">
+            <option value="0.5">50%</option>
+            <option value="0.75">75%</option>
+            <option value="1" selected>100%</option>
+            <option value="1.5">150%</option>
+            <option value="2">200%</option>
+          </select>
+        </label>
+
+        <cds-button id="endossaire-btn-clear-page" kind="danger-ghost" size="sm" type="button" style="margin-left:auto;">
+          🗑 Vider cette page
+        </cds-button>
+      </div>
+
+      <div class="endossaire-layout">
+        <aside class="endossaire-sidebar">
+          <p class="view-subtitle">Bibliothèque de tampons</p>
+          <div id="endossaire-stamp-picker" class="endossaire-stamp-grid"></div>
+
+          <p class="view-subtitle">Réglages</p>
+          <cds-number-input id="endossaire-pref-size" label="Taille par défaut (px)" min="20" max="400" step="10"
+            value="100">
+          </cds-number-input>
+
+          <p class="view-lead" style="margin-bottom:0;">Position par défaut</p>
+          <div class="endossaire-pos-grid" id="endossaire-pos-grid">
+            <button type="button" class="endossaire-pos-btn" data-v="top" data-h="left">↖</button>
+            <button type="button" class="endossaire-pos-btn" data-v="top" data-h="center">↑</button>
+            <button type="button" class="endossaire-pos-btn" data-v="top" data-h="right">↗</button>
+            <button type="button" class="endossaire-pos-btn" data-v="middle" data-h="left">←</button>
+            <button type="button" class="endossaire-pos-btn" data-v="middle" data-h="center">•</button>
+            <button type="button" class="endossaire-pos-btn" data-v="middle" data-h="right">→</button>
+            <button type="button" class="endossaire-pos-btn" data-v="bottom" data-h="left">↙</button>
+            <button type="button" class="endossaire-pos-btn" data-v="bottom" data-h="center">↓</button>
+            <button type="button" class="endossaire-pos-btn is-active" data-v="bottom" data-h="right">↘</button>
+          </div>
+
+          <p class="endossaire-stats" id="endossaire-stats"></p>
+        </aside>
+
+        <div class="endossaire-canvas-wrap" id="endossaire-canvas-wrap">
+          <button id="endossaire-btn-delete" class="endossaire-delete-btn" type="button"
+            aria-label="Supprimer ce tampon" hidden>✕</button>
+          <canvas id="endossaire-canvas"></canvas>
+        </div>
+      </div>
+
+      <div class="view-actions">
+        <cds-button id="endossaire-btn-download" kind="primary" type="button">📥 Télécharger</cds-button>
+        <cds-button id="endossaire-btn-share" kind="secondary" type="button" hidden>📤 Partager</cds-button>
+        <cds-button id="endossaire-btn-restart" kind="tertiary" type="button">🔄 Traiter un autre fichier</cds-button>
+      </div>
+    </div>
+  </section>
+</codex-endossaire>
