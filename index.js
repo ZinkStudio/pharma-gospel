@@ -20,6 +20,10 @@ import '@views/renouvellement/codex-renouvellement.js';
 import '@views/cartes/codex-cartes.js';
 import '@views/ordoscan/codex-ordoscan.js';
 
+import '@components/ui/tampon/codex-tampon-rond.js';
+import '@components/ui/tampon/codex-tampon-rectangle.js';
+import '@views/endossaire/codex-endossaire.js';
+
 import '@carbon/web-components/accordion.min.js'
 import '@carbon/web-components/settings-a9cb5e4b.js'
 import '@carbon/web-components/property-4de26c93.js'
