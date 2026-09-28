@@ -1,4 +1,4 @@
-import { BaseComponent } from '../../core/base-component.js';
+import { BaseView } from '../../core/base-view.js';
 import { downloadBlob, canShareFiles, shareBlob } from '../../utils/export-utils.js';
 import { tampons } from './tampons-data.js';
 
@@ -40,8 +40,14 @@ function loadPdfJs() {
 }
 
 const PREFS_KEY = 'endossaire-prefs';
+const REF_PAGE_WIDTH = 900; // largeur de référence d'une page PDF rendue à 1,5×
+// Petite icône PDF en SVG inline — évite une requête réseau pour la miniature
+// d'aperçu, et fonctionne même si aucun asset n'est déployé à côté.
+const PDF_THUMB_DATAURI =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>" +
+  "<path fill='%23d32f2f' d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z'/></svg>";
 
-export class CodexEndossaire extends BaseComponent {
+export class CodexEndossaire extends BaseView {
   constructor() {
     super();
     this._fabric = null;
@@ -52,7 +58,7 @@ export class CodexEndossaire extends BaseComponent {
     this._currentPage = 1;
     this._totalPages = 1;
     this._zoom = 1;
-    this._pos = { v: 'middle', h: 'center' };
+    this._pos = { v: 'bottom', h: 'right' };
     this._defaultSize = 100;
     this._fileNameBase = 'document';
     this._objectUrls = [];
@@ -69,21 +75,18 @@ export class CodexEndossaire extends BaseComponent {
 
   onReady() {
     this.#renderStampPicker();
+    this.#synchroniserBoutonPosition();
 
-    const dropzone = this.querySelector('#endossaire-dropzone');
-    const fileInput = this.querySelector('#endossaire-fileinput');
-
-    dropzone?.addEventListener('click', () => fileInput.click());
-    dropzone?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
-    });
-    fileInput?.addEventListener('change', (e) => {
-      const file = e.target.files?.[0];
-      if (file) this.#handleFile(file);
-    });
+    // Import : clic, drag&drop et paste sont centralisés par <codex-drop-zone>
+    // (assistés par file-paste pour le Ctrl+V). Un seul point d'entrée.
     this.addEventListener('files-captured', (e) => {
       const file = e.detail?.file;
       if (file) this.#handleFile(file);
+    });
+
+    // ✕ sur la preview → on remet tout à zéro
+    this.querySelector('#endossaire-dropzone')?.addEventListener('preview-cleared', () => {
+      this.#resetAll();
     });
 
     this.querySelector('#endossaire-btn-prev')?.addEventListener('click', () => this.#changerPage(-1));
@@ -114,6 +117,13 @@ export class CodexEndossaire extends BaseComponent {
         if (document.activeElement?.tagName === 'INPUT') return;
         this.#supprimerSelection();
       }
+    });
+  }
+
+  /** Reflète l'état mémorisé (localStorage) sur la grille de position affichée. */
+  #synchroniserBoutonPosition() {
+    this.querySelectorAll('.endossaire-pos-btn').forEach(b => {
+      b.classList.toggle('is-active', b.dataset.v === this._pos.v && b.dataset.h === this._pos.h);
     });
   }
 
@@ -203,58 +213,131 @@ export class CodexEndossaire extends BaseComponent {
   // =============================================================
   // Import (image ou PDF)
   // =============================================================
-  async #handleFile(file) {
-    try {
-      this._fileNameBase = (file.name || 'document').replace(/\.[^.]+$/, '');
-      this._fabric = await loadFabric();
-
-      const canvasEl = this.querySelector('#endossaire-canvas');
-      this._fabricCanvas = new this._fabric.Canvas(canvasEl, { width: 600, height: 800, enableRetinaScaling: false, backgroundColor: '#ffffff' });
-      this._fabricCanvas.on('selection:created', () => this.#updateDeletePos());
-      this._fabricCanvas.on('selection:updated', () => this.#updateDeletePos());
-      this._fabricCanvas.on('object:moving', () => this.#updateDeletePos());
-      this._fabricCanvas.on('object:scaling', () => this.#updateDeletePos());
-      this._fabricCanvas.on('selection:cleared', () => {
-        const btn = this.querySelector('#endossaire-btn-delete');
-        if (btn) btn.hidden = true;
-      });
-
-      const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name || '');
-      this._isPdf = isPdf;
-
-      if (isPdf) {
-        this._pdfBytesOriginal = await file.arrayBuffer();
-        const pdfjs = await loadPdfJs();
-        this._pdfDoc = await pdfjs.getDocument({ data: this._pdfBytesOriginal.slice(0) }).promise;
-        this._totalPages = this._pdfDoc.numPages;
-        this._currentPage = 1;
-        await this.#renderPage(1);
-      } else {
-        this._totalPages = 1;
-        this._currentPage = 1;
-        const url = URL.createObjectURL(file);
-        this._objectUrls.push(url);
-        const img = await this._fabric.FabricImage.fromURL(url);
-        this.#definirFond(img);
-        this.#appliquerZoom(1);
-        this._fabricCanvas.renderAll();
+  /**
+ * Détruit l'instance Fabric courante et nettoie le DOM résiduel
+ * (wrapper .canvas-container, upper-canvas, marqueur __fabric).
+ * À appeler avant toute nouvelle initialisation de canvas.
+ */
+  async #detruireCanvas() {
+    if (this._fabricCanvas) {
+      try {
+        await this._fabricCanvas.dispose();
+      } catch (e) {
+        console.warn('[CodexEndossaire] dispose() a échoué :', e);
       }
-
-      this.#majNavigation();
-      this.#updateStats();
-      const shareBtn = this.querySelector('#endossaire-btn-share');
-      if (shareBtn) shareBtn.hidden = false;
-      this.#showPhase('edit');
-    } catch (err) {
-      console.error('[CodexEndossaire] Erreur import :', err);
-      this.notify.error("Impossible de traiter ce fichier : " + (err.message || 'format non pris en charge.'));
-      this.#showPhase('import');
+      this._fabricCanvas = null;
     }
+    // Fabric v7 laisse parfois le wrapper et le marqueur __fabric après dispose().
+    // On retire tout ce qui traîne pour garantir un DOM propre.
+    const wrap = this.querySelector('#endossaire-canvas-wrap');
+    wrap?.querySelectorAll('canvas, .canvas-container').forEach(n => n.remove());
   }
 
+  async #handleFile(file) {
+  try {
+    this._fileNameBase = (file.name || 'document').replace(/\.[^.]+$/, '');
+    this._fabric = await loadFabric();
+
+    // 1. Nettoyage complet de l'import précédent (instance + DOM résiduel)
+    await this.#detruireCanvas();
+
+    // 2. Création d'un <canvas> neuf à chaque import — contourne le
+    //    marqueur __fabric que Fabric v7 laisse parfois après dispose().
+    const wrap = this.querySelector('#endossaire-canvas-wrap');
+    const canvasEl = document.createElement('canvas');
+    canvasEl.id = 'endossaire-canvas';
+    const deleteBtn = wrap.querySelector('#endossaire-btn-delete');
+    if (deleteBtn) wrap.insertBefore(canvasEl, deleteBtn.nextSibling);
+    else wrap.appendChild(canvasEl);
+
+    // 3. Initialisation Fabric sur cet élément fraîchement créé
+    this._fabricCanvas = new this._fabric.Canvas(canvasEl, {
+      width: 600, height: 800,
+      enableRetinaScaling: false,
+      backgroundColor: '#ffffff'
+    });
+
+    // 4. Listeners Fabric (sélection, déplacement, mise à l'échelle)
+    this._fabricCanvas.on('selection:created', () => this.#updateDeletePos());
+    this._fabricCanvas.on('selection:updated', () => this.#updateDeletePos());
+    this._fabricCanvas.on('object:moving',   () => this.#updateDeletePos());
+    this._fabricCanvas.on('object:scaling', (e) => {
+      if (e.target) e.target.scaleY = e.target.scaleX; // ratio toujours conservé
+      this.#updateDeletePos();
+    });
+    this._fabricCanvas.on('selection:cleared', () => {
+      const btn = this.querySelector('#endossaire-btn-delete');
+      if (btn) btn.hidden = true;
+    });
+
+    // 5. Détection PDF / image
+    const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name || '');
+    this._isPdf = isPdf;
+
+    let previewSrc = null;
+
+    if (isPdf) {
+      this._pdfBytesOriginal = await file.arrayBuffer();
+      const pdfjs = await loadPdfJs();
+      this._pdfDoc = await pdfjs.getDocument({ data: this._pdfBytesOriginal.slice(0) }).promise;
+      this._totalPages = this._pdfDoc.numPages;
+      this._currentPage = 1;
+      await this.#renderPage(1);
+      previewSrc = PDF_THUMB_DATAURI;
+    } else {
+      this._totalPages = 1;
+      this._currentPage = 1;
+      const url = URL.createObjectURL(file);
+      this._objectUrls.push(url);
+      previewSrc = url;                  // réutilise l'URL déjà créée pour le fond
+      const img = await this._fabric.FabricImage.fromURL(url);
+      this.#definirFond(img);
+      this.#appliquerZoom(1);
+      this._fabricCanvas.renderAll();
+    }
+
+    // 6. Mise à jour de l'UI et bascule de phase
+    this.#majNavigation();
+    this.#updateStats();
+    const shareBtn = this.querySelector('#endossaire-btn-share');
+    if (shareBtn) shareBtn.hidden = false;
+    this.#showPhase('edit');
+    this.#ajusterZoomALaLargeur();
+    this.#afficherPreview(file, previewSrc);
+
+  } catch (err) {
+    console.error('[CodexEndossaire] Erreur import :', err);
+    this.notify.error("Impossible de traiter ce fichier : " + (err.message || 'format non pris en charge.'));
+    // Échec : on nettoie tout résidu et on retire une éventuelle preview fantôme
+    await this.#detruireCanvas();
+    this.querySelector('#endossaire-dropzone')?.clearPreview({ silent: true });
+    this.#showPhase('import');
+  }
+}
+
   #showPhase(phase) {
-    this.querySelector('#endossaire-phase-import')?.toggleAttribute('hidden', phase !== 'import');
     this.querySelector('#endossaire-phase-edit')?.toggleAttribute('hidden', phase !== 'edit');
+  }
+  /** Bascule la dropzone en preview une fois le fichier effectivement traité. */
+  #afficherPreview(file, src) {
+    const dz = this.querySelector('#endossaire-dropzone');
+    if (!dz) return;
+    dz.previewSrc = src || '';
+    dz.previewName = file.name || 'Document';
+    dz.previewDetails = this.#decrireFichier(file);
+    dz.state = 'preview';
+  }
+
+  /** "PDF · 1,4 Mo" ou "PNG · 320 Ko" — descripteur court pour la preview. */
+  #decrireFichier(file) {
+    const parts = [];
+    const ext = file.type ? file.type.split('/').pop()?.toUpperCase() : '';
+    if (ext) parts.push(ext);
+    if (file.size) {
+      const mo = file.size / 1024 / 1024;
+      parts.push(mo >= 1 ? `${mo.toFixed(1)} Mo` : `${Math.round(file.size / 1024)} Ko`);
+    }
+    return parts.join(' · ');
   }
 
   // =============================================================
@@ -321,6 +404,32 @@ export class CodexEndossaire extends BaseComponent {
    * un décalage du fond (zone non peinte -> noire à l'export JPEG) et un
    * déplacement des tampons déjà posés si le zoom change ensuite.
    */
+  /**
+   * Zoom initial : ajuste la page à la largeur disponible (sans jamais
+   * agrandir). Indispensable pour les photos, dont la taille naturelle
+   * (plusieurs milliers de px) dépasse largement l'écran.
+   */
+  #ajusterZoomALaLargeur() {
+    const wrap = this.querySelector('#endossaire-canvas-wrap');
+    const bg = this._fabricCanvas?.backgroundImage;
+    if (!wrap || !bg || !wrap.clientWidth) return;
+
+    const zoom = Math.min(1, Math.floor(((wrap.clientWidth - 4) / bg.width) * 100) / 100);
+    const select = this.querySelector('#endossaire-zoom');
+    if (select) {
+      let opt = select.querySelector('option[data-fit]');
+      if (!opt) {
+        opt = document.createElement('option');
+        opt.dataset.fit = '1';
+        select.prepend(opt);
+      }
+      opt.value = String(zoom);
+      opt.textContent = `Ajusté (${Math.round(zoom * 100)}%)`;
+      select.value = String(zoom);
+    }
+    this.#appliquerZoom(zoom);
+  }
+
   #appliquerZoom(zoom) {
     this._zoom = zoom;
     if (!this._fabricCanvas) return;
@@ -347,35 +456,46 @@ export class CodexEndossaire extends BaseComponent {
       return;
     }
 
-    // Fabric ne gère pas <textPath> : parser le SVG en objets Fabric aplatit
-    // le texte courbé. On rasterise donc le tampon via le rendu natif du
-    // navigateur (fidèle au composant) et on l'insère comme image. Définition
-    // = 3× la taille par défaut (bornée 300–800 px) pour garder de la marge
-    // si l'utilisateur agrandit le tampon ensuite.
-    const px = Math.min(800, Math.max(300, this._defaultSize * 3));
+    // Réglages lus sur le formulaire (source de vérité affichée), pas sur
+    // l'état mémorisé : les deux peuvent diverger au premier ajout.
+    const { size: sizeReglee, pos } = this.#lireReglages();
+
+    const bg = this._fabricCanvas.backgroundImage;
+    const bgW = bg?.width || this._fabricCanvas.width;
+    const bgH = bg?.height || this._fabricCanvas.height;
+
+    // La taille saisie est exprimée pour une page de référence de ~900 px de
+    // large (un PDF rendu à 1,5×). Une photo de 3000 px de large reçoit donc
+    // un tampon proportionnellement plus grand, au lieu d'un timbre minuscule
+    // relégué dans un coin hors du cadre visible.
+    const facteur = bgW / REF_PAGE_WIDTH;
+    const size = sizeReglee * facteur;
+    const pad = 20 * facteur;
+
+    // Fabric ne gère pas <textPath> : on rasterise le tampon via le rendu
+    // natif du navigateur puis on l'insère comme image (2× la taille affichée,
+    // bornée 300–1600 px, pour garder de la marge à l'agrandissement).
+    const px = Math.min(1600, Math.max(300, Math.round(size * 2)));
     const pngBlob = await source.toPngBlob(px);
     source.remove();
     const stampUrl = URL.createObjectURL(pngBlob);
     this._objectUrls.push(stampUrl);
     const group = await this._fabric.FabricImage.fromURL(stampUrl);
 
-    const bg = this._fabricCanvas.backgroundImage;
-    const bgW = bg?.width || this._fabricCanvas.width;
-    const bgH = bg?.height || this._fabricCanvas.height;
-    const size = this._defaultSize;
-    const pad = 20;
+    group.scaleToWidth(size);
+    const w = group.getScaledWidth();
+    const h = group.getScaledHeight();
 
     let left;
-    if (this._pos.h === 'left') left = pad;
-    else if (this._pos.h === 'center') left = bgW / 2 - size / 2;
-    else left = bgW - size - pad;
+    if (pos.h === 'left') left = pad;
+    else if (pos.h === 'center') left = bgW / 2 - w / 2;
+    else left = bgW - w - pad;
 
     let top;
-    if (this._pos.v === 'top') top = pad;
-    else if (this._pos.v === 'middle') top = bgH / 2 - size / 2;
-    else top = bgH - size - pad;
+    if (pos.v === 'top') top = pad;
+    else if (pos.v === 'middle') top = bgH / 2 - h / 2;
+    else top = bgH - h - pad;
 
-    group.scaleToWidth(size);
     group.set({
       originX: 'left',
       originY: 'top',
@@ -389,11 +509,25 @@ export class CodexEndossaire extends BaseComponent {
       borderColor: '#006d44',
       transparentCorners: false
     });
+    // Ratio verrouillé : pas de poignées latérales (étirement non uniforme)
+    group.setControlsVisibility({ ml: false, mr: false, mt: false, mb: false });
 
     this._fabricCanvas.add(group);
     this._fabricCanvas.setActiveObject(group);
     this._fabricCanvas.renderAll();
     this.#updateStats();
+  }
+
+  /**
+   * Réglages effectifs : lus dans le DOM (bouton de position actif, champ de
+   * taille), avec repli sur l'état interne.
+   */
+  #lireReglages() {
+    const actif = this.querySelector('.endossaire-pos-btn.is-active');
+    const pos = actif ? { v: actif.dataset.v, h: actif.dataset.h } : this._pos;
+    const saisie = parseInt(this.querySelector('#endossaire-pref-size')?.value, 10);
+    const size = Number.isFinite(saisie) && saisie > 0 ? saisie : this._defaultSize;
+    return { size, pos };
   }
 
   #supprimerSelection() {
@@ -478,6 +612,9 @@ export class CodexEndossaire extends BaseComponent {
     const pdfDoc = await PDFDocument.load(this._pdfBytesOriginal.slice(0));
     const pages = pdfDoc.getPages();
 
+    // pdf.js a rendu les pages à scale 1.5 (cf. #renderPage)
+    const SCALE_RENDER = 1.5;
+
     for (const o of this._fabricCanvas.getObjects()) {
       const data = tampons.find(t => t.id === o.stampId);
       if (!data) continue;
@@ -491,33 +628,54 @@ export class CodexEndossaire extends BaseComponent {
       const page = pages[o.pageRef - 1];
       if (!page) continue;
 
-      const { width, height } = page.getSize();
-      const rx = width / o.unzoomedPageWidth;
-      const ry = height / o.unzoomedPageHeight;
-      const drawW = o.getScaledWidth() * rx;
-      const drawH = o.getScaledHeight() * ry;
+      // --- Zone réellement rendue par pdf.js : CropBox (fallback MediaBox) ---
+      let box;
+      try { box = page.getCropBox(); } catch { box = page.getMediaBox(); }
+      const { x: bx, y: by, width: bw, height: bh } = box;
 
-      // pdf-lib pivote autour du coin bas-gauche de l'image ; Fabric autour
-      // du centre. On part donc du centre (indépendant de l'origine et de la
-      // rotation) et on en déduit le coin bas-gauche après rotation.
+      // --- Rotation de page (souvent /Rotate 90 ou 270 sur un scan) ---
+      const R = (((page.getRotation()?.angle ?? 0) % 360) + 360) % 360;
+
+      // --- Centre du tampon en coordonnées canvas, ramené à l'échelle 1 ---
       const center = o.getCenterPoint();
-      const cx = center.x * rx;
-      const cy = height - center.y * ry;
-      const phi = (-(o.angle || 0)) * Math.PI / 180; // Fabric = horaire, PDF = anti-horaire
-      const vx = -drawW / 2;
-      const vy = -drawH / 2;
+      const cx = center.x / SCALE_RENDER;
+      const cy = center.y / SCALE_RENDER;
+
+      // --- Centre du tampon en coordonnées PDF (origine bas-gauche, y vers le haut) ---
+      let px, py;
+      if (R === 0) { px = bx + cx; py = by + bh - cy; }
+      else if (R === 90) { px = bx + cy; py = by + cx; }
+      else if (R === 180) { px = bx + bw - cx; py = by + cy; }
+      else /* R=270 */ { px = bx + bw - cy; py = by + bh - cx; }
+
+      // --- Taille du tampon en unités PDF ---
+      const drawW = o.getScaledWidth() / SCALE_RENDER;
+      const drawH = o.getScaledHeight() / SCALE_RENDER;
+
+      // --- Rotation PDF (CCW positif) = rotation page − rotation canvas (CW) ---
+      const alphaDeg = R - (o.angle || 0);
+      const alpha = alphaDeg * Math.PI / 180;
+      const cosA = Math.cos(alpha), sinA = Math.sin(alpha);
+
+      // pdf-lib dessine à partir du coin bas-gauche de l'image NON tournée,
+      // puis effectue la rotation autour de ce coin. On veut que le CENTRE
+      // soit à (px, py) : il faut donc reculer du demi-vecteur tourné.
+      const x = px - (drawW / 2) * cosA + (drawH / 2) * sinA;
+      const y = py - (drawW / 2) * sinA - (drawH / 2) * cosA;
 
       page.drawImage(embeddedImg, {
-        x: cx + vx * Math.cos(phi) - vy * Math.sin(phi),
-        y: cy + vx * Math.sin(phi) + vy * Math.cos(phi),
+        x, y,
         width: drawW,
         height: drawH,
-        rotate: degrees(-(o.angle || 0))
+        rotate: degrees(alphaDeg)
       });
     }
 
     const bytes = await pdfDoc.save();
-    return { blob: new Blob([bytes], { type: 'application/pdf' }), filename: `${this._fileNameBase}_tamponne.pdf` };
+    return {
+      blob: new Blob([bytes], { type: 'application/pdf' }),
+      filename: `${this._fileNameBase}_tamponne.pdf`
+    };
   }
 
   async #construireImageExport() {
@@ -527,20 +685,18 @@ export class CodexEndossaire extends BaseComponent {
     return { blob, filename: `${this._fileNameBase}_tamponne.jpg` };
   }
 
-  #resetAll() {
+  async #resetAll() {
+    await this.#detruireCanvas();
+
     this._objectUrls.forEach(u => URL.revokeObjectURL(u));
     this._objectUrls = [];
-    this._fabricCanvas?.dispose();
-    this._fabricCanvas = null;
     this._pdfDoc = null;
     this._pdfBytesOriginal = null;
     this._isPdf = false;
     this._currentPage = 1;
     this._totalPages = 1;
 
-    const fileInput = this.querySelector('#endossaire-fileinput');
-    if (fileInput) fileInput.value = '';
-
+    this.querySelector('#endossaire-dropzone')?.clearPreview({ silent: true });
     this.#showPhase('import');
   }
 }

@@ -1,6 +1,6 @@
-import { BaseComponent } from '../../core/base-component.js';
+import { BaseView } from '../../core/base-view.js';
 
-export class CodexCropEditor extends BaseComponent {
+export class CodexCropEditor extends BaseView {
   static get observedAttributes() { return ['src']; }
 
   render() {

@@ -1,4 +1,4 @@
-import { BaseComponent } from '../../core/base-component.js';
+import { BaseView } from '../../core/base-view.js';
 import { exportToPdf, printElement, PDF_PRESETS } from '../../utils/pdf-utils.js';
 import { infirmiers } from './cartes-data.js';
 
@@ -103,7 +103,7 @@ const CARD_STYLE = `
   }
 `;
 
-export class CodexCartes extends BaseComponent {
+export class CodexCartes extends BaseView {
   constructor() {
     super();
     this.data = infirmiers;

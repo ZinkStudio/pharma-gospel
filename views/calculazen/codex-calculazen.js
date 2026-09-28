@@ -1,4 +1,4 @@
-import { BaseComponent } from '../../core/base-component.js';
+import { BaseView } from '../../core/base-view.js';
 import { Validators } from '../../utils/validators.js';
 
 /**
@@ -10,7 +10,7 @@ function parseNombre(str, fallback = 0) {
   return Number.isNaN(val) ? fallback : val;
 }
 
-export class CodexCalculazen extends BaseComponent {
+export class CodexCalculazen extends BaseView {
   render() {
     this.shadowRoot.innerHTML = `
       <style>:host { display: block; }</style>

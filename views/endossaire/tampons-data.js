@@ -17,36 +17,13 @@ export const tampons = [
     }
   },
   {
-    id: 'principal',
-    label: 'Le Principal',
-    tag: 'codex-tampon-rond',
+    id: 'protocole-pai',
+    label: 'Protocole PAI',
+    tag: 'codex-tampon-rectangle',
     props: {
-      top: 'Collège Katherine Johnson',
-      bottom: 'Bd du Bhosphore 13015 Marseille',
-      center: 'LE PRINCIPAL',
-      'center-sub': 'C. CALIPPE'
-    }
-  },
-  {
-    id: 'secretariat',
-    label: 'Secrétariat',
-    tag: 'codex-tampon-rond',
-    props: {
-      top: 'Collège Katherine Johnson',
-      bottom: 'Bd du Bhosphore 13015 Marseille',
-      center: 'SECRÉTARIAT',
-      'center-sub': 'L. ZERRAD'
-    }
-  },
-  {
-    id: 'gestion',
-    label: 'Service Gestion',
-    tag: 'codex-tampon-rond',
-    props: {
-      top: 'Collège Katherine Johnson',
-      bottom: 'Bd du Bhosphore 13015 Marseille',
-      center: 'SERVICE',
-      'center-sub': 'GESTION'
+      top: 'Trousse de Secours',
+      center: 'Protocole PAI',
+      bottom: "Projet d'Accueil Individualisé"
     }
   }
 ];

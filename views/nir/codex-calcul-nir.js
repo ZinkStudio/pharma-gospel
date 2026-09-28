@@ -1,6 +1,6 @@
-import { BaseComponent } from '../../core/base-component.js';
+import { BaseView } from '../../core/base-view.js';
 
-export class CodexCalculNir extends BaseComponent {
+export class CodexCalculNir extends BaseView {
   render() {
     this.shadowRoot.innerHTML = `
       <style>:host { display: block; }</style>

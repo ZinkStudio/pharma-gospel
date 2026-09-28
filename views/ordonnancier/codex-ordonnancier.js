@@ -1,4 +1,4 @@
-import { BaseComponent } from '../../core/base-component.js';
+import { BaseView } from '../../core/base-view.js';
 import { exportToPdf, PDF_PRESETS } from '../../utils/pdf-utils.js';
 
 const MODELES = {
@@ -8,7 +8,7 @@ const MODELES = {
   'pdf-pansement-double': 'pansement-double'
 };
 
-export class CodexOrdonnancier extends BaseComponent {
+export class CodexOrdonnancier extends BaseView {
   render() {
     this.shadowRoot.innerHTML = `
       <style>:host { display: block; }</style>
