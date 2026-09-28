@@ -87,11 +87,17 @@ export class BaseTampon extends HTMLElement {
   /** Rasterise le tampon en PNG carré (pour incrustation dans un document). */
   toPngBlob(pixelSize = 600) {
     return new Promise((resolve, reject) => {
+      // `pixelSize` = plus grand côté ; le ratio du tampon est conservé
+      // (un tampon rectangulaire ne doit jamais être étiré en carré).
+      const svgW = parseFloat(this.svgElement.getAttribute('width')) || 1;
+      const svgH = parseFloat(this.svgElement.getAttribute('height')) || 1;
+      const ratio = svgW / svgH;
       const canvas = document.createElement('canvas');
-      canvas.width = canvas.height = pixelSize;
+      canvas.width = ratio >= 1 ? pixelSize : Math.round(pixelSize * ratio);
+      canvas.height = ratio >= 1 ? Math.round(pixelSize / ratio) : pixelSize;
       const img = new Image();
       img.onload = () => {
-        canvas.getContext('2d').drawImage(img, 0, 0, pixelSize, pixelSize);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
         canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Rasterisation échouée')), 'image/png');
       };
       img.onerror = reject;

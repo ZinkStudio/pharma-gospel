@@ -159,7 +159,8 @@ export class CodexRenouvellement extends BaseComponent {
       const dateStr = `${date.toLocaleDateString('fr-FR')} (${jourCapitalized})`;
       const modalId = `modal-qr-R${index + 1}`;
       const texteCopie = `R${index + 1} = ${date.toLocaleDateString('fr-FR')} - ${jourSemaine}`;
-      return { numero: index + 1, dateStr, modalId, texteCopie };
+      const texteCopieHtml =  `<b>${texteCopie}</b>`;
+      return { numero: index + 1, dateStr, modalId, texteCopie, texteCopieHtml };
     });
 
     tableBody.insertAdjacentHTML('beforeend', rendersData.map(d => `
@@ -167,10 +168,8 @@ export class CodexRenouvellement extends BaseComponent {
         <td>R${d.numero}</td>
         <td>${d.dateStr}</td>
         <td>
-          <span id="clipboard-${d.numero}" hidden>${d.texteCopie}</span>
-          <cds-button kind="ghost" size="sm" type="button" data-copy="#clipboard-${d.numero}" data-copy-feedback="✅">
-            📋 Copier
-          </cds-button>
+          <span id="clipboard-${d.numero}" hidden>${d.texteCopieHtml}</span>
+          <codex-copier design="ibm" target="#clipboard-${d.numero}" feedback-text=" ✅ Copié ! "></codex-copier>
           <cds-button kind="ghost" size="sm" type="button" data-qr-open="${d.modalId}">
             ⛆ QR Code
           </cds-button>
@@ -183,7 +182,7 @@ export class CodexRenouvellement extends BaseComponent {
         <cds-modal id="${d.modalId}">
           <cds-modal-header>
             <cds-modal-close-button></cds-modal-close-button>
-            <cds-modal-heading>${d.texteCopie}</cds-modal-heading>
+            <cds-modal-heading>${d.texteCopieHtml}</cds-modal-heading>
           </cds-modal-header>
           <cds-modal-body>
             <div style="display:flex; justify-content:center; padding: 1rem 0;">
