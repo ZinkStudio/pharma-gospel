@@ -1,11 +1,11 @@
-import { BaseComponent } from '../../core/base-component.js';
+import { BaseView } from '../../core/base-view.js';
 
 /**
  * CodexField
  * Composant wrapper de champ de formulaire réactif et Form-Associated.
  * Supporte la projection d'inputs natifs ou de Web Components (ex: Carbon <cds-combo-box>).
  */
-export class CodexField extends BaseComponent {
+export class CodexField extends BaseView {
   // Déclare que ce Custom Element peut participer nativement aux formulaires HTML
   static formAssociated = true;
 

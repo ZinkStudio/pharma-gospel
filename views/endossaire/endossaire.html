@@ -1,21 +1,17 @@
 <link rel="stylesheet" href="./views/endossaire/endossaire.css">
-<codex-endossaire assistants="file-drop-paste">
+<codex-endossaire assistants="file-paste">
   <section class="view-shell">
     <h1 class="view-title">Endossaire</h1>
     <p class="view-lead">Apposez un tampon sur une image ou un PDF, page par page, puis exportez le résultat.</p>
 
-    <!-- ===== PHASE IMPORT ===== -->
-    <div id="endossaire-phase-import">
-      <div class="ordoscan-dropzone" id="endossaire-dropzone" tabindex="0" role="button"
-        aria-label="Zone d'import : cliquer, glisser-déposer ou coller un fichier">
-        <p>📥 Glissez un PDF ou une image ici, <strong>cliquez</strong> pour en choisir un,</p>
-        <p>ou <strong>collez</strong> une image copiée (Ctrl+V / Cmd+V).</p>
-      </div>
-      <input type="file" id="endossaire-fileinput" accept="application/pdf,image/*" hidden>
-    </div>
+    <!-- Dropzone permanente : vide avant import, en preview après import -->
+    <codex-drop-zone design="ibm" id="endossaire-dropzone" accept="application/pdf,image/*"
+      heading="📥 Glissez un PDF ou une image ici, <strong>cliquez</strong> pour en choisir un"
+      hint="ou <strong>collez</strong> une image copiée (Ctrl+V / Cmd+V)">
+    </codex-drop-zone>
 
-    <!-- ===== PHASE ÉDITION ===== -->
-    <div id="endossaire-phase-edit" hidden>
+    <!-- ===== PHASE ÉDITION (seule phase qui reste à basculer) ===== -->
+    <div id="endossaire-phase-edit" hidden style="margin-top: 1rem;">
       <div class="endossaire-toolbar view-actions">
         <cds-button id="endossaire-btn-prev" kind="ghost" size="sm" type="button">◀</cds-button>
         <span id="endossaire-page-label" class="view-subtitle">Page 1 / 1</span>
@@ -32,7 +28,8 @@
           </select>
         </label>
 
-        <cds-button id="endossaire-btn-clear-page" kind="danger-ghost" size="sm" type="button" style="margin-left:auto;">
+        <cds-button id="endossaire-btn-clear-page" kind="danger-ghost" size="sm" type="button"
+          style="margin-left:auto;">
           🗑 Vider cette page
         </cds-button>
       </div>
@@ -66,7 +63,7 @@
         <div class="endossaire-canvas-wrap" id="endossaire-canvas-wrap">
           <button id="endossaire-btn-delete" class="endossaire-delete-btn" type="button"
             aria-label="Supprimer ce tampon" hidden>✕</button>
-          <canvas id="endossaire-canvas"></canvas>
+            <!-- le <canvas> est créé dynamiquement à chaque import -->
         </div>
       </div>
 

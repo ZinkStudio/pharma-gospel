@@ -1,9 +1,9 @@
-import { BaseComponent } from '../../core/base-component.js';
+import { BaseView } from '../../core/base-view.js';
 import { parseGS1 } from '../../utils/gs1-parser.js';
 import { PDFService } from '../../services/pdf/pdf-service.js';
 import { VACCINS_LIST } from './data/vaccins.js';
 
-export class CodexDocGrippe extends BaseComponent {
+export class CodexDocGrippe extends BaseView {
   #currentBlobUrl = null;
 
   onReady() {

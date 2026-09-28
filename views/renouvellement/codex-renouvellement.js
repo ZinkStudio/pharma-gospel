@@ -1,4 +1,4 @@
-import { BaseComponent } from '../../core/base-component.js';
+import { BaseView } from '../../core/base-view.js';
 import { formatFR, addDays, initTodayInputs } from '../../utils/date-utils.js';
 
 const QRIOUS_URL = new URL('../../vendor/qrious@4.0.2/qrious.min.js', import.meta.url).href;
@@ -24,7 +24,7 @@ function loadQRious() {
   return qriousLoadPromise;
 }
 
-export class CodexRenouvellement extends BaseComponent {
+export class CodexRenouvellement extends BaseView {
   constructor() {
     super();
     this.joursFeries = [];

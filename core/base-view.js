@@ -1,12 +1,14 @@
+/**
+ * BaseView — coquille de vue.
+ * À utiliser pour les composants dont le contenu vient du light DOM
+ * (via <slot>) et qui ont besoin de `imports`/`assistants`/`notify`.
+ * Pour un atome UI réactif self-contained, préférer BaseLit.
+ */
 import { importer } from './dynamic-importer.js';
 import { assistantEngine } from './assistant-engine.js';
 import { missiveBus } from '../services/missive-bus.js';
 
-/**
- * BaseComponent
- * Classe de base abstraite pour l'ensemble des Custom Elements applicatifs.
- */
-export class BaseComponent extends HTMLElement {
+export class BaseView extends HTMLElement {
   #isReady = false;
 
   constructor() {
@@ -54,7 +56,7 @@ export class BaseComponent extends HTMLElement {
       // 4. Invocation du hook d'initialisation post-chargement
       this.onReady();
     } catch (error) {
-      console.error(`[Kernel BaseComponent] Échec d'initialisation du composant <${this.tagName.toLowerCase()}>`, error);
+      console.error(`[Kernel BaseView] Échec d'initialisation du composant <${this.tagName.toLowerCase()}>`, error);
     }
   }
 

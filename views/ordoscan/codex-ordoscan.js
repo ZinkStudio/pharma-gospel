@@ -1,4 +1,4 @@
-import { BaseComponent } from '../../core/base-component.js';
+import { BaseView } from '../../core/base-view.js';
 import { downloadBlob, canShareFiles, shareBlob } from '../../utils/export-utils.js';
 import { removeImageBackground } from '../../utils/ordoscan-bgremoval.js';
 import { detectDocumentCorners, mountCornerEditor, extractFlattenedImage } from './scanic-adapter.js';
@@ -12,7 +12,7 @@ const FORMATS = {
   'ecran-portrait': { width: 794, height: 1123, label: 'portrait-ecran' }
 };
 
-export class CodexOrdoscan extends BaseComponent {
+export class CodexOrdoscan extends BaseView {
   constructor() {
     super();
     this._fichierOriginal = null;
@@ -33,15 +33,11 @@ export class CodexOrdoscan extends BaseComponent {
   }
 
   onReady() {
-    const dropzone = this.querySelector('#ordoscan-dropzone');
-    const fileInput = this.querySelector('#ordoscan-fileinput');
-
-    dropzone?.addEventListener('click', () => fileInput.click());
-    dropzone?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
-    });
-    fileInput?.addEventListener('change', (e) => {
-      const file = e.target.files?.[0];
+    // Import : clic, drag&drop (via <codex-drop-zone>) et paste (via l'assistant
+    // file-paste déclaré sur l'attribut `assistants`) convergent tous vers
+    // l'événement `files-captured` — un seul point d'entrée.
+    this.addEventListener('files-captured', (e) => {
+      const file = e.detail?.file;
       if (file) this.#handleFile(file);
     });
 
@@ -259,7 +255,7 @@ export class CodexOrdoscan extends BaseComponent {
     const shareBtn = this.querySelector('#ordoscan-btn-share');
     shareBtn?.toggleAttribute('hidden', !canShareFiles(this._currentBlob, 'ordonnance.png'));
   }
-async #runBackgroundRemoval() {
+  async #runBackgroundRemoval() {
     const btn = this.querySelector('#ordoscan-btn-remove-bg');
     const progress = this.querySelector('#ordoscan-bg-progress');
     if (!this._croppedCanvas) return;
@@ -271,34 +267,34 @@ async #runBackgroundRemoval() {
     const startTime = performance.now();
 
     try {
-        const modele = this.querySelector('#ordoscan-model-switcher')?.value || 'small';
-        const croppedBlob = await this.#canvasToBlob(this._croppedCanvas, 'image/jpeg', 0.95);
-        const transparentPng = await removeImageBackground(croppedBlob, (key, current, total) => {
-            const percent = total ? Math.round((current / total) * 100) : 0;
-            progress.textContent = `⏳ Traitement en cours (${key})… (${percent}%)`;
-        }, modele);
+      const modele = this.querySelector('#ordoscan-model-switcher')?.value || 'small';
+      const croppedBlob = await this.#canvasToBlob(this._croppedCanvas, 'image/jpeg', 0.95);
+      const transparentPng = await removeImageBackground(croppedBlob, (key, current, total) => {
+        const percent = total ? Math.round((current / total) * 100) : 0;
+        progress.textContent = `⏳ Traitement en cours (${key})… (${percent}%)`;
+      }, modele);
 
-        // ⏱️ Fin du chronomètre
-        const endTime = performance.now();
-        const durationMs = endTime - startTime;
-        const durationSeconds = (durationMs / 1000).toFixed(2);
+      // ⏱️ Fin du chronomètre
+      const endTime = performance.now();
+      const durationMs = endTime - startTime;
+      const durationSeconds = (durationMs / 1000).toFixed(2);
 
-        console.log(`⏱️ [OrdoscanBgRemoval] Temps de traitement total : ${durationSeconds} s (${durationMs.toFixed(0)} ms)`);
+      console.log(`⏱️ [OrdoscanBgRemoval] Temps de traitement total : ${durationSeconds} s (${durationMs.toFixed(0)} ms)`);
 
-        this._currentBlob = transparentPng;
-        this.#afficherResultat();
-        
-        // Vous pouvez même l'inclure dans la notification si vous le souhaitez !
-        this.notify.success(`Arrière-plan supprimé en ${durationSeconds}s`);
-        btn.hidden = true;
+      this._currentBlob = transparentPng;
+      this.#afficherResultat();
+
+      // Vous pouvez même l'inclure dans la notification si vous le souhaitez !
+      this.notify.success(`Arrière-plan supprimé en ${durationSeconds}s`);
+      btn.hidden = true;
     } catch (err) {
-        console.error('[CodexOrdoscan] Erreur suppression du fond :', err);
-        this.notify.error('Erreur lors de la suppression du fond : ' + err.message);
-        btn.disabled = false;
+      console.error('[CodexOrdoscan] Erreur suppression du fond :', err);
+      this.notify.error('Erreur lors de la suppression du fond : ' + err.message);
+      btn.disabled = false;
     } finally {
-        progress.hidden = true;
+      progress.hidden = true;
     }
-}
+  }
   async #runBackgroundRemovalOld() {
     const btn = this.querySelector('#ordoscan-btn-remove-bg');
     const progress = this.querySelector('#ordoscan-bg-progress');
@@ -411,9 +407,6 @@ async #runBackgroundRemoval() {
     this._cornerEditor = null;
     this._croppedCanvas = null;
     this._currentBlob = null;
-
-    const fileInput = this.querySelector('#ordoscan-fileinput');
-    if (fileInput) fileInput.value = '';
 
     const removeBgBtn = this.querySelector('#ordoscan-btn-remove-bg');
     if (removeBgBtn) { removeBgBtn.hidden = false; removeBgBtn.disabled = false; }

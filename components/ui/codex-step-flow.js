@@ -1,10 +1,10 @@
-import { BaseComponent } from '../../core/base-component.js';
+import { BaseView } from '../../core/base-view.js';
 
 /**
  * CodexStepFlow
  * Orchestrateur déclaratif de parcours à étapes (Wizard / Workflow).
  */
-export class CodexStepFlow extends BaseComponent {
+export class CodexStepFlow extends BaseView {
   static get observedAttributes() {
     return ['current-step'];
   }

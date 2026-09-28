@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="./views/ordoscan/ordoscan.css">
-<codex-ordoscan assistants="file-drop-paste">
+<codex-ordoscan assistants="file-paste">
   <section class="view-shell">
     <h1 class="view-title">Ordoscan</h1>
     <p class="view-lead">
@@ -9,13 +9,11 @@
 
     <!-- ===== PHASE IMPORT ===== -->
     <div id="ordoscan-phase-import">
-      <div class="ordoscan-dropzone" id="ordoscan-dropzone" tabindex="0" role="button"
+      <codex-drop-zone design="ibm" id="ordoscan-dropzone" accept="image/*,.pdf,.heic,.heif"
+        heading="📥 Glissez une photo, un PDF ou un HEIC ici, <strong>cliquez</strong> pour choisir un fichier"
+        hint="ou <strong>collez</strong> une image copiée (Ctrl+V / Cmd+V)" formats="JPG, PNG, WEBP, PDF, HEIC"
         aria-label="Zone d'import : cliquer, glisser-déposer ou coller un fichier">
-        <p>📥 Glissez une photo, un PDF ou un HEIC ici, <strong>cliquez</strong> pour choisir un fichier,</p>
-        <p>ou <strong>collez</strong> une image copiée (Ctrl+V / Cmd+V).</p>
-        <p class="view-lead">Formats : JPG, PNG, WEBP, PDF, HEIC…</p>
-      </div>
-      <input type="file" id="ordoscan-fileinput" accept="image/*,.pdf,.heic,.heif" hidden>
+      </codex-drop-zone>
     </div>
 
     <!-- ===== PHASE RECADRAGE ===== -->
