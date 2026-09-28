@@ -52,7 +52,7 @@ export class CodexEndossaire extends BaseComponent {
     this._currentPage = 1;
     this._totalPages = 1;
     this._zoom = 1;
-    this._pos = { v: 'bottom', h: 'right' };
+    this._pos = { v: 'middle', h: 'center' };
     this._defaultSize = 100;
     this._fileNameBase = 'document';
     this._objectUrls = [];
@@ -209,7 +209,7 @@ export class CodexEndossaire extends BaseComponent {
       this._fabric = await loadFabric();
 
       const canvasEl = this.querySelector('#endossaire-canvas');
-      this._fabricCanvas = new this._fabric.Canvas(canvasEl, { width: 600, height: 800 });
+      this._fabricCanvas = new this._fabric.Canvas(canvasEl, { width: 600, height: 800, enableRetinaScaling: false, backgroundColor: '#ffffff' });
       this._fabricCanvas.on('selection:created', () => this.#updateDeletePos());
       this._fabricCanvas.on('selection:updated', () => this.#updateDeletePos());
       this._fabricCanvas.on('object:moving', () => this.#updateDeletePos());
@@ -235,7 +235,7 @@ export class CodexEndossaire extends BaseComponent {
         const url = URL.createObjectURL(file);
         this._objectUrls.push(url);
         const img = await this._fabric.FabricImage.fromURL(url);
-        this._fabricCanvas.backgroundImage = img;
+        this.#definirFond(img);
         this.#appliquerZoom(1);
         this._fabricCanvas.renderAll();
       }
@@ -271,7 +271,7 @@ export class CodexEndossaire extends BaseComponent {
     await page.render({ canvasContext: tempCanvas.getContext('2d'), viewport }).promise;
 
     const img = await this._fabric.FabricImage.fromURL(tempCanvas.toDataURL());
-    this._fabricCanvas.backgroundImage = img;
+    this.#definirFond(img);
     this.#appliquerZoom(this._zoom);
 
     this._fabricCanvas.getObjects().forEach(o => {
@@ -301,15 +301,34 @@ export class CodexEndossaire extends BaseComponent {
     if (next) next.disabled = !this._isPdf || this._currentPage >= this._totalPages;
   }
 
+  /**
+   * Installe l'image de fond. Depuis Fabric v7, l'origine par défaut des
+   * objets est leur CENTRE : sans forcer left/top, le fond serait dessiné
+   * décalé de (-largeur/2, -hauteur/2), donc « excentré » et rogné.
+   * La résolution interne du canvas est calée sur la taille naturelle.
+   */
+  #definirFond(img) {
+    img.set({ originX: 'left', originY: 'top', left: 0, top: 0, selectable: false, evented: false });
+    this._fabricCanvas.backgroundImage = img;
+    this._fabricCanvas.setDimensions({ width: img.width, height: img.height });
+  }
+
+  /**
+   * Le zoom ne touche QUE la taille affichée (CSS), jamais la résolution
+   * interne du canvas (backing store) — qui reste en permanence à la taille
+   * naturelle de la page/image. `setDimensions(..., { cssOnly: true })` est
+   * exactement fait pour ça. Séparer les deux évite deux bugs à la fois :
+   * un décalage du fond (zone non peinte -> noire à l'export JPEG) et un
+   * déplacement des tampons déjà posés si le zoom change ensuite.
+   */
   #appliquerZoom(zoom) {
     this._zoom = zoom;
     if (!this._fabricCanvas) return;
-    this._fabricCanvas.setZoom(zoom);
     const bg = this._fabricCanvas.backgroundImage;
-    if (bg) {
-      this._fabricCanvas.setDimensions({ width: bg.width * zoom, height: bg.height * zoom });
-    }
-    this._fabricCanvas.renderAll();
+    const w = bg ? bg.width : this._fabricCanvas.width;
+    const h = bg ? bg.height : this._fabricCanvas.height;
+    this._fabricCanvas.setDimensions({ width: w * zoom, height: h * zoom }, { cssOnly: true });
+    this._fabricCanvas.requestRenderAll();
     this.#updateDeletePos();
   }
 
@@ -328,10 +347,17 @@ export class CodexEndossaire extends BaseComponent {
       return;
     }
 
-    const { loadSVGFromString, util } = this._fabric;
-    const { objects, options } = await loadSVGFromString(source.toSvgString());
+    // Fabric ne gère pas <textPath> : parser le SVG en objets Fabric aplatit
+    // le texte courbé. On rasterise donc le tampon via le rendu natif du
+    // navigateur (fidèle au composant) et on l'insère comme image. Définition
+    // = 3× la taille par défaut (bornée 300–800 px) pour garder de la marge
+    // si l'utilisateur agrandit le tampon ensuite.
+    const px = Math.min(800, Math.max(300, this._defaultSize * 3));
+    const pngBlob = await source.toPngBlob(px);
     source.remove();
-    const group = util.groupSVGElements(objects.filter(Boolean), options);
+    const stampUrl = URL.createObjectURL(pngBlob);
+    this._objectUrls.push(stampUrl);
+    const group = await this._fabric.FabricImage.fromURL(stampUrl);
 
     const bg = this._fabricCanvas.backgroundImage;
     const bgW = bg?.width || this._fabricCanvas.width;
@@ -351,6 +377,8 @@ export class CodexEndossaire extends BaseComponent {
 
     group.scaleToWidth(size);
     group.set({
+      originX: 'left',
+      originY: 'top',
       left,
       top,
       stampId: id,
@@ -394,10 +422,13 @@ export class CodexEndossaire extends BaseComponent {
     const btn = this.querySelector('#endossaire-btn-delete');
     if (!obj || !btn) { if (btn) btn.hidden = true; return; }
 
+    // rect est en coordonnées internes (taille naturelle) ; le canvas est
+    // affiché à `zoom` en CSS -> on convertit en coordonnées écran.
     const rect = obj.getBoundingRect();
+    const zoom = this._zoom;
     btn.hidden = false;
-    btn.style.top = `${Math.max(0, rect.top - 10)}px`;
-    btn.style.left = `${rect.left + rect.width - 15}px`;
+    btn.style.top = `${Math.max(0, rect.top * zoom - 10)}px`;
+    btn.style.left = `${(rect.left + rect.width) * zoom - 15}px`;
   }
 
   #updateStats() {
@@ -466,9 +497,19 @@ export class CodexEndossaire extends BaseComponent {
       const drawW = o.getScaledWidth() * rx;
       const drawH = o.getScaledHeight() * ry;
 
+      // pdf-lib pivote autour du coin bas-gauche de l'image ; Fabric autour
+      // du centre. On part donc du centre (indépendant de l'origine et de la
+      // rotation) et on en déduit le coin bas-gauche après rotation.
+      const center = o.getCenterPoint();
+      const cx = center.x * rx;
+      const cy = height - center.y * ry;
+      const phi = (-(o.angle || 0)) * Math.PI / 180; // Fabric = horaire, PDF = anti-horaire
+      const vx = -drawW / 2;
+      const vy = -drawH / 2;
+
       page.drawImage(embeddedImg, {
-        x: o.left * rx,
-        y: height - (o.top * ry) - drawH,
+        x: cx + vx * Math.cos(phi) - vy * Math.sin(phi),
+        y: cy + vx * Math.sin(phi) + vy * Math.cos(phi),
         width: drawW,
         height: drawH,
         rotate: degrees(-(o.angle || 0))
