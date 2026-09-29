@@ -31,13 +31,6 @@ export class CodexRenouvellement extends BaseView {
     this.anneeEnCours = new Date().getFullYear();
   }
 
-  render() {
-    this.shadowRoot.innerHTML = `
-      <style>:host { display: block; }</style>
-      <slot></slot>
-    `;
-  }
-
   async onReady() {
     this.addEventListener('codex-form-submit', (e) => {
       if (e.target.id === 'form-renouvellement') {

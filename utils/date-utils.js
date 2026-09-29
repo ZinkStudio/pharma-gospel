@@ -1,13 +1,11 @@
 /**
- * Utilitaires de dates pour Pharma-Codex.
+ * Utilitaires de dates pour Pharma-Codex / Pharma-Gospel.
  * Gestion robuste des formats FR/ISO, parsing tolérant et calculs de renouvellement.
  */
 
 /**
  * Normalise l'entrée en objet Date valide.
- * Supporte les instances Date, les timestamps et les chaînes FR/ISO/Saisie rapide.
- * @param {Date|string|number} input
- * @returns {Date}
+ * Supporte Date, timestamps et chaînes FR/ISO/saisie rapide.
  */
 export function normalizeDate(input) {
   if (!input) return new Date();
@@ -27,42 +25,30 @@ export function normalizeDate(input) {
 }
 
 /**
- * Parse une chaîne de date lâche (DD/MM/YYYY, YYYY-MM-DD, DDMMYYYY) en objet Date local.
- * @param {string} str - Chaîne de date
- * @returns {Date|null}
+ * Parse une chaîne de date lâche (DD/MM/YYYY, YYYY-MM-DD, DDMMYYYY) en Date locale.
  */
 export function parseLoose(str) {
   if (!str || typeof str !== 'string') return null;
   const clean = str.trim();
 
-  // Format DD/MM/YYYY
   if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(clean)) {
     const [d, m, y] = clean.split('/').map(Number);
     return new Date(y, m - 1, d);
   }
-
-  // Format YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(clean)) {
     const [y, m, d] = clean.split('-').map(Number);
     return new Date(y, m - 1, d);
   }
-
-  // Format Saisie Rapide : DDMMYYYY (8 chiffres)
   if (/^\d{8}$/.test(clean)) {
     const d = parseInt(clean.slice(0, 2), 10);
     const m = parseInt(clean.slice(2, 4), 10);
     const y = parseInt(clean.slice(4, 8), 10);
     return new Date(y, m - 1, d);
   }
-
   return null;
 }
 
-/**
- * Formate une date en ISO YYYY-MM-DD en heure locale (sans biais UTC).
- * @param {Date|string} date
- * @returns {string}
- */
+/** Formate en ISO YYYY-MM-DD (heure locale, pas de biais UTC). */
 export function formatISO(date = new Date()) {
   try {
     const d = normalizeDate(date);
@@ -70,33 +56,23 @@ export function formatISO(date = new Date()) {
     const mm = String(d.getMonth() + 1).padStart(2, '0');
     const dd = String(d.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
-  } catch {
-    return '';
-  }
+  } catch { return ''; }
 }
 
-/**
- * Formate une date au format français DD/MM/YYYY.
- * @param {Date|string} date
- * @returns {string}
- */
+/** Formate en DD/MM/YYYY. */
 export function formatFR(date = new Date()) {
   try {
     const d = normalizeDate(date);
     const dd = String(d.getDate()).padStart(2, '0');
     const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const yyyy = d.getFullYear();
-    return `${dd}/${mm}/${yyyy}`;
-  } catch {
-    return '';
-  }
+    return `${dd}/${mm}/${d.getFullYear()}`;
+  } catch { return ''; }
 }
 
 /**
  * Ajoute ou retire des jours à une date.
- * @param {Date|string} date - Date de départ
- * @param {number} [days=-22] - Nombre de jours à ajouter/retirer (ex: -22 pour la règle de renouvellement)
- * @returns {Date}
+ * @param {Date|string} date
+ * @param {number} [days=-22] — règle de renouvellement par défaut
  */
 export function addDays(date = new Date(), days = -22) {
   const d = normalizeDate(date);
@@ -105,38 +81,41 @@ export function addDays(date = new Date(), days = -22) {
   return result;
 }
 
-/**
- * Calcule la différence en jours entre deux dates (valeur absolue).
- * @param {Date|string} dateA
- * @param {Date|string} dateB
- * @returns {number}
- */
+/** Différence en jours (valeur absolue). */
 export function diffDays(dateA, dateB) {
   const a = normalizeDate(dateA);
   const b = normalizeDate(dateB);
-  const diffTime = Math.abs(b - a);
-  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.ceil(Math.abs(b - a) / (1000 * 60 * 60 * 24));
 }
 
 /**
- * Initialise tous les inputs date porteurs de data-init="aujourdhui".
- * Supporte le Shadow DOM ou un nœud spécifique.
- * @param {HTMLElement|Document} [root=document]
+ * Remplit les champs data-init="aujourdhui" dans une racine donnée.
+ * Supporte <input type="date"> natif et <cds-text-input data-init="aujourdhui">.
+ * @param {HTMLElement} root — obligatoire, pour éviter d'écrire dans
+ *   plusieurs vues simultanément montées par le routeur.
  */
-export function initTodayInputs(root = document) {
-  try {
-    const today = formatISO();
-    const inputs = root.querySelectorAll('input[type="date"][data-init="aujourdhui"]');
-    inputs.forEach(input => {
-      input.value = today;
-    });
-  } catch (error) {
-    console.error('[date-utils] Échec de initTodayInputs :', error);
+export function initTodayInputs(root) {
+  if (!root) {
+    console.warn('[date-utils] initTodayInputs : racine requise.');
+    return;
   }
+  const today = formatISO();
+
+  root.querySelectorAll('input[type="date"][data-init="aujourdhui"]').forEach(input => {
+    input.value = today;
+  });
+
+  root.querySelectorAll('cds-text-input[data-init="aujourdhui"]').forEach(el => {
+    el.value = today;
+    el.dispatchEvent(new CustomEvent('cds-text-input-changed', {
+      detail: { value: today }, bubbles: true
+    }));
+  });
 }
 
 /**
- * Assistant de classe pour injection autonome dans un composant Lit / Web Component.
+ * Assistant de classe pour injection autonome dans un composant.
+ * Compatible avec l'AssistantEngine (`assistants="date"`).
  */
 export default class DateAssistant {
   constructor(host) {
@@ -145,7 +124,8 @@ export default class DateAssistant {
   }
 
   #init() {
-    const root = this.host.shadowRoot || this.host;
-    requestAnimationFrame(() => initTodayInputs(root));
+    // Les champs data-init sont en light DOM (slot) — le shadow root du
+    // host ne les voit pas. On cible le host lui-même.
+    requestAnimationFrame(() => initTodayInputs(this.host));
   }
 }

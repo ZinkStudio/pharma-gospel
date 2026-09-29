@@ -61,11 +61,16 @@ export class BaseView extends HTMLElement {
   }
 
   /**
-   * Méthode de rendu du Shadow DOM.
-   * Doit être surchargée par le composant enfant.
+   * Rendu par défaut : projette le light DOM via <slot>.
+   * Les sous-classes qui ont besoin d'une structure shadow spécifique
+   * (formulaire interne, plusieurs slots nommés, wrapper stylé) peuvent
+   * surcharger cette méthode sans appeler super.render().
    */
   render() {
-    // Implémentation par défaut vide
+    this.shadowRoot.innerHTML = `
+      <style>:host { display: block; }</style>
+      <slot></slot>
+    `;
   }
 
   /**

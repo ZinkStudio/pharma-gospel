@@ -1,9 +1,11 @@
-<codex-doc-grippe assistants="masks" services="pdf">
+<link rel="stylesheet" href="./views/grippe/grippe.css">
+<codex-doc-grippe assistants="masks">
   <section class="view-shell">
     <header class="view-header">
       <h2>🦠 Bon de Prise en Charge – Vaccination Grippale</h2>
       <p class="view-description">
-        Génération automatique du bon de prise en charge et d'injection de la vaccination anti-grippale (610d).
+        Génération automatique du bon de prise en charge et d'injection
+        de la vaccination anti-grippale (610d).
       </p>
     </header>
 
@@ -26,37 +28,36 @@
       </div>
     </div>
 
-    <form id="formGrippe" class="form-section">
+    <codex-form id="formGrippe" class="form-section">
       <fieldset class="form-group">
         <legend class="form-legend">Informations du bénéficiaire</legend>
-        
+
         <div class="form-grid">
           <cds-text-input name="nom" label="Nom" required></cds-text-input>
           <cds-text-input name="prenom" label="Prénom" required></cds-text-input>
-          
-          <cds-text-input 
-            name="dateNaissance" 
-            label="Date de naissance" 
-            placeholder="JJ/MM/AAAA" 
-            data-mask="date" 
-            required>
-          </cds-text-input>
-          
-          <!-- Masque NIR / Sécurité sociale -->
-          <cds-text-input 
-            name="immatriculation" 
-            label="N° d'immatriculation (NIR)" 
-            placeholder="1 85 05 75 123 456 78" 
-            data-mask="nir" 
+
+          <cds-text-input
+            name="dateNaissance"
+            label="Date de naissance"
+            placeholder="JJ/MM/AAAA"
+            data-mask="date"
             required>
           </cds-text-input>
 
-          <!-- Masque Code Organisme CPAM -->
-          <cds-text-input 
-            name="codeOrganisme" 
-            label="Code organisme" 
-            placeholder="01 131 0421" 
-            data-mask="code-organisme" 
+          <cds-text-input
+            name="immatriculation"
+            label="N° d'immatriculation (NIR)"
+            placeholder="1 85 05 75 123 456 78"
+            data-mask="nir"
+            pattern="[0-9]{15}"
+            required>
+          </cds-text-input>
+
+          <cds-text-input
+            name="codeOrganisme"
+            label="Code organisme"
+            placeholder="01 131 0421"
+            data-mask="code-organisme"
             required>
           </cds-text-input>
         </div>
@@ -64,19 +65,24 @@
 
       <fieldset class="form-group">
         <legend class="form-legend">Vaccin, Lot et Injection</legend>
-        
+
         <div class="form-grid">
           <div class="grid-col-full">
-            <cds-text-input 
-              name="datamatrix" 
-              label="🔍 Scanner le DataMatrix (GS1)" 
-              placeholder="0134009...10ABC..." 
-              helper-text="Format: 01(EAN)17(Date)10(Lot)">
+            <cds-text-input
+              name="datamatrix"
+              label="🔍 Scanner le DataMatrix (GS1)"
+              placeholder="0134009...10ABC..."
+              helper-text="Format : 01(EAN) 17(Date) 10(Lot)">
             </cds-text-input>
             <div id="datamatrix-feedback" class="scan-feedback"></div>
           </div>
 
-          <cds-text-input name="lot" label="📦 N° de Lot" placeholder="Ex: XJ1012" required></cds-text-input>
+          <cds-text-input
+            name="lot"
+            label="📦 N° de Lot"
+            placeholder="Ex : XJ1012"
+            required>
+          </cds-text-input>
 
           <cds-select name="specialite" label="Spécialité délivrée" required>
             <cds-select-item value="Influvac">Influvac</cds-select-item>
@@ -87,20 +93,23 @@
           </cds-select>
 
           <div class="checkbox-container">
-            <cds-checkbox name="avecInjection" label-text="Prendre en charge l'injection (Volet 2)" checked></cds-checkbox>
+            <cds-checkbox
+              name="avecInjection"
+              label-text="Prendre en charge l'injection (Volet 2)"
+              checked>
+            </cds-checkbox>
           </div>
         </div>
       </fieldset>
 
       <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Générer le bon PDF</button>
+        <cds-button type="submit" kind="primary">Générer le bon PDF</cds-button>
       </div>
-    </form>
+    </codex-form>
 
-    <!-- Zone de prévisualisation PDF -->
     <div id="previewContainer" class="pdf-preview-container hidden">
       <h3>📄 Document généré</h3>
-      <iframe id="pdfPreview" class="pdf-iframe"></iframe>
+      <codex-pdf-preview id="pdfPreview" design="ibm"></codex-pdf-preview>
     </div>
   </section>
 </codex-doc-grippe>

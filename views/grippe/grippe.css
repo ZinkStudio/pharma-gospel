@@ -1,0 +1,127 @@
+/* Contrainte de largeur : évite l'étalement sur écrans larges */
+.view-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.view-header { margin-bottom: 1.5rem; }
+
+.view-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  color: var(--pc-text);
+}
+
+.view-description {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  max-width: 72ch;
+}
+
+/* Callouts */
+.callouts-container { margin-bottom: 1.5rem; }
+
+.grid-2-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 720px) {
+  .grid-2-cols { grid-template-columns: 1fr; }
+}
+
+.callout {
+  padding: 1rem 1.25rem;
+  border-radius: 4px;
+  border: 1px solid var(--pc-border);
+  background: var(--pc-surface);
+}
+
+.callout-info {
+  background: color-mix(in srgb, var(--pc-primary) 5%, transparent);
+  border-color: color-mix(in srgb, var(--pc-primary) 30%, transparent);
+}
+
+.callout-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--pc-text);
+}
+
+.callout-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--pc-text-secondary);
+  line-height: 1.5;
+}
+
+.callout-secondary p {
+  margin: 0 0 0.75rem 0;
+  color: var(--pc-text-secondary);
+}
+
+/* Formulaire */
+.form-section {
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  border: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+}
+
+.form-legend {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text);
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.grid-col-full { grid-column: 1 / -1; }
+
+.checkbox-container {
+  grid-column: 1 / -1;
+  padding-top: 0.5rem;
+}
+
+/* Feedback scan DataMatrix */
+.scan-feedback {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  min-height: 1.25rem;
+}
+
+.scan-feedback.success { color: #0e6027; }
+.scan-feedback.warning { color: #8d6e00; }
+.scan-feedback.error   { color: #a2191f; }
+
+/* Actions */
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Aperçu PDF */
+.pdf-preview-container {
+  margin-top: 1.5rem;
+}
+
+.pdf-preview-container h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  color: var(--pc-text);
+}
+
+.hidden { display: none !important; }

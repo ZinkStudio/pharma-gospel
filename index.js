@@ -1,18 +1,22 @@
-import '@components/app/codex-routeur/codex-routeur.js';
 import '@components/app/codex-application/codex-application.js';
-import '@components/app/codex-vue/codex-vue.js';
-import '@components/app/codex-theme/codex-theme.js';
-import '@components/app/codex-missives/codex-missives.js';
 import '@components/app/codex-copier/codex-copier.js';
-import '@components/app/codex-recherche/codex-recherche.js';
-import '@components/app/codex-module-grille/codex-module-grille.js';
+import '@components/app/codex-missives/codex-missives.js';
 import '@components/app/codex-module/codex-module.js';
+import '@components/app/codex-module-grille/codex-module-grille.js';
+import '@components/app/codex-recherche/codex-recherche.js';
+import '@components/app/codex-routeur/codex-routeur.js';
+import '@components/app/codex-theme/codex-theme.js';
+import '@components/app/codex-vue/codex-vue.js';
 
-import '@components/ui/codex-form.js';
-import '@components/ui/codex-field.js';
-import '@components/ui/codex-step-flow.js';
+import '@components/ui/pdf/codex-pdf-preview.js';
+import '@components/ui/pdf/codex-pdf-toolbar.js';
+import '@components/ui/tampon/codex-tampon-rond.js';
+import '@components/ui/tampon/codex-tampon-rectangle.js';
 import '@components/ui/codex-crop-editor.js';
 import '@components/ui/codex-drop-zone.js';
+import '@components/ui/codex-field.js';
+import '@components/ui/codex-form.js';
+import '@components/ui/codex-step-flow.js';
 
 import '@views/nir/codex-calcul-nir.js';
 import '@views/ordonnancier/codex-ordonnancier.js';
@@ -20,10 +24,9 @@ import '@views/calculazen/codex-calculazen.js';
 import '@views/renouvellement/codex-renouvellement.js';
 import '@views/cartes/codex-cartes.js';
 import '@views/ordoscan/codex-ordoscan.js';
-
-import '@components/ui/tampon/codex-tampon-rond.js';
-import '@components/ui/tampon/codex-tampon-rectangle.js';
 import '@views/endossaire/codex-endossaire.js';
+import '@views/grippe/codex-doc-grippe.js';
+
 
 import '@carbon/web-components/accordion.min.js'
 import '@carbon/web-components/settings-a9cb5e4b.js'

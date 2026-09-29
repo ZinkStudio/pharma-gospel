@@ -9,12 +9,6 @@ const MODELES = {
 };
 
 export class CodexOrdonnancier extends BaseView {
-  render() {
-    this.shadowRoot.innerHTML = `
-      <style>:host { display: block; }</style>
-      <slot></slot>
-    `;
-  }
 
   onReady() {
     for (const [id, partial] of Object.entries(MODELES)) {

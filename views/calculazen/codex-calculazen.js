@@ -11,12 +11,6 @@ function parseNombre(str, fallback = 0) {
 }
 
 export class CodexCalculazen extends BaseView {
-  render() {
-    this.shadowRoot.innerHTML = `
-      <style>:host { display: block; }</style>
-      <slot></slot>
-    `;
-  }
 
   onReady() {
     this.addEventListener('codex-form-submit', (e) => {

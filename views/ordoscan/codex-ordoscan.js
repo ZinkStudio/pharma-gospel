@@ -25,13 +25,6 @@ export class CodexOrdoscan extends BaseView {
     this._objectUrls = [];
   }
 
-  render() {
-    this.shadowRoot.innerHTML = `
-      <style>:host { display: block; }</style>
-      <slot></slot>
-    `;
-  }
-
   onReady() {
     // Import : clic, drag&drop (via <codex-drop-zone>) et paste (via l'assistant
     // file-paste déclaré sur l'attribut `assistants`) convergent tous vers
