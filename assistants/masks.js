@@ -1,32 +1,48 @@
 /**
  * Assistant Masks
- * Formatage dynamique d'inputs via l'attribut data-oninput.
- * Supporte le Shadow DOM, le registre dynamique de masques et l'initialisation à la volée.
+ *
+ * Formatage dynamique de champs natifs ou Carbon (cds-text-input, cds-textarea…)
+ * via l'attribut data-mask="<nom>".
+ *
+ * Architecture découplée :
+ *   - registerMask() enregistre un formatter depuis n'importe où.
+ *   - Un formatter reçoit la valeur BRUTE et retourne la valeur FORMATÉE.
+ *     Il ignore tout du DOM, du curseur, du type de champ.
+ *   - L'assistant gère le cycle de vie : écoute, curseur, propagation Carbon.
+ *
+ * Ajouter un masque : une ligne registerMask(...) ici ou dans un module à part.
  */
 
-// Normalisation des clés pour éviter les erreurs de casse/tirez/espaces
+// =============================================================
+// Registre
+// =============================================================
+
+const MASKS = new Map();
+
 function normalizeKey(str) {
   return str ? str.toLowerCase().replace(/[-_\s]+/g, '') : '';
 }
 
-// Registre des masqueurs
-const MASKS = new Map();
-
 /**
- * Enregistre un nouveau masqueur de formatage.
- * @param {string} name - Nom du masque (ex: 'nir')
- * @param {Function} formatterFn - Fonction de formatage (valeur: string) => string
- * @param {string[]} [aliases=[]] - Alias éventuels
+ * Enregistre un masque.
+ * @param {string} name
+ * @param {(raw: string) => string} formatter - valeur brute → valeur formatée
+ * @param {string[]} [aliases]
  */
-export function registerMask(name, formatterFn, aliases = []) {
-  const keys = [name, ...aliases].map(normalizeKey);
-  keys.forEach(key => MASKS.set(key, formatterFn));
+export function registerMask(name, formatter, aliases = []) {
+  [name, ...aliases].map(normalizeKey).forEach(k => MASKS.set(k, formatter));
 }
 
-// --- Formatters intégrés ---
+// =============================================================
+// Formatters
+//
+// Contrat : reçoit la valeur brute (peut contenir n'importe quoi),
+// retourne la valeur formatée. Ne touche JAMAIS au DOM.
+// =============================================================
 
-const formatCodeOrganisme = (val) => {
-  const v = val.replace(/\D/g, '').substring(0, 9);
+/** Code organisme CPAM : 9 chiffres → "01 131 0421" */
+export const formatCodeOrganisme = (raw) => {
+  const v = (raw || '').replace(/\D/g, '').substring(0, 9);
   const parts = [];
   if (v.length > 0) parts.push(v.substring(0, 2));
   if (v.length > 2) parts.push(v.substring(2, 5));
@@ -34,16 +50,63 @@ const formatCodeOrganisme = (val) => {
   return parts.join(' ');
 };
 
-const formatNIR = (val) => {
-  const v = val.replace(/\D/g, '').substring(0, 15);
-  return v.replace(/(\d{1})(\d{2})(\d{2})(\d{2})(\d{3})(\d{3})(\d{2})?/, '$1 $2 $3 $4 $5 $6 $7').trim();
+/** NIR : 15 chiffres → "1 85 05 75 123 456 78" (progressif) */
+export const formatNIR = (raw) => {
+  const v = (raw || '').replace(/\D/g, '').substring(0, 15);
+  const groups = [1, 2, 2, 2, 3, 3, 2];
+  const parts = [];
+  let i = 0;
+  for (const len of groups) {
+    if (i >= v.length) break;
+    parts.push(v.slice(i, i + len));
+    i += len;
+  }
+  return parts.join(' ');
 };
 
-// Enregistrement des masques par défaut et leurs alias
+/** Date : 8 chiffres → "JJ/MM/AAAA" (progressif) */
+export const formatDate = (raw) => {
+  const v = (raw || '').replace(/\D/g, '').substring(0, 8);
+  const parts = [];
+  if (v.length > 0) parts.push(v.substring(0, 2));
+  if (v.length > 2) parts.push(v.substring(2, 4));
+  if (v.length > 4) parts.push(v.substring(4, 8));
+  return parts.join('/');
+};
+
+/** DLU (Date Limite d'Utilisation) : 6 chiffres → "MM/AAAA" avec mois clampé 1-12 */
+export const formatDLU = (raw) => {
+  const v = (raw || '').replace(/\D/g, '').substring(0, 6);
+  if (!v.length) return '';
+
+  let mois = v.substring(0, 2);
+  if (mois.length === 2) {
+    const n = Math.min(Math.max(parseInt(mois, 10) || 1, 1), 12);
+    mois = String(n).padStart(2, '0');
+  }
+  if (v.length <= 2) return mois;
+
+  const annee = v.substring(2, 6);
+  return `${mois}/${annee}`;
+};
+
+/** Téléphone FR : 10 chiffres → "01 23 45 67 89" (progressif) */
+export const formatTelephone = (raw) => {
+  const v = (raw || '').replace(/\D/g, '').substring(0, 10);
+  return v.replace(/(\d{2})(?=\d)/g, '$1 ');
+};
+
+// --- Enregistrements ---
+
 registerMask('codeOrganisme', formatCodeOrganisme, ['code-organisme', 'code_organisme']);
 registerMask('nir', formatNIR, ['secu', 'numero-secu', 'numero_secu']);
+registerMask('date', formatDate, ['date-naissance', 'dateNaissance']);
+registerMask('dlu', formatDLU, ['date-limite', 'peremption']);
+registerMask('telephone', formatTelephone, ['tel', 'phone', 'mobile']);
 
-// --- Assistant Principal ---
+// =============================================================
+// Assistant
+// =============================================================
 
 export default class MasksAssistant {
   constructor(host) {
@@ -52,22 +115,30 @@ export default class MasksAssistant {
   }
 
   #init() {
-    const root = this.host.shadowRoot || this.host;
+    // Le light DOM remonte ses événements jusqu'au host (Carbon compose
+    // son `input` — confirmé par test). Le shadow root, lui, est aveugle.
+    this.host.addEventListener('input', (e) => this.#onInput(e));
 
-    // Listeners pour l'événement input (délégation d'événement)
-    root.addEventListener('input', (e) => this.#applyMask(e.target));
-
-    // Formatage immédiat des champs déjà pré-remplis au montage du composant
+    // Formate les champs déjà pré-remplis au montage.
     requestAnimationFrame(() => {
-      const inputs = root.querySelectorAll('input[data-oninput]');
-      inputs.forEach(input => this.#applyMask(input));
+      this.host.querySelectorAll('[data-mask]').forEach(el => this.#applyMask(el));
     });
   }
 
-  #applyMask(input) {
-    if (!input || !(input instanceof HTMLInputElement)) return;
-    
-    const maskType = input.dataset?.oninput;
+  #onInput(e) {
+    const porteur = (e.composedPath?.() || []).find(
+      n => n instanceof Element && n.hasAttribute?.('data-mask')
+    );
+    if (porteur) this.#applyMask(porteur);
+  }
+
+  #getInnerInput(el) {
+    if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return el;
+    return el.shadowRoot?.querySelector('input, textarea') ?? null;
+  }
+
+  #applyMask(el) {
+    const maskType = el.getAttribute('data-mask');
     if (!maskType) return;
 
     const formatter = MASKS.get(normalizeKey(maskType));
@@ -76,25 +147,36 @@ export default class MasksAssistant {
       return;
     }
 
-    const oldValue = input.value;
-    const oldCursor = input.selectionStart;
+    const inner = this.#getInnerInput(el);
+    if (!inner) return;
 
-    // Calcul du nouveau texte formaté
+    const oldValue = inner.value;
     const formattedValue = formatter(oldValue);
 
-    if (oldValue !== formattedValue) {
-      input.value = formattedValue;
+    // Garde anti-boucle : on réécrit ci-dessous, ce qui redéclenche un
+    // `input` qu'on recevra à nouveau. On ne réécrit que si ça change.
+    if (oldValue === formattedValue) return;
 
-      // Calcul intelligent de l'ajustement du curseur
-      // Ajuste la position si un espace de séparation a été injecté
-      const diff = formattedValue.length - oldValue.length;
-      const newCursor = Math.max(0, (oldCursor || 0) + diff);
-      
-      try {
-        input.setSelectionRange(newCursor, newCursor);
-      } catch (err) {
-        // Fallback sur certains types d'input (ex: type="tel" sur certains navigateurs)
-      }
+    // Curseur : on compte les chiffres avant la position actuelle, puis on
+    // retrouve la position équivalente dans la chaîne formatée.
+    const oldCursor = inner.selectionStart ?? oldValue.length;
+    const chiffresAvant = oldValue.slice(0, oldCursor).replace(/\D/g, '').length;
+
+    inner.value = formattedValue;
+
+    let newCursor = 0;
+    let compteur = 0;
+    while (newCursor < formattedValue.length && compteur < chiffresAvant) {
+      if (/\d/.test(formattedValue[newCursor])) compteur++;
+      newCursor++;
     }
+
+    try {
+      inner.setSelectionRange(newCursor, newCursor);
+    } catch { /* certains types d'input refusent setSelectionRange */ }
+
+    // Réémet un input pour que Carbon synchronise sa propriété `.value`
+    // publique — sinon el.value du composant reste périmée.
+    inner.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
   }
 }

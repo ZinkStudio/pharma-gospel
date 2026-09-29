@@ -109,13 +109,6 @@ export class CodexCartes extends BaseView {
     this.data = infirmiers;
   }
 
-  render() {
-    this.shadowRoot.innerHTML = `
-      <style>:host { display: block; }</style>
-      <slot></slot>
-    `;
-  }
-
   onReady() {
     this._tbody = this.querySelector('#cartes-liste');
     this._selectGenre = this.querySelector('#cartes-filtre-genre');

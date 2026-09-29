@@ -66,13 +66,6 @@ export class CodexEndossaire extends BaseView {
     this.#chargerPrefs();
   }
 
-  render() {
-    this.shadowRoot.innerHTML = `
-      <style>:host { display: block; }</style>
-      <slot></slot>
-    `;
-  }
-
   onReady() {
     this.#renderStampPicker();
     this.#synchroniserBoutonPosition();

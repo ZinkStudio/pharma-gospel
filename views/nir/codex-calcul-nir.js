@@ -1,12 +1,6 @@
 import { BaseView } from '../../core/base-view.js';
 
 export class CodexCalculNir extends BaseView {
-  render() {
-    this.shadowRoot.innerHTML = `
-      <style>:host { display: block; }</style>
-      <slot></slot>
-    `;
-  }
 
   onReady() {
     this.addEventListener('codex-form-submit', (e) => {
