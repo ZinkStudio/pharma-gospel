@@ -26,15 +26,31 @@ export const PDF_PRESETS = {
   }
 };
 
+let html2pdfLoadPromise = null;
+
 async function getHtml2Pdf() {
   if (window.html2pdf) return window.html2pdf;
-  try {
-    const mod = await import('../../../vendor/pdf/html2pdf.bundle.min@0.10.1.js');
-    return mod.default || window.html2pdf;
-  } catch (err) {
-    console.error('[html2pdf-engine] Impossible de charger html2pdf', err);
-    throw new Error('Module html2pdf indisponible.');
+  if (!html2pdfLoadPromise) {
+    html2pdfLoadPromise = new Promise((resolve, reject) => {
+      const src = new URL('../../../vendor/pdf/html2pdf.bundle.min@0.10.1.js', import.meta.url).href;
+      if (document.querySelector(`script[src="${src}"]`)) {
+        const check = setInterval(() => {
+          if (window.html2pdf) { clearInterval(check); resolve(window.html2pdf); }
+        }, 50);
+        setTimeout(() => { clearInterval(check); reject(new Error('html2pdf timeout')); }, 10000);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = src;
+      script.onload = () => resolve(window.html2pdf);
+      script.onerror = () => {
+        html2pdfLoadPromise = null;
+        reject(new Error('[html2pdf-engine] Échec du chargement de html2pdf'));
+      };
+      document.head.appendChild(script);
+    });
   }
+  return html2pdfLoadPromise;
 }
 
 function mergeOptions(defaults, custom) {
@@ -49,9 +65,21 @@ function mergeOptions(defaults, custom) {
   return result;
 }
 
+
 export class Html2PdfEngine {
   /**
    * Capture un élément HTML et retourne le PDF en Blob.
+   *
+   * ⚠️ Note — html2pdf clone l'intégralité de document.body en interne,
+   * y compris les composants Lit de la coquille applicative. Comme ces
+   * composants utilisent `adoptedStyleSheets`, leur upgrade dans le
+   * document intermédiaire d'html2pdf lève plusieurs DOMException
+   * ("Adopted style sheet's constructor document must match...").
+   * Ces exceptions sont SANS EFFET sur le PDF produit (le contenu de
+   * `element` est du HTML brut, non concerné). Ne pas chercher à les
+   * corriger : c'est un comportement upstream connu.
+   *
+   * 
    * @param {HTMLElement} element - Élément à capturer (sera cloné)
    * @param {Object} [options] - Options html2pdf (voir PDF_PRESETS)
    * @returns {Promise<Blob>}
@@ -74,7 +102,21 @@ export class Html2PdfEngine {
       pointer-events: none;
     `;
     document.body.appendChild(sandbox);
-    sandbox.appendChild(element.cloneNode(true));
+
+    // Injecter les styles fournis DANS le sandbox — évite de polluer
+    // le document global et garantit qu'ils s'appliquent au clone.
+    if (options.styles) {
+      const styleEl = document.createElement('style');
+      styleEl.textContent = options.styles;
+      sandbox.appendChild(styleEl);
+    }
+
+    // Garde une référence explicite au clone : plus robuste que
+    // firstElementChild si on injecte autre chose avant (styles, meta, etc.)
+    const clone = element.cloneNode(true);
+    sandbox.appendChild(clone);
+
+    const { styles: _ignored, ...html2pdfOptions } = options;
 
     const defaultOptions = {
       margin: 0,
@@ -90,11 +132,11 @@ export class Html2PdfEngine {
       pagebreak: { mode: ['css', 'legacy'], before: '.breaker' }
     };
 
-    const finalOptions = mergeOptions(defaultOptions, options);
+    const finalOptions = mergeOptions(defaultOptions, html2pdfOptions);
 
     try {
       await new Promise(resolve => setTimeout(resolve, 250));
-      const worker = html2pdf().set(finalOptions).from(sandbox.firstElementChild);
+      const worker = html2pdf().set(finalOptions).from(clone);   // ← clone, pas firstElementChild
       return await worker.outputPdf('blob');
     } finally {
       sandbox.remove();

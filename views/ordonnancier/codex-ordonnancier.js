@@ -1,11 +1,11 @@
 import { BaseView } from '../../core/base-view.js';
-import { exportToPdf, PDF_PRESETS } from '../../utils/pdf-utils.js';
+import { PDFService, PDF_PRESETS } from '../../services/pdf/pdf-service.js';
 
 const MODELES = {
-  'pdf-basique': 'basique',
-  'pdf-basique-double': 'basique-double',
-  'pdf-pansement': 'pansement',
-  'pdf-pansement-double': 'pansement-double'
+  'pdf-basique':         'basique',
+  'pdf-basique-double':  'basique-double',
+  'pdf-pansement':       'pansement',
+  'pdf-pansement-double':'pansement-double'
 };
 
 export class CodexOrdonnancier extends BaseView {
@@ -22,41 +22,42 @@ export class CodexOrdonnancier extends BaseView {
    * @param {string} partial - Nom du modèle (basique, basique-double, pansement, pansement-double)
    */
   async #telechargerModele(partial) {
+    const filename = `ordonnance-ide-${partial}.pdf`;
+
     try {
-      // 1. Charge le template (résolu relativement à ce module, insensible à la profondeur de route)
+      this.notify.info(`Génération du modèle…`);
+
+      // 1. Charge le partial (résolu relativement à ce module)
       const url = new URL(`./partials/${partial}.html`, import.meta.url);
       const response = await fetch(url);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const html = await response.text();
 
-      // 2. Parse le HTML récupéré
+      // 2. Parse
       const temp = document.createElement('div');
       temp.innerHTML = html.trim();
 
-      // 3. Injecte temporairement le style du modèle dans le document
-      const styleTag = temp.querySelector('style');
-      let injectedStyle = null;
-      if (styleTag) {
-        injectedStyle = styleTag.cloneNode(true);
-        document.head.appendChild(injectedStyle);
-      }
-
-      // 4. Récupère l'élément à exporter
       const ordonnance = temp.querySelector('#ordonnance');
       if (!ordonnance) {
-        throw new Error(`Élément #ordonnance non trouvé dans ${partial}.html`);
+        throw new Error(`Élément #ordonnance introuvable dans ${partial}.html`);
       }
 
-      // 5. Export PDF
-      await exportToPdf(ordonnance, `ordonnance-ide-${partial}.pdf`, PDF_PRESETS.FACTURE);
+      // 3. Extrait le CSS du partial (il sera injecté dans le sandbox
+      //    d'export, jamais dans le document global)
+      const styles = temp.querySelector('style')?.textContent || '';
 
-      // 6. Nettoyage du style injecté
-      if (injectedStyle) injectedStyle.remove();
+      // 4. Export via le service PDF — capture d'élément HTML
+      await PDFService.capture(ordonnance, {
+        ...PDF_PRESETS.FACTURE,
+        filename,
+        action: 'download',
+        styles
+      });
 
-      this.notify.success('PDF généré avec succès');
+      this.notify.success(`PDF "${filename}" généré.`);
     } catch (err) {
-      console.error(`[CodexOrdonnancier] Erreur chargement ${partial}:`, err);
-      this.notify.error(`Impossible de charger le modèle "${partial}"`);
+      console.error(`[CodexOrdonnancier] Erreur "${partial}" :`, err);
+      this.notify.error(`Impossible de générer le modèle "${partial}".`);
     }
   }
 }
