@@ -3,7 +3,7 @@ import { PdfLibEngine } from './engines/pdf-lib-engine.js';
 import { Html2PdfEngine } from './engines/html2pdf-engine.js';
 import { printElement } from './print-service.js';
 import { downloadBlob, shareBlob, canShareFiles } from '../../utils/export-utils.js';
-
+export { PDF_PRESETS } from './engines/html2pdf-engine.js';
 /**
  * PDFService — façade unique pour tous les usages PDF.
  *

@@ -1,6 +1,9 @@
 import { BaseView } from '../../core/base-view.js';
-import { exportToPdf, printElement, PDF_PRESETS } from '../../utils/pdf-utils.js';
+import { PDFService } from '../../services/pdf/pdf-service.js';
+import { PDF_PRESETS } from '../../services/pdf/engines/html2pdf-engine.js';
 import { infirmiers } from './cartes-data.js';
+
+const CARDS_PER_PAGE = 10; // 5 rangées × 2 colonnes
 
 function slug(str) {
   return (str || 'infirmier')
@@ -11,9 +14,9 @@ function slug(str) {
 }
 
 /**
- * Styles autonomes des cartes imprimables. Volontairement en couleurs fixes
- * (pas de var(--pc-*)) : un export PDF doit rester identique quel que soit
- * le thème actif au moment de la génération.
+ * Styles visuels des cartes (aucune règle @media print ici).
+ * Volontairement en couleurs fixes : un export PDF doit rester identique
+ * quel que soit le thème actif.
  */
 const CARD_STYLE = `
   .pdf-page {
@@ -29,6 +32,7 @@ const CARD_STYLE = `
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 3mm;
+    align-content: start;
   }
   .carte-infirmier {
     display: flex;
@@ -83,9 +87,7 @@ const CARD_STYLE = `
     padding: 0.5mm 2.5mm;
     margin-bottom: 2mm;
   }
-  .carte-contact {
-    margin-bottom: 1.5mm;
-  }
+  .carte-contact { margin-bottom: 1.5mm; }
   .carte-ligne {
     font-size: 9.5pt;
     color: #333333;
@@ -96,10 +98,34 @@ const CARD_STYLE = `
     color: #666666;
     font-style: italic;
   }
+`;
+
+/**
+ * Règles d'impression, injectées uniquement dans la fenêtre popup du
+ * navigateur (via PDFService.print) — jamais dans le document principal,
+ * pour éviter que Ctrl+P sur l'app cache tout sauf les cartes.
+ */
+const CARD_PRINT_STYLE = `
   @media print {
+    body { margin: 0; padding: 0; background: #ffffff; }
     body * { visibility: hidden; }
     .pdf-page, .pdf-page * { visibility: visible; }
-    .pdf-page { position: absolute; left: 0; top: 0; margin: 0; }
+    .pdf-page {
+      position: absolute;
+      left: 0; top: 0;
+      margin: 0;
+      box-shadow: none;
+    }
+  }
+`;
+
+/** Style d'affichage à l'écran pour la preview — ajoute un cadre aux pages. */
+const CARD_PREVIEW_STYLE = `
+  ${CARD_STYLE}
+  #cartes-preview .pdf-page {
+    margin: 1rem auto;
+    box-shadow: 0 0 0 1px #e0e0e0, 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 2px;
   }
 `;
 
@@ -141,6 +167,15 @@ export class CodexCartes extends BaseView {
     this._tbody?.addEventListener('click', (e) => this._handleRowClick(e));
   }
 
+  disconnectedCallback() {
+    super.disconnectedCallback?.();
+    this._retirerStylePreview();
+  }
+
+  // =============================================================
+  // Filtrage et rendu du tableau
+  // =============================================================
+
   _getFiltered() {
     const genre = this._selectGenre?.value;
     return genre ? this.data.filter(d => d.genre === genre) : this.data;
@@ -175,7 +210,7 @@ export class CodexCartes extends BaseView {
   }
 
   _handleRowClick(e) {
-    const btn = e.target.closest('[data-action]');
+    const btn = e.target.closest?.('[data-action]');
     if (!btn) return;
 
     const idx = parseInt(btn.dataset.idx, 10);
@@ -189,47 +224,60 @@ export class CodexCartes extends BaseView {
     }
   }
 
+  // =============================================================
+  // Construction de la grille paginée
+  // =============================================================
+
   /**
-   * Construit la grille de cartes imprimable (détachée du DOM).
-   * Retourne { wrapper, page } : wrapper = conteneur autonome (style inclus,
-   * à passer à exportToPdf) ; page = seul l'élément .pdf-page (à passer à
-   * printElement, qui gère déjà son propre <style>).
+   * Construit un conteneur de pages (une .pdf-page par tranche de
+   * CARDS_PER_PAGE cartes), sans style inline — les styles sont passés
+   * via l'option `styles` de PDFService.
+   *
+   * @returns {HTMLElement} container contenant une ou plusieurs .pdf-page
    */
-  _construireGrille(items) {
-    const wrapper = document.createElement('div');
-    const styleEl = document.createElement('style');
-    styleEl.textContent = CARD_STYLE;
-    wrapper.appendChild(styleEl);
+  _construirePages(items) {
+    const container = document.createElement('div');
 
-    const page = document.createElement('div');
-    page.className = 'pdf-page';
+    for (let i = 0; i < items.length; i += CARDS_PER_PAGE) {
+      const chunk = items.slice(i, i + CARDS_PER_PAGE);
 
-    const grid = document.createElement('div');
-    grid.className = 'page-grid';
-    grid.innerHTML = items.map(item => `
-      <div class="carte-infirmier">
-        <div class="carte-accent"></div>
-        <div class="carte-body">
-          <div class="carte-header">
-            <span class="carte-nom">${item.nom || ''}</span>
-            <span class="carte-badge carte-badge--${item.genre === 'F' ? 'F' : 'H'}">
-              ${item.genre === 'F' ? '♀ Femme' : '♂ Homme'}
-            </span>
+      const page = document.createElement('div');
+      page.className = 'pdf-page';
+
+      if (i > 0) page.classList.add('breaker');
+
+      const grid = document.createElement('div');
+      grid.className = 'page-grid';
+      grid.innerHTML = chunk.map((item) => `
+        <div class="carte-infirmier">
+          <div class="carte-accent"></div>
+          <div class="carte-body">
+            <div class="carte-header">
+              <span class="carte-nom">${item.nom || ''}</span>
+              <span class="carte-badge carte-badge--${item.genre === 'F' ? 'F' : 'H'}">
+                ${item.genre === 'F' ? '♀ Femme' : '♂ Homme'}
+              </span>
+            </div>
+            ${item.secteur ? `<span class="carte-secteur">${item.secteur}</span>` : ''}
+            <div class="carte-contact">
+              <div class="carte-ligne">📞 ${item.telephone || 'Non renseigné'}</div>
+              <div class="carte-ligne">✉️ ${item.mail || 'Non renseigné'}</div>
+            </div>
+            ${item.adresse ? `<div class="carte-adresse">${item.adresse}</div>` : ''}
           </div>
-          ${item.secteur ? `<span class="carte-secteur">${item.secteur}</span>` : ''}
-          <div class="carte-contact">
-            <div class="carte-ligne">📞 ${item.telephone || 'Non renseigné'}</div>
-            <div class="carte-ligne">✉️ ${item.mail || 'Non renseigné'}</div>
-          </div>
-          ${item.adresse ? `<div class="carte-adresse">${item.adresse}</div>` : ''}
         </div>
-      </div>
-    `).join('');
+      `).join('');
 
-    page.appendChild(grid);
-    wrapper.appendChild(page);
-    return { wrapper, page };
+      page.appendChild(grid);
+      container.appendChild(page);
+    }
+
+    return container;
   }
+
+  // =============================================================
+  // Export PDF
+  // =============================================================
 
   async _telechargerPdf(items, filename) {
     if (!items?.length) {
@@ -237,14 +285,28 @@ export class CodexCartes extends BaseView {
       return;
     }
     try {
-      const { wrapper } = this._construireGrille(items);
-      await exportToPdf(wrapper, filename, { ...PDF_PRESETS.DOCUMENT, margin: 0 });
+      this.notify.info('Génération du PDF...');
+      const container = this._construirePages(items);
+
+      await PDFService.capture(container, {
+        ...PDF_PRESETS.DOCUMENT,
+        margin: 0,
+        filename,
+        action: 'download',
+        styles: CARD_STYLE,
+        pagebreak: { mode: ['css', 'legacy'], before: '.breaker' }
+      });
+
       this.notify.success('PDF généré avec succès.');
     } catch (err) {
       console.error('[CodexCartes] Erreur génération PDF :', err);
       this.notify.error('Erreur lors de la génération du PDF.');
     }
   }
+
+  // =============================================================
+  // Aperçu — avec style isolé, pas de fuite dans le document principal
+  // =============================================================
 
   _apercu(items) {
     if (!items?.length) {
@@ -253,32 +315,57 @@ export class CodexCartes extends BaseView {
     }
     if (!this._preview) return;
 
+    // Vide la preview ET retire le style précédent (si un aperçu était ouvert).
+    this._retirerStylePreview();
     this._preview.innerHTML = '';
 
+    // Style injecté UNIQUEMENT dans le conteneur de preview.
+    // Comme il cible `#cartes-preview .pdf-page`, il ne touche pas le reste
+    // de l'app et n'interfère pas avec un Ctrl+P ultérieur.
+    const styleEl = document.createElement('style');
+    styleEl.id = 'cartes-preview-style';
+    styleEl.textContent = CARD_PREVIEW_STYLE;
+    this._preview.appendChild(styleEl);
+
+    // Toolbar
     const toolbar = document.createElement('div');
     toolbar.className = 'view-actions';
     toolbar.innerHTML = `
       <cds-button kind="secondary" size="sm" type="button" id="cartes-preview-telecharger">⬇ Télécharger ce PDF</cds-button>
       <cds-button kind="tertiary" size="sm" type="button" id="cartes-preview-imprimer">🖨 Imprimer</cds-button>
     `;
-
-    const { wrapper, page } = this._construireGrille(items);
-
     this._preview.appendChild(toolbar);
-    this._preview.appendChild(wrapper);
+
+    // Pages
+    const container = this._construirePages(items);
+    this._preview.appendChild(container);
 
     toolbar.querySelector('#cartes-preview-telecharger')?.addEventListener('click', () => {
-      exportToPdf(wrapper, 'annuaire-infirmiers.pdf', { ...PDF_PRESETS.DOCUMENT, margin: 0 })
+      PDFService.capture(container, {
+        ...PDF_PRESETS.DOCUMENT,
+        margin: 0,
+        filename: 'annuaire-infirmiers.pdf',
+        action: 'download',
+        styles: CARD_STYLE,
+        pagebreak: { mode: ['css', 'legacy'], before: '.breaker' }
+      })
         .then(() => this.notify.success('PDF généré avec succès.'))
-        .catch(err => {
+        .catch((err) => {
           console.error('[CodexCartes] Erreur génération PDF :', err);
           this.notify.error('Erreur lors de la génération du PDF.');
         });
     });
 
     toolbar.querySelector('#cartes-preview-imprimer')?.addEventListener('click', () => {
-      printElement(page, { title: 'Cartes infirmiers', styles: CARD_STYLE });
+      PDFService.print(container, {
+        title: 'Cartes infirmiers',
+        styles: CARD_STYLE + CARD_PRINT_STYLE
+      });
     });
+  }
+
+  _retirerStylePreview() {
+    this._preview?.querySelector('#cartes-preview-style')?.remove();
   }
 }
 
