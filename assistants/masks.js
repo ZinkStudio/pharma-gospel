@@ -96,6 +96,21 @@ export const formatTelephone = (raw) => {
   return v.replace(/(\d{2})(?=\d)/g, '$1 ');
 };
 
+/** Décimal : accepte point ou virgule, normalise en virgule, garde les décimales */
+export const formatDecimal = (raw) => {
+  // Ne garder que chiffres + un séparateur (point ou virgule)
+  let v = String(raw ?? '').replace(/[^\d.,]/g, '');
+
+  // Un seul séparateur : conserver le premier, supprimer les suivants
+  const firstSep = v.search(/[.,]/);
+  if (firstSep !== -1) {
+    v = v.slice(0, firstSep + 1) + v.slice(firstSep + 1).replace(/[.,]/g, '');
+  }
+
+  // Normaliser point → virgule pour l'affichage FR
+  return v.replace('.', ',');
+};
+
 // --- Enregistrements ---
 
 registerMask('codeOrganisme', formatCodeOrganisme, ['code-organisme', 'code_organisme']);
@@ -103,6 +118,7 @@ registerMask('nir', formatNIR, ['secu', 'numero-secu', 'numero_secu']);
 registerMask('date', formatDate, ['date-naissance', 'dateNaissance']);
 registerMask('dlu', formatDLU, ['date-limite', 'peremption']);
 registerMask('telephone', formatTelephone, ['tel', 'phone', 'mobile']);
+registerMask('decimal', formatDecimal, ['montant', 'prix', 'number']);
 
 // =============================================================
 // Assistant
@@ -160,15 +176,26 @@ export default class MasksAssistant {
     // Curseur : on compte les chiffres avant la position actuelle, puis on
     // retrouve la position équivalente dans la chaîne formatée.
     const oldCursor = inner.selectionStart ?? oldValue.length;
-    const chiffresAvant = oldValue.slice(0, oldCursor).replace(/\D/g, '').length;
+    const wasAtEnd = oldCursor >= oldValue.length;
 
     inner.value = formattedValue;
 
-    let newCursor = 0;
-    let compteur = 0;
-    while (newCursor < formattedValue.length && compteur < chiffresAvant) {
-      if (/\d/.test(formattedValue[newCursor])) compteur++;
-      newCursor++;
+    let newCursor;
+    if (wasAtEnd) {
+      // Frappe en fin de chaîne : on colle au bout. C'est ce qui permet de
+      // taper "99." et d'obtenir "99," avec le curseur APRÈS la virgule,
+      // puis de continuer "99,9" sans que les chiffres partent avant.
+      newCursor = formattedValue.length;
+    } else {
+      // Insertion au milieu : on retrouve la position équivalente en
+      // comptant les chiffres avant le curseur.
+      const chiffresAvant = oldValue.slice(0, oldCursor).replace(/\D/g, '').length;
+      newCursor = 0;
+      let compteur = 0;
+      while (newCursor < formattedValue.length && compteur < chiffresAvant) {
+        if (/\d/.test(formattedValue[newCursor])) compteur++;
+        newCursor++;
+      }
     }
 
     try {

@@ -99,18 +99,37 @@ export function initTodayInputs(root) {
     console.warn('[date-utils] initTodayInputs : racine requise.');
     return;
   }
-  const today = formatISO();
 
-  root.querySelectorAll('input[type="date"][data-init="aujourdhui"]').forEach(input => {
-    input.value = today;
-  });
+  const todayISO = formatISO();
+  const todayFR = formatFR();
 
-  root.querySelectorAll('cds-text-input[data-init="aujourdhui"]').forEach(el => {
-    el.value = today;
-    el.dispatchEvent(new CustomEvent('cds-text-input-changed', {
-      detail: { value: today }, bubbles: true
-    }));
-  });
+  // Notifie le DOM qu'une valeur a été posée programmatiquement, pour que
+  // codex-field / codex-form / les assistants voient le changement.
+  const fill = (el, value) => {
+    el.value = value;
+    if (el.tagName === 'CDS-TEXT-INPUT' || el.tagName === 'CDS-NUMBER-INPUT') {
+      el.dispatchEvent(new CustomEvent('cds-text-input-changed', {
+        detail: { value }, bubbles: true
+      }));
+    } else {
+      el.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+    }
+  };
+
+  // Cas 1 — Champs "date natif" → format ISO
+  // Cible : <input type="date"> ET <cds-text-input type="date"> (facture)
+  root.querySelectorAll(
+    'input[type="date"][data-init="aujourdhui"], ' +
+    'cds-text-input[type="date"][data-init="aujourdhui"]'
+  ).forEach(el => fill(el, todayISO));
+
+  // Cas 2 — Champs "texte + masque date" → format FR lisible
+  // Cible : <input data-mask="date"> (sans type=date) ET son équivalent Carbon
+  // Le `:not([type="date"])` évite de double-traiter un éventuel chevauchement.
+  root.querySelectorAll(
+    'input[data-mask="date"][data-init="aujourdhui"]:not([type="date"]), ' +
+    'cds-text-input[data-mask="date"][data-init="aujourdhui"]:not([type="date"])'
+  ).forEach(el => fill(el, todayFR));
 }
 
 /**

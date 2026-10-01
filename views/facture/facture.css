@@ -1,0 +1,52 @@
+.view-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.form-section { margin-bottom: 1.5rem; }
+
+.form-group {
+  border: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+.form-legend {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text);
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.facture-output {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: auto;
+  max-height: 80vh;
+}
+
+.facture-output.hidden { display: none; }
+
+/* Encadré de la facture */
+.facture-output > #facture-pdf,
+.facture-output > #facture-vierge,
+.facture-output > #facture-vierge-double {
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}

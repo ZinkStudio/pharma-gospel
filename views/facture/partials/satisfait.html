@@ -1,0 +1,22 @@
+<div id="facture-pdf" style="width: 20cm; min-height: 27cm; background: white; padding: 2rem; color: black; box-sizing: border-box;">
+
+  <div style="display: flex; justify-content: space-between; margin-bottom: 2rem;">
+    <div style="flex: 1;">
+      <img src="/pharma-gospel/assets/tampon.png" alt="Tampon"
+        style="transform: rotate(-45deg); margin: 80px 0 0 60px; max-width: 200px;">
+    </div>
+    <div style="flex: 1; text-align: right;">
+      <p id="facture-pdf-date">À MARSEILLE, le : <input type="date" id="date-preview" name="date-preview" value="${facture.date}"></p>
+    </div>
+  </div>
+
+  <div style="font-size: 1.5rem; margin-bottom: 1.5rem; text-align: left; margin-top: 80px;">
+    <h5 id="facture-pdf-nom">Nom : ${facture.nom}</h5>
+  </div>
+
+  <div style="font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center;">
+    <h1>FACTURE</h1>
+    <h2>PRODUITS PHARMACEUTIQUES</h2>
+    <h4 id="facture-pdf-total">Total TTC (€) : ${facture.total}</h4>
+  </div>
+</div>

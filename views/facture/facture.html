@@ -1,0 +1,46 @@
+<link rel="stylesheet" href="./views/facture/facture.css">
+<codex-facture assistants="masks">
+    <section class="view-shell">
+        <h1 class="view-title">Facture</h1>
+        <p class="view-lead">
+            Générez une facture pharmaceutique prête à imprimer, vierge ou renseignée.
+        </p>
+
+        <codex-form id="formFacture" class="form-section">
+            <fieldset class="form-group">
+                <legend class="form-legend">Informations de la facture</legend>
+
+                <div class="form-grid">
+                    <cds-text-input name="nom" label="Nom" placeholder="Dupont Jean">
+                    </cds-text-input>
+
+                    <cds-text-input name="date" type="date" label="Date" data-init="aujourdhui"
+                        required></cds-text-input>
+
+                    <cds-text-input name="total" label="Total TTC (€)" placeholder="99,99" inputmode="decimal"
+                        data-mask="decimal" required>
+                    </cds-text-input>
+                    
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <cds-button type="submit" kind="primary">Prévisualiser</cds-button>
+            </div>
+        </codex-form>
+
+        <div class="view-actions" style="margin-top: 1rem;">
+            <cds-button id="pdf-renseignee" kind="primary" disabled>
+                📄 Télécharger Renseignée
+            </cds-button>
+            <cds-button id="pdf-vierge" kind="secondary">
+                🧾 Télécharger Vierge A4
+            </cds-button>
+            <cds-button id="pdf-vierge-double" kind="secondary">
+                🧾 Télécharger Vierge A5 (x2)
+            </cds-button>
+        </div>
+
+        <div id="facture-output" class="facture-output hidden"></div>
+    </section>
+</codex-facture>
