@@ -26,7 +26,7 @@ import '@views/cartes/codex-cartes.js';
 import '@views/ordoscan/codex-ordoscan.js';
 import '@views/endossaire/codex-endossaire.js';
 import '@views/grippe/codex-doc-grippe.js';
-
+import '@views/facture/codex-facture.js';
 
 import '@carbon/web-components/accordion.min.js'
 import '@carbon/web-components/settings-a9cb5e4b.js'
