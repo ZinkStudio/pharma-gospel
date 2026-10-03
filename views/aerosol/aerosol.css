@@ -1,0 +1,400 @@
+.view-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.view-header {
+  margin-bottom: 1.5rem;
+}
+
+.view-header .view-actions {
+  margin-top: 1rem;
+}
+
+/* Panneaux du content-switcher */
+[role="tabpanel"] {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Cartes génériques */
+.aerosol-card {
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--pc-border);
+  border-left: 4px solid var(--pc-primary);
+  border-radius: 4px;
+  background: var(--pc-surface);
+}
+
+.aerosol-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--pc-text);
+}
+
+.aerosol-card-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.aerosol-card-text {
+  margin: 0 0 0.5rem 0;
+  color: var(--pc-text-secondary);
+  line-height: 1.55;
+}
+
+.aerosol-card-text strong {
+  color: var(--pc-text);
+}
+
+.aerosol-card-subtitle {
+  margin: 1rem 0 0.5rem 0;
+  font-weight: 600;
+  color: var(--pc-text);
+}
+
+.aerosol-card-legal {
+  display: inline-block;
+  margin: 0.75rem 0 0 0;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--pc-text-muted);
+  padding: 0.15rem 0.5rem;
+  background: var(--pc-surface-hover);
+  border-radius: 3px;
+}
+
+/* Variantes de carte */
+.aerosol-card--note {
+  border-left-color: var(--cds-support-info, #0043ce);
+}
+
+.aerosol-card--warn {
+  border-left-color: var(--cds-support-warning, #f1c21b);
+}
+
+.aerosol-card--info {
+  border-left-color: var(--cds-support-info, #0043ce);
+}
+
+.aerosol-card--danger {
+  border-left-color: var(--cds-support-error, #da1e28);
+}
+
+/* Liste des obligations */
+.aerosol-obligations {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.aerosol-obligations li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  color: var(--pc-text-secondary);
+  line-height: 1.55;
+}
+
+.aerosol-obligation-num {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--pc-primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 1px;
+}
+
+/* Mention copiable */
+.aerosol-mention {
+  margin-top: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--pc-primary-light);
+  border: 1px dashed var(--pc-primary);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.aerosol-mention code {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.85rem;
+  color: var(--pc-primary-dark);
+}
+
+.aerosol-copy-btn {
+  border: 1px solid var(--pc-primary);
+  background: var(--pc-surface);
+  color: var(--pc-primary);
+  padding: 0.3rem 0.7rem;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.aerosol-copy-btn:hover {
+  background: var(--pc-primary);
+  color: #fff;
+}
+
+/* Tableau de facturation */
+.aerosol-table {
+  margin-top: 0.5rem;
+}
+
+.aerosol-table th:last-child,
+.aerosol-table td:last-child {
+  width: 45%;
+}
+
+.aerosol-table td {
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.aerosol-cell-none {
+  color: var(--cds-support-error, #da1e28);
+  font-weight: 500;
+}
+
+.aerosol-cell-full {
+  color: var(--pc-primary-dark);
+  font-weight: 500;
+}
+
+.aerosol-row--none {
+  background: color-mix(in srgb, var(--cds-support-error, #da1e28) 4%, transparent);
+}
+
+.aerosol-row--full {
+  background: color-mix(in srgb, var(--pc-primary) 4%, transparent);
+}
+
+/* Liste simple */
+.aerosol-list {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.25rem;
+  color: var(--pc-text-secondary);
+  line-height: 1.55;
+}
+
+.aerosol-list li {
+  margin-bottom: 0.35rem;
+}
+
+.aerosol-list li strong {
+  color: var(--pc-text);
+}
+
+/* ============================================================
+   Cartes « spécialités » — tableau 3 colonnes + règles en pied
+   ============================================================ */
+
+.aerosol-card--specialite {
+  padding: 0;
+  overflow: hidden;
+}
+
+.aerosol-spec-header {
+  padding: 1.25rem 1.5rem 0.5rem;
+  border-bottom: 1px solid var(--pc-border);
+  background: var(--pc-surface-hover);
+}
+
+.aerosol-spec-header .aerosol-card-title {
+  margin-bottom: 0.25rem;
+}
+
+.aerosol-spec-brand {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--pc-text-secondary);
+}
+
+.aerosol-spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.aerosol-spec-table thead th {
+  padding: 0.6rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pc-text-secondary);
+  background: var(--pc-surface-hover);
+  border-bottom: 1px solid var(--pc-border);
+}
+
+.aerosol-spec-table tbody tr {
+  border-bottom: 1px solid var(--pc-border);
+}
+
+.aerosol-spec-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.aerosol-spec-table th[scope="row"],
+.aerosol-spec-table td {
+  padding: 0.9rem 1rem;
+  vertical-align: top;
+  text-align: left;
+}
+
+.aerosol-spec-table th[scope="row"] {
+  width: 35%;
+  font-weight: 400;
+  color: var(--pc-text);
+}
+
+.aerosol-spec-table td {
+  width: 32.5%;
+  color: var(--pc-text-secondary);
+}
+
+.aerosol-spec-pop {
+  background: var(--pc-surface);
+}
+
+.aerosol-pop-tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  margin-bottom: 0.4rem;
+  background: var(--pc-primary-light);
+  color: var(--pc-primary-dark);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 3px;
+}
+
+.aerosol-pop-note {
+  display: inline-block;
+  margin-left: 0.35rem;
+  font-size: 0.75rem;
+  color: var(--pc-text-muted);
+  font-style: italic;
+}
+
+.aerosol-spec-ul {
+  margin: 0;
+  padding-left: 1rem;
+  color: var(--pc-text-secondary);
+  line-height: 1.5;
+}
+
+.aerosol-spec-ul li+li {
+  margin-top: 0.2rem;
+}
+
+.aerosol-spec-merged {
+  background: var(--pc-surface-hover);
+  vertical-align: middle !important;
+}
+
+/* Badges de prise en charge */
+.aerosol-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.aerosol-badge--ok {
+  background: color-mix(in srgb, var(--pc-primary) 12%, transparent);
+  color: var(--pc-primary-dark);
+  border: 1px solid color-mix(in srgb, var(--pc-primary) 30%, transparent);
+}
+
+.aerosol-badge--ko {
+  background: color-mix(in srgb, var(--cds-support-error, #da1e28) 10%, transparent);
+  color: var(--cds-support-error, #da1e28);
+  border: 1px solid color-mix(in srgb, var(--cds-support-error, #da1e28) 30%, transparent);
+}
+
+.aerosol-spec-detail {
+  margin: 0.4rem 0 0 0;
+  font-size: 0.8rem;
+  color: var(--pc-text-secondary);
+  line-height: 1.5;
+}
+
+.aerosol-spec-detail strong {
+  color: var(--pc-text);
+}
+
+/* Encart règles en bas de carte */
+.aerosol-spec-rules {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.9rem 1.5rem;
+  background: color-mix(in srgb, var(--pc-primary) 5%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--pc-primary) 20%, transparent);
+  font-size: 0.85rem;
+  color: var(--pc-text-secondary);
+  line-height: 1.55;
+}
+
+.aerosol-spec-rules strong {
+  color: var(--pc-text);
+}
+
+.aerosol-spec-rules-icon {
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  line-height: 1.55;
+}
+
+.aerosol-spec-rules-note {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--pc-text-muted);
+  font-style: italic;
+}
+
+.aerosol-spec-rules em {
+  font-style: normal;
+  color: var(--pc-primary-dark);
+  font-weight: 500;
+}
+
+/* Note de bas de panneau */
+.aerosol-footnote {
+  margin: 1rem 0 0 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: var(--pc-text-muted);
+  background: var(--pc-surface-hover);
+  border-radius: 4px;
+  border-left: 3px solid var(--pc-border);
+}

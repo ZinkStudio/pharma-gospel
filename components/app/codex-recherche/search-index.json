@@ -114,6 +114,12 @@
     "route": "#views/vaccination/vaccination.html"
   },
   {
+    "id": "Aerosol",
+    "title": "Aérosol : Prescription hors AMM",
+    "keywords": "aerosol, aérosol,prescription, hors, amm, amms, médicament, medicament",
+    "route": "#views/aerosol/aerosol.html"
+  },
+  {
     "id": "atelier",
     "title": "Module atelier",
     "keywords": "dashboard, atelier, outils",

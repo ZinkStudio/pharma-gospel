@@ -1,0 +1,471 @@
+<link rel="stylesheet" href="./views/aerosol/aerosol.css">
+<codex-aerosol>
+    <section class="view-shell">
+        <header class="view-header">
+            <h1 class="view-title">Aérosolthérapie</h1>
+            <p class="view-lead">
+                Règles de prescription, de prise en charge et de facturation des médicaments
+                et dispositifs médicaux associés — d'après le mémo de l'Assurance Maladie.
+            </p>
+            <div class="view-actions">
+                <a class="btn btn-secondary btn-sm" href="./views/aerosol/pdf/memo.pdf" download>
+                    📄 Télécharger le mémo PDF
+                </a>
+            </div>
+        </header>
+
+        <cds-content-switcher id="aerosol-switcher" value="prescription">
+            <cds-content-switcher-item value="prescription" target="panel-prescription">
+                Prescription
+            </cds-content-switcher-item>
+            <cds-content-switcher-item value="pec" target="panel-pec">
+                Prise en charge
+            </cds-content-switcher-item>
+            <cds-content-switcher-item value="facturation" target="panel-facturation">
+                Facturation
+            </cds-content-switcher-item>
+            <cds-content-switcher-item value="specialites" target="panel-specialites">
+                Spécialités remboursables
+            </cds-content-switcher-item>
+        </cds-content-switcher>
+
+        <!-- ============ PANEL 1 — PRESCRIPTION ============ -->
+        <div id="panel-prescription">
+            <cds-stack gap="4" orientation="vertical">
+                <article class="aerosol-card">
+                    <h2 class="aerosol-card-title">
+                        <span class="aerosol-card-icon">✍️</span>
+                        Deux ordonnances distinctes
+                    </h2>
+                    <p class="aerosol-card-text">
+                        Les prescriptions de médicaments et de dispositifs médicaux doivent
+                        être réalisées sur <strong>deux ordonnances distinctes</strong>.
+                    </p>
+                    <p class="aerosol-card-legal">
+                        Article 68 de la convention nationale des médecins
+                    </p>
+                </article>
+
+                <article class="aerosol-card aerosol-card--note">
+                    <h2 class="aerosol-card-title">
+                        <span class="aerosol-card-icon">ℹ️</span>
+                        Tolérance d'usage
+                    </h2>
+                    <p class="aerosol-card-text">
+                        Par usage, une <strong>seule prescription médicale</strong> associant
+                        les médicaments et le matériel est <strong>acceptée par l'Assurance Maladie</strong>.
+                    </p>
+                </article>
+            </cds-stack>
+        </div>
+
+        <!-- ============ PANEL 2 — PRISE EN CHARGE ============ -->
+        <div id="panel-pec" hidden>
+            <cds-stack gap="4" orientation="vertical">
+
+                <article class="aerosol-card">
+                    <h2 class="aerosol-card-title">
+                        <span class="aerosol-card-icon">📋</span>
+                        Règle générale
+                    </h2>
+                    <p class="aerosol-card-text">
+                        Réglementairement, les prescriptions de médicaments se font dans le
+                        respect de leur <strong>autorisation de mise sur le marché (AMM)</strong>
+                        ou de leurs <strong>indications thérapeutiques remboursables (ITR)</strong>.
+                    </p>
+                </article>
+
+                <article class="aerosol-card aerosol-card--warn">
+                    <h2 class="aerosol-card-title">
+                        <span class="aerosol-card-icon">⚠️</span>
+                        Prescription hors AMM
+                    </h2>
+                    <p class="aerosol-card-text">
+                        En l'absence d'alternative médicamenteuse appropriée, un médicament
+                        peut faire l'objet d'une prescription non conforme à son AMM.
+                    </p>
+                    <p class="aerosol-card-legal">
+                        Article L. 5121-12-1 du code de la santé publique
+                    </p>
+
+                    <p class="aerosol-card-subtitle">Le prescripteur est alors tenu de&nbsp;:</p>
+                    <ol class="aerosol-obligations">
+                        <li>
+                            <span class="aerosol-obligation-num">1</span>
+                            Informer le patient que la prescription n'est pas conforme à son AMM,
+                            des risques encourus, des contraintes et des bénéfices susceptibles
+                            d'être apportés par le médicament.
+                        </li>
+                        <li>
+                            <span class="aerosol-obligation-num">2</span>
+                            Motiver sa prescription dans le dossier médical du patient.
+                        </li>
+                        <li>
+                            <span class="aerosol-obligation-num">3</span>
+                            Informer le patient sur l'absence de remboursement.
+                        </li>
+                        <li>
+                            <span class="aerosol-obligation-num">4</span>
+                            Porter sur l'ordonnance la mention&nbsp;:
+                            <div class="aerosol-mention">
+                                <code>« Prescription hors autorisation de mise sur le marché »</code>
+                                <button id="aerosol-btn-copy" type="button" class="aerosol-copy-btn"
+                                    title="Copier la mention dans le presse-papiers">
+                                    📋 Copier
+                                </button>
+                            </div>
+                        </li>
+                    </ol>
+                </article>
+
+                <article class="aerosol-card aerosol-card--warn">
+                    <h2 class="aerosol-card-title">
+                        <span class="aerosol-card-icon">🚫</span>
+                        Prescription hors ITR
+                    </h2>
+                    <p class="aerosol-card-text">
+                        En cas de prescription hors ITR d'un produit, d'une prestation ou d'un
+                        acte, le médecin est tenu d'en signaler sur l'ordonnance le
+                        <strong>caractère non remboursable</strong>.
+                    </p>
+                    <p class="aerosol-card-legal">
+                        Article L. 162-4 du code de la sécurité sociale
+                    </p>
+                </article>
+
+            </cds-stack>
+        </div>
+
+        <!-- ============ PANEL 3 — FACTURATION ============ -->
+        <div id="panel-facturation" hidden>
+            <cds-stack gap="4" orientation="vertical">
+                <article class="aerosol-card">
+                    <h2 class="aerosol-card-title">
+                        <span class="aerosol-card-icon">💶</span>
+                        Règles de facturation par le pharmacien ou le fournisseur
+                    </h2>
+
+                    <div class="view-table-wrap">
+                        <table class="view-table aerosol-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Situation</th>
+                                    <th scope="col">Prise en charge</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="aerosol-row--none">
+                                    <td>
+                                        La spécialité pharmaceutique <strong>n'est pas remboursable</strong>
+                                        ou est prescrite <strong>hors AMM</strong>.
+                                    </td>
+                                    <td class="aerosol-cell-none">
+                                        Ni la spécialité<br>
+                                        Ni l'aérosol<br>
+                                        Ni le masque
+                                    </td>
+                                </tr>
+                                <tr class="aerosol-row--full">
+                                    <td>
+                                        La spécialité pharmaceutique est <strong>remboursable</strong> et
+                                        prescrite conformément aux ITR.
+                                    </td>
+                                    <td class="aerosol-cell-full">
+                                        La spécialité pharmaceutique remboursable<br>
+                                        L'appareil générateur d'aérosol<br>
+                                        Ses accessoires
+                                    </td>
+                                </tr>
+                                <tr class="aerosol-row--full">
+                                    <td>
+                                        <strong>Plusieurs spécialités</strong> sont prescrites et
+                                        <strong>l'une d'elles est remboursable</strong>.
+                                    </td>
+                                    <td class="aerosol-cell-full">
+                                        La spécialité pharmaceutique remboursable<br>
+                                        L'appareil générateur d'aérosol<br>
+                                        Ses accessoires
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <article class="aerosol-card aerosol-card--info">
+                    <h2 class="aerosol-card-title">
+                        <span class="aerosol-card-icon">🔍</span>
+                        Cas particulier — Ordonnance seule pour la location
+                    </h2>
+                    <p class="aerosol-card-text">
+                        Dans le cas où le pharmacien/fournisseur a en sa possession uniquement
+                        une ordonnance pour la location d'un appareil générateur d'aérosol,
+                        il lui appartient de <strong>se renseigner sur les médicaments associés</strong>.
+                    </p>
+                    <ul class="aerosol-list">
+                        <li>Il doit <strong>adapter le générateur</strong> à la spécialité médicamenteuse prescrite.
+                        </li>
+                        <li>Il doit <strong>donner des conseils d'hygiène et de sécurité</strong>.</li>
+                    </ul>
+                </article>
+
+                <article class="aerosol-card aerosol-card--danger">
+                    <h2 class="aerosol-card-title">
+                        <span class="aerosol-card-icon">❌</span>
+                        Aucun médicament remboursable prescrit
+                    </h2>
+                    <p class="aerosol-card-text">
+                        Lorsqu'<strong>aucun des médicaments prescrits n'est remboursable</strong>,
+                        la prise en charge par l'Assurance Maladie de la location d'un appareil
+                        générateur d'aérosol <strong>n'est pas possible</strong>.
+                    </p>
+                </article>
+            </cds-stack>
+        </div>
+        <!-- ============ PANEL 4 — SPÉCIALITÉS ============ -->
+        <div id="panel-specialites" hidden>
+            <cds-stack gap="4" orientation="vertical">
+                <p class="view-lead" style="margin-bottom:1rem;">
+                    Règles de prescription et prise en charge des spécialités pour inhalation
+                    par nébuliseur. Pour chaque principe actif&nbsp;: indication RCP, prise en
+                    charge du médicament et de la prestation LPP d'aérosolthérapie.
+                </p>
+
+                <!-- ========== GROUPE 1 — Bronchodilatateurs ========== -->
+                <article class="aerosol-card aerosol-card--specialite">
+                    <header class="aerosol-spec-header">
+                        <h2 class="aerosol-card-title">
+                            <span class="aerosol-card-icon">💨</span>
+                            Bronchodilatateurs — Ipratropium, Terbutaline, Salbutamol
+                        </h2>
+                        <p class="aerosol-spec-brand">
+                            Atrovent® / Brianyl® / Ventoline® et spécialités génériques
+                        </p>
+                    </header>
+
+                    <table class="aerosol-spec-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Indication RCP</th>
+                                <th scope="col">Médicament</th>
+                                <th scope="col">LPP — Prestation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="aerosol-spec-pop">
+                                    <span class="aerosol-pop-tag">Adulte</span>
+                                    <ul class="aerosol-spec-ul">
+                                        <li>Traitement symptomatique des asthmes aigus graves</li>
+                                        <li>Traitement des poussées de BPCO</li>
+                                    </ul>
+                                </th>
+                                <td>
+                                    <span class="aerosol-badge aerosol-badge--ok">✓ Prise en charge</span>
+                                    <p class="aerosol-spec-detail">
+                                        Dans les indications AMM et si prescrit par <strong>spécialiste
+                                            autorisé</strong>.
+                                    </p>
+                                </td>
+                                <td>
+                                    <span class="aerosol-badge aerosol-badge--ko">✗ Pas de prise en charge</span>
+                                    <p class="aerosol-spec-detail">
+                                        De la prestation d'aérosolthérapie correspondante si pas de prise
+                                        en charge des spécialités.
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="aerosol-spec-pop">
+                                    <span class="aerosol-pop-tag">Enfant</span>
+                                    <span class="aerosol-pop-note">(et nourrisson pour salbutamol)</span>
+                                    <ul class="aerosol-spec-ul">
+                                        <li>Traitement symptomatique des asthmes aigus graves</li>
+                                    </ul>
+                                </th>
+                                <td>
+                                    <span class="aerosol-badge aerosol-badge--ko">✗ Pas de prise en charge</span>
+                                    <p class="aerosol-spec-detail">
+                                        Si prescrit par <strong>médecin généraliste</strong> ou
+                                        <strong>spécialiste non autorisé</strong>.
+                                    </p>
+                                </td>
+                                <td>
+                                    <span class="aerosol-badge aerosol-badge--ok">✓ Prise en charge</span>
+                                    <p class="aerosol-spec-detail">
+                                        En cas d'association de plusieurs spécialités dont au moins une
+                                        est prise en charge, la prestation d'aérosolthérapie est prise en charge.
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <aside class="aerosol-spec-rules">
+                        <span class="aerosol-spec-rules-icon">🔒</span>
+                        <div>
+                            <strong>Prescription restreinte</strong> — réservée uniquement aux
+                            spécialistes en <em>pneumologie</em> et <em>pédiatrie</em>, en
+                            prescription <em>initiale</em> ou de <em>renouvellement</em>.
+                            <br>
+                            <span class="aerosol-spec-rules-note">
+                                Administration possible par tout médecin intervenant en situation
+                                d'urgence ou dans le cadre d'une structure d'assistance médicale
+                                mobile ou de rapatriement sanitaire.
+                            </span>
+                        </div>
+                    </aside>
+                </article>
+
+                <!-- ========== GROUPE 2 — Budésonide ========== -->
+                <article class="aerosol-card aerosol-card--specialite">
+                    <header class="aerosol-spec-header">
+                        <h2 class="aerosol-card-title">
+                            <span class="aerosol-card-icon">💨</span>
+                            Budésonide
+                        </h2>
+                        <p class="aerosol-spec-brand">
+                            Pulmicort® et spécialités génériques
+                        </p>
+                    </header>
+
+                    <table class="aerosol-spec-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Indication RCP</th>
+                                <th scope="col">Médicament</th>
+                                <th scope="col">LPP — Prestation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="aerosol-spec-pop">
+                                    <span class="aerosol-pop-tag">Adulte</span>
+                                    <ul class="aerosol-spec-ul">
+                                        <li>Traitement continu anti-inflammatoire de l'asthme persistant sévère</li>
+                                    </ul>
+                                </th>
+                                <td>
+                                    <span class="aerosol-badge aerosol-badge--ok">✓ Prise en charge</span>
+                                    <p class="aerosol-spec-detail">
+                                        <strong>Extension AMM</strong> — JO 03/06/20 et 31/07/20.
+                                    </p>
+                                </td>
+                                <td>
+                                    <span class="aerosol-badge aerosol-badge--ok">✓ Prise en charge</span>
+                                    <p class="aerosol-spec-detail">
+                                        De la prestation d'aérosolthérapie correspondante.
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="aerosol-spec-pop">
+                                    <span class="aerosol-pop-tag">Enfant / adolescent &lt; 18 ans</span>
+                                    <ul class="aerosol-spec-ul">
+                                        <li>Traitement continu anti-inflammatoire de l'asthme persistant sévère</li>
+                                    </ul>
+                                </th>
+                                <td>
+                                    <span class="aerosol-badge aerosol-badge--ok">✓ Prise en charge</span>
+                                </td>
+                                <td>
+                                    <span class="aerosol-badge aerosol-badge--ok">✓ Prise en charge</span>
+                                    <p class="aerosol-spec-detail">
+                                        De la prestation d'aérosolthérapie correspondante.
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <aside class="aerosol-spec-rules">
+                        <span class="aerosol-spec-rules-icon">🩺</span>
+                        <div>
+                            <strong>Tout prescripteur</strong> en prescription initiale et en renouvellement.
+                        </div>
+                    </aside>
+                </article>
+
+                <!-- ========== GROUPE 3 — Béclométasone ========== -->
+                <article class="aerosol-card aerosol-card--specialite">
+                    <header class="aerosol-spec-header">
+                        <h2 class="aerosol-card-title">
+                            <span class="aerosol-card-icon">💨</span>
+                            Béclométasone dipropionate
+                        </h2>
+                        <p class="aerosol-spec-brand">
+                            Beclospin® et spécialités génériques
+                        </p>
+                    </header>
+
+                    <table class="aerosol-spec-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Indication RCP</th>
+                                <th scope="col">Médicament</th>
+                                <th scope="col">LPP — Prestation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="aerosol-spec-pop">
+                                    <span class="aerosol-pop-tag">Adulte / adolescent ≥ 12 ans</span>
+                                    <ul class="aerosol-spec-ul">
+                                        <li>Traitement continu de l'asthme</li>
+                                    </ul>
+                                </th>
+                                <td rowspan="2" class="aerosol-spec-merged">
+                                    <span class="aerosol-badge aerosol-badge--ko">✗ Pas de prise en charge</span>
+                                </td>
+                                <td rowspan="2" class="aerosol-spec-merged">
+                                    <span class="aerosol-badge aerosol-badge--ko">✗ Pas de prise en charge</span>
+                                    <p class="aerosol-spec-detail">
+                                        De la prestation d'aérosolthérapie correspondante.
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="aerosol-spec-pop">
+                                    <span class="aerosol-pop-tag">Enfant ≤ 5 ans</span>
+                                    <ul class="aerosol-spec-ul">
+                                        <li>Traitement des épisodes récurrents de sibilances</li>
+                                    </ul>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="aerosol-spec-pop">
+                                    <span class="aerosol-pop-tag">Enfant &lt; 12 ans</span>
+                                    <ul class="aerosol-spec-ul">
+                                        <li>Traitement continu de l'asthme</li>
+                                    </ul>
+                                </th>
+                                <td>
+                                    <span class="aerosol-badge aerosol-badge--ok">✓ Prise en charge</span>
+                                </td>
+                                <td>
+                                    <span class="aerosol-badge aerosol-badge--ok">✓ Prise en charge</span>
+                                    <p class="aerosol-spec-detail">
+                                        De la prestation d'aérosolthérapie correspondante.
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <aside class="aerosol-spec-rules">
+                        <span class="aerosol-spec-rules-icon">🩺</span>
+                        <div>
+                            <strong>Tout prescripteur</strong> en prescription initiale et en renouvellement.
+                        </div>
+                    </aside>
+                </article>
+
+                <p class="aerosol-footnote">
+                    <span aria-hidden="true">ℹ️</span>
+                    Sources&nbsp;: RCP des spécialités concernées, Avis HAS, Code de la santé
+                    publique, Code de la sécurité sociale.
+                </p>
+            </cds-stack>
+        </div>
+    </section>
+</codex-aerosol>
