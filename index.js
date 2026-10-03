@@ -16,6 +16,7 @@ import '@components/ui/codex-crop-editor.js';
 import '@components/ui/codex-drop-zone.js';
 import '@components/ui/codex-field.js';
 import '@components/ui/codex-form.js';
+import '@components/ui/codex-smart-fill.js';
 import '@components/ui/codex-step-flow.js';
 
 import '@views/nir/codex-calcul-nir.js';
