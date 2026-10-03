@@ -36,29 +36,16 @@
           <cds-text-input name="nom" label="Nom" required></cds-text-input>
           <cds-text-input name="prenom" label="Prénom" required></cds-text-input>
 
-          <cds-text-input
-            name="dateNaissance"
-            label="Date de naissance"
-            placeholder="JJ/MM/AAAA"
-            data-mask="date"
+          <cds-text-input name="dateNaissance" label="Date de naissance" placeholder="JJ/MM/AAAA" data-mask="date"
             required>
           </cds-text-input>
 
-          <cds-text-input
-            name="immatriculation"
-            label="N° d'immatriculation (NIR)"
-            placeholder="1 85 05 75 123 456 78"
-            data-mask="nir"
-            pattern="[0-9]{15}"
-            required>
+          <cds-text-input name="immatriculation" label="N° d'immatriculation (NIR)" placeholder="1 85 05 75 123 456 78"
+            data-mask="nir" pattern="[0-9]{15}" required>
           </cds-text-input>
 
-          <cds-text-input
-            name="codeOrganisme"
-            label="Code organisme"
-            placeholder="01 131 0421"
-            data-mask="code-organisme"
-            required>
+          <cds-text-input name="codeOrganisme" label="Code organisme" placeholder="01 131 0421"
+            data-mask="code-organisme" required>
           </cds-text-input>
         </div>
       </fieldset>
@@ -68,20 +55,13 @@
 
         <div class="form-grid">
           <div class="grid-col-full">
-            <cds-text-input
-              name="datamatrix"
-              label="🔍 Scanner le DataMatrix (GS1)"
-              placeholder="0134009...10ABC..."
+            <cds-text-input name="datamatrix" label="🔍 Scanner le DataMatrix (GS1)" placeholder="0134009...10ABC..."
               helper-text="Format : 01(EAN) 17(Date) 10(Lot)">
             </cds-text-input>
             <div id="datamatrix-feedback" class="scan-feedback"></div>
           </div>
 
-          <cds-text-input
-            name="lot"
-            label="📦 N° de Lot"
-            placeholder="Ex : XJ1012"
-            required>
+          <cds-text-input name="lot" label="📦 N° de Lot" placeholder="Ex : XJ1012" required>
           </cds-text-input>
 
           <cds-select name="specialite" label="Spécialité délivrée" required>
@@ -93,16 +73,16 @@
           </cds-select>
 
           <div class="checkbox-container">
-            <cds-checkbox
-              name="avecInjection"
-              label-text="Prendre en charge l'injection (Volet 2)"
-              checked>
+            <cds-checkbox name="avecInjection" label-text="Prendre en charge l'injection (Volet 2)" checked>
             </cds-checkbox>
           </div>
         </div>
       </fieldset>
 
       <div class="form-actions">
+        <cds-button id="grippe-btn-smart-fill" kind="ghost" type="button">
+          📋 Importer depuis LGPI
+        </cds-button>
         <cds-button type="submit" kind="primary">Générer le bon PDF</cds-button>
       </div>
     </codex-form>
@@ -111,5 +91,7 @@
       <h3>📄 Document généré</h3>
       <codex-pdf-preview id="pdfPreview" design="ibm"></codex-pdf-preview>
     </div>
+    <codex-smart-fill id="grippe-smart-fill" profile-id="grippe">
+    </codex-smart-fill>
   </section>
 </codex-doc-grippe>

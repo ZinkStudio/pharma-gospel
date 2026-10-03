@@ -27,6 +27,7 @@ export class CodexDocGrippe extends BaseView {
     this.#form.addEventListener('codex-form-invalid', (e) => this.#handleFormInvalid(e.detail));
 
     this.#setupDataMatrixScanner();
+    this.#setupSmartFill();
     this.#setupPreviewActions();
   }
 
@@ -114,7 +115,35 @@ export class CodexDocGrippe extends BaseView {
     );
     return null;
   }
+  
+  #setupSmartFill() {
+    const modal = this.querySelector('#grippe-smart-fill');
+    const btn = this.querySelector('#grippe-btn-smart-fill');
 
+    if (!modal || !btn) return;
+
+    btn.addEventListener('click', () => modal.show());
+
+    modal.addEventListener('smart-fill-validated', (e) => {
+      const { fields } = e.detail;
+      if (!fields || !this.#form) return;
+
+      Object.entries(fields).forEach(([name, value]) => {
+        if (value) this.#form.setValue(name, value);
+      });
+
+      const nb = Object.values(fields).filter((v) => v).length;
+      this.notify.success(`${nb} champ${nb > 1 ? 's' : ''} pré-rempli${nb > 1 ? 's' : ''} depuis LGPI.`);
+
+      // Focus le premier champ non rempli restant (lot, spécialité…)
+      const firstEmpty = ['lot', 'specialite'].find((n) => !this.#form.getValue(n));
+      if (firstEmpty) this.#form.focusField(firstEmpty);
+    });
+
+    modal.addEventListener('smart-fill-cancelled', () => {
+      // Silencieux — l'utilisateur a juste fermé la modal
+    });
+  }
   // =============================================================
   // Soumission
   // =============================================================
@@ -181,7 +210,7 @@ export class CodexDocGrippe extends BaseView {
         },
         overlay
       };
-      
+
       const { blob } = await PDFService.fillAndOverlay(
         templateUrl,
         data,
