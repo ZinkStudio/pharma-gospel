@@ -17,17 +17,18 @@
         <span id="endossaire-page-label" class="view-subtitle">Page 1 / 1</span>
         <cds-button id="endossaire-btn-next" kind="ghost" size="sm" type="button">▶</cds-button>
 
-        <label style="margin-left:1rem; font-size:0.85rem; color:var(--pc-text-secondary);">
-          Zoom
-          <select id="endossaire-zoom">
-            <option value="0.5">50%</option>
-            <option value="0.75">75%</option>
-            <option value="1" selected>100%</option>
-            <option value="1.5">150%</option>
-            <option value="2">200%</option>
-          </select>
-        </label>
+        <cds-dropdown id="endossaire-zoom" type="inline" direction="bottom" title-text="Zoom" label="Ajuster le zoom"
+          value="1" style="margin-left:1rem; min-width: 160px;">
+          <cds-dropdown-item value="0.5">50%</cds-dropdown-item>
+          <cds-dropdown-item value="0.75">75%</cds-dropdown-item>
+          <cds-dropdown-item value="1" selected>100%</cds-dropdown-item>
+          <cds-dropdown-item value="1.5">150%</cds-dropdown-item>
+          <cds-dropdown-item value="2">200%</cds-dropdown-item>
+        </cds-dropdown>
 
+        <cds-button id="endossaire-btn-reset-prefs" kind="ghost" size="sm" type="button" style="margin-left:auto;">
+          ⚙ Réinitialiser les préférences
+        </cds-button>
         <cds-button id="endossaire-btn-clear-page" kind="danger-ghost" size="sm" type="button"
           style="margin-left:auto;">
           🗑 Vider cette page
@@ -50,7 +51,7 @@
             <button type="button" class="endossaire-pos-btn" data-v="top" data-h="center">↑</button>
             <button type="button" class="endossaire-pos-btn" data-v="top" data-h="right">↗</button>
             <button type="button" class="endossaire-pos-btn" data-v="middle" data-h="left">←</button>
-            <button type="button" class="endossaire-pos-btn is-active" data-v="middle" data-h="center">•</button>
+            <button type="button" class="endossaire-pos-btn" data-v="middle" data-h="center">•</button>
             <button type="button" class="endossaire-pos-btn" data-v="middle" data-h="right">→</button>
             <button type="button" class="endossaire-pos-btn" data-v="bottom" data-h="left">↙</button>
             <button type="button" class="endossaire-pos-btn" data-v="bottom" data-h="center">↓</button>
@@ -63,7 +64,7 @@
         <div class="endossaire-canvas-wrap" id="endossaire-canvas-wrap">
           <button id="endossaire-btn-delete" class="endossaire-delete-btn" type="button"
             aria-label="Supprimer ce tampon" hidden>✕</button>
-            <!-- le <canvas> est créé dynamiquement à chaque import -->
+          <!-- le <canvas> est créé dynamiquement à chaque import -->
         </div>
       </div>
 

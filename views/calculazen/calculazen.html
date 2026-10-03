@@ -1,4 +1,4 @@
-<codex-calculazen>
+<codex-calculazen assistants="masks">
   <section class="view-shell">
     <h1 class="view-title">CalculaZen</h1>
     <p class="view-lead">Le calcul tranquille au comptoir...même à 19h59.</p>
@@ -19,11 +19,15 @@
 
           <cds-number-input name="unitesPayantes" label="Unités payantes" min="0" max="9999" step="1" value="0">
           </cds-number-input>
-          <cds-number-input name="prixUnitaire" label="Prix unitaire (€)" min="0" max="99999" step="0.01" value="0">
-          </cds-number-input>
-          <cds-number-input name="remisePourcent" label="Remise sur payantes (%)" min="0" max="100" step="0.01"
-            value="0">
-          </cds-number-input>
+
+          <cds-text-input name="prixUnitaire" label="Prix unitaire (€)" placeholder="99,99" inputmode="decimal"
+                        data-mask="decimal" required>
+                    </cds-text-input>
+
+          <cds-text-input name="remisePourcent" label="Remise sur payantes (%)" placeholder="20,00" inputmode="decimal"
+                        data-mask="decimal" required>
+                    </cds-text-input>
+                    
           <cds-number-input name="unitesGratuites" label="Unités gratuites" min="0" max="9999" step="1" value="0">
           </cds-number-input>
 

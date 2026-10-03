@@ -17,6 +17,27 @@ export const tampons = [
     }
   },
   {
+    id: 'delivrance-urgence',
+    label: 'Délivrance Urgence',
+    tag: 'codex-tampon-rond',
+    props: {
+      top: "Administration possible par tout médecin intervenant en situation d'urgence",
+      center: 'CARACTÈRE',
+      'center-sub': 'URGENT'
+    }
+  },
+  {
+    id: 'facture-aquitee',
+    label: 'Facture Acquitée',
+    tag: 'codex-tampon-rectangle',
+    props: {
+      top: 'Pharmacie Saint Barthélémy',
+      center: 'Facture Acquitée',
+      bottom: ""
+    }
+  }
+  ,
+  {
     id: 'protocole-pai',
     label: 'Protocole PAI',
     tag: 'codex-tampon-rectangle',
