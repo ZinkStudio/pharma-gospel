@@ -27,6 +27,7 @@ import '@views/cartes/codex-cartes.js';
 import '@views/ordoscan/codex-ordoscan.js';
 import '@views/endossaire/codex-endossaire.js';
 import '@views/grippe/codex-doc-grippe.js';
+import '@views/vaccin/codex-vaccin.js';
 import '@views/facture/codex-facture.js';
 import '@views/aerosol/codex-aerosol.js';
 

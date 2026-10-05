@@ -15,13 +15,13 @@
     "id": "grippe",
     "title": "Générer Bon Grippe",
     "keywords": "grippe, bon, pdf, document",
-    "route": "#views/documents/grippe/grippe.html"
+    "route": "#views/grippe/grippe.html"
   },
   {
     "id": "vaccin",
     "title": "Générer Bon Vaccin",
     "keywords": "vaccin, bon, pdf, document",
-    "route": "#views/documents/vaccin/vaccin.html"
+    "route": "#views/vaccin/vaccin.html"
   },
   {
     "id": "cuprior",
@@ -33,7 +33,7 @@
     "id": "preparatoire",
     "title": "Tarifs Préparatoire",
     "keywords": "préparatoire, tarifs, tableau, document",
-    "route": "#views/documents/preparatoire/preparatoire.html"
+    "route": "#views/preparatoire/preparatoire.html"
   },
   {
     "id": "applications",
