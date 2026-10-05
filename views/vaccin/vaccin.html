@@ -1,0 +1,74 @@
+<link rel="stylesheet" href="./views/vaccin/vaccin.css">
+<codex-vaccin assistants="masks">
+  <section class="view-shell">
+    <header class="view-header">
+      <h2>💉 Bon de Prise en Charge – Vaccination</h2>
+      <p class="view-description">
+        Hors grippe et COVID-19. Générez le bon 611 pré-rempli à partir des
+        informations bénéficiaire.
+      </p>
+    </header>
+
+    <div class="callouts-container grid-2-cols">
+      <div class="callout callout-info">
+        <div class="callout-title">📋 Comment ça marche ?</div>
+        <ol class="callout-list">
+          <li>Renseignez les informations du bénéficiaire</li>
+          <li>Sélectionnez le vaccin dans la liste</li>
+          <li>Générez le bon pré-rempli au format PDF</li>
+        </ol>
+      </div>
+      <div class="callout callout-secondary">
+        <div class="callout-title">📄 Formulaire vierge</div>
+        <p>Pour une utilisation papier traditionnelle, téléchargez le modèle officiel.</p>
+        <a class="btn btn-secondary btn-sm" href="./views/vaccin/pdf/611-vierge.pdf" download>
+          Télécharger le PDF vierge
+        </a>
+      </div>
+    </div>
+
+    <codex-form id="formVaccin" class="form-section">
+      <fieldset class="form-group">
+        <legend class="form-legend">Informations du bénéficiaire</legend>
+        <div class="form-grid">
+          <cds-text-input name="nom" label="Nom" placeholder="DUPONT" required></cds-text-input>
+          <cds-text-input name="prenom" label="Prénom" placeholder="Jean" required></cds-text-input>
+          <cds-text-input name="dateNaissance" type="date" label="Date de naissance" required></cds-text-input>
+          <cds-text-input name="immatriculation" label="N° d'immatriculation (NIR)" placeholder="1 85 05 75 123 456 78"
+            data-mask="nir" pattern="[0-9]{15}" required></cds-text-input>
+          <cds-text-input name="codeOrganisme" label="Code de l'organisme" placeholder="01 131 0421"
+            data-mask="code-organisme" required></cds-text-input>
+          <cds-text-input name="datePrescription" type="date" label="Date de prescription" data-init="aujourdhui"
+            required></cds-text-input>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-group">
+        <legend class="form-legend">💉 Vaccin</legend>
+        <div class="form-grid">
+          <div class="grid-col-full">
+            <codex-field label="Spécialité pharmaceutique">
+              <input type="text" name="specialite" id="vaccin-specialite-input" list="vaccins-list"
+                placeholder="Ex : GARDASIL 9" autocomplete="off" required>
+              <datalist id="vaccins-list"></datalist>
+            </codex-field>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-actions">
+        <cds-button id="vaccin-btn-smart-fill" kind="ghost" type="button">
+          📋 Importer depuis LGPI
+        </cds-button>
+        <cds-button type="submit" kind="primary">Générer le bon de prise en charge</cds-button>
+      </div>
+    </codex-form>
+
+    <div id="previewContainer" class="pdf-preview-container hidden">
+      <h3>📄 Document généré</h3>
+      <codex-pdf-preview id="pdfPreview" design="ibm"></codex-pdf-preview>
+    </div>
+  </section>
+
+  <codex-smart-fill id="vaccin-smart-fill" profile-id="vaccin"></codex-smart-fill>
+</codex-vaccin>

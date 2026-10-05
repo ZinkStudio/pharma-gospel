@@ -1,5 +1,6 @@
 import { lgpiParser } from './parsers/lgpi-parser.js';
 import { grippeProfile } from './profiles/grippe-profile.js';
+import { vaccinProfile } from './profiles/vaccin-profile.js';
 
 /**
  * SmartFillService — façade d'extraction de données patient depuis un texte OCR
@@ -103,3 +104,4 @@ export class SmartFillService {
 export const smartFillService = new SmartFillService();
 smartFillService.registerParser(lgpiParser);
 smartFillService.registerProfile(grippeProfile);
+smartFillService.registerProfile(vaccinProfile);
