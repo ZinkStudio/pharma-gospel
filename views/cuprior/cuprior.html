@@ -1,0 +1,110 @@
+<link rel="stylesheet" href="./views/cuprior/cuprior.css">
+<codex-cuprior>
+    <section class="view-shell">
+        <header class="view-header">
+            <h2>📦 Commande de Cuprior</h2>
+            <p class="view-description">
+                Générez le bon de commande Orphalan pré-rempli et le mail prêt à envoyer.
+            </p>
+        </header>
+
+        <div class="callouts-container grid-2-cols">
+            <div class="callout callout-info">
+                <div class="callout-title">📋 Workflow</div>
+                <ol class="callout-list">
+                    <li>Vérifiez les informations pré-remplies</li>
+                    <li>Ajustez la quantité si besoin</li>
+                    <li>Générez le PDF et copiez le mail</li>
+                </ol>
+            </div>
+            <div class="callout callout-secondary">
+                <div class="callout-title">📧 Envoi par mail</div>
+                <p>
+                    Destinataire : <strong>orphalan@health-logistics.com</strong><br>
+                    Fax : <strong>0800 912 910</strong> — Tél : <strong>0800 901 859</strong>
+                </p>
+            </div>
+        </div>
+
+        <codex-form id="formCuprior" class="form-section">
+            <fieldset class="form-group">
+                <legend class="form-legend">Commande</legend>
+                <div class="form-grid">
+                    <cds-text-input name="date" type="date" label="Date de commande" data-init="aujourdhui"
+                        required></cds-text-input>
+                    <cds-text-input name="quantite" type="number" label="Nombre de boîtes" min="1" max="99"
+                        required></cds-text-input>
+                    <div class="grid-col-full">
+                        <cds-text-input name="commentaire" label="Commentaire"
+                            placeholder="Ex : Fermeture le dimanche"></cds-text-input>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-group">
+                <legend class="form-legend">
+                    Informations de la pharmacie
+                    <span class="legend-hint">Modifiables via <code>data/pharmacie.json</code></span>
+                </legend>
+                <div class="form-grid">
+                    <cds-text-input name="etablissement" label="Raison sociale" required></cds-text-input>
+                    <cds-text-input name="pharmacien_nom" label="Nom du pharmacien" required></cds-text-input>
+                    <cds-text-input name="pharmacien_rpps" label="N° RPPS"></cds-text-input>
+                    <cds-text-input name="numero_tva" label="Numéro de TVA"></cds-text-input>
+                    <cds-text-input name="contact" label="Personne à contacter"></cds-text-input>
+                    <cds-text-input name="adresse" label="Adresse"></cds-text-input>
+                    <cds-text-input name="code_postale" label="Code postal et ville"></cds-text-input>
+                    <cds-text-input name="telephone" label="Téléphone" data-mask="telephone"></cds-text-input>
+                    <cds-text-input name="fax" label="Fax" data-mask="telephone"></cds-text-input>
+                    <cds-text-input name="mail" label="Adresse mail" type="email"></cds-text-input>
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <cds-button type="submit" kind="primary">Générer le bon de commande</cds-button>
+            </div>
+        </codex-form>
+
+        <div id="cuprior-output" class="cuprior-output hidden">
+            <div class="output-section">
+                <h3 class="output-title">📄 Bon de commande</h3>
+                <codex-pdf-preview id="cuprior-pdf" design="ibm"></codex-pdf-preview>
+            </div>
+
+            <div class="output-section">
+                <div class="output-header">
+                    <h3 class="output-title">📧 Mail à envoyer</h3>
+                    <cds-button id="cuprior-open-outlook" kind="primary" size="sm" type="button">
+                        📨 Ouvrir dans Outlook Web
+                    </cds-button>
+                </div>
+
+                <div class="mail-composer">
+                    <div class="mail-field">
+                        <label class="mail-field-label" for="cuprior-mail-to">Destinataire</label>
+                        <div class="mail-field-row">
+                            <input id="cuprior-mail-to" class="mail-input" readonly>
+                            <codex-copier target="#cuprior-mail-to" design="ibm"></codex-copier>
+                        </div>
+                    </div>
+
+                    <div class="mail-field">
+                        <label class="mail-field-label" for="cuprior-mail-subject">Objet</label>
+                        <div class="mail-field-row">
+                            <input id="cuprior-mail-subject" class="mail-input" readonly>
+                            <codex-copier target="#cuprior-mail-subject" design="ibm"></codex-copier>
+                        </div>
+                    </div>
+
+                    <div class="mail-field">
+                        <label class="mail-field-label" for="cuprior-mail-body">Corps du message</label>
+                        <div class="mail-field-row mail-field-row--textarea">
+                            <textarea id="cuprior-mail-body" class="mail-input" rows="10" readonly></textarea>
+                            <codex-copier target="#cuprior-mail-body" design="ibm"></codex-copier>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</codex-cuprior>

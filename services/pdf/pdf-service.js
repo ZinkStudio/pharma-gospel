@@ -43,10 +43,14 @@ export class PDFService {
     return this._handleOutput(blob, options);
   }
 
-  /** Remplissage par coordonnées. */
+  /**
+ * Remplissage par coordonnées (overlay pur, ignore les AcroForm).
+ * @param {string} templateUrl
+ * @param {Object} fieldData — { fieldKey: value }
+ * @param {Object} layout — { positions: {…} }
+ */
   static async overlay(templateUrl, fieldData, layout, options = {}) {
-    const blob = await PdfLibEngine.smartFill(templateUrl, {}, layout, { ...options, forceOverlay: true });
-    // Note : si tu veux un overlay pur (ignorer AcroForm), il faudra une méthode dédiée.
+    const blob = await PdfLibEngine.overlayOnly(templateUrl, fieldData, layout, options);
     return this._handleOutput(blob, options);
   }
 
@@ -74,7 +78,7 @@ export class PDFService {
     const blob = await PdfLibEngine.fillAndOverlay(templateUrl, data, layout, options);
     return this._handleOutput(blob, options);
   }
-  
+
   /** Diagnostic : liste les champs AcroForm d'un PDF. */
   static async listFields(templateUrl) {
     return PdfLibEngine.listFields(templateUrl);

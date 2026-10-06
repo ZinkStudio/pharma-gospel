@@ -1,0 +1,14 @@
+{
+  "etablissement": "PHARMACIE SAINT BARTHELEMY II",
+  "pharmacien_nom": "GIUDICELLI Philippe",
+  "pharmacien_rpps": "10002058799",
+  "numero_tva": "FR 108 431 231 91",
+  "contact": "GIUDICELLI Philippe",
+  "adresse": "19, Avenue Claude Monet",
+  "code_postale": "13014 Marseille",
+  "telephone": "04 91 94 02 41",
+  "fax": "09 86 26 06 16",
+  "mail": "pharmaciesb@hotmail.com",
+  "commentaire": "Fermeture le dimanche",
+  "quantite_defaut": 2
+}

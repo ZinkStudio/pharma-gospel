@@ -30,6 +30,7 @@ import '@views/grippe/codex-doc-grippe.js';
 import '@views/vaccin/codex-vaccin.js';
 import '@views/facture/codex-facture.js';
 import '@views/aerosol/codex-aerosol.js';
+import '@views/cuprior/codex-cuprior.js';
 
 import '@carbon/web-components/accordion.min.js'
 import '@carbon/web-components/settings-a9cb5e4b.js'

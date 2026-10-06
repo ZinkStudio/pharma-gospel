@@ -1,0 +1,122 @@
+[
+  {
+    "id": "gmail",
+    "title": "Gmail",
+    "keywords": "messageries, gmail, email, mail",
+    "route": "https://mail.google.com/mail/u/0/#inbox"
+  },
+  {
+    "id": "outlook",
+    "title": "Outlook",
+    "keywords": "messageries, outlook, email, mail",
+    "route": "https://outlook.live.com/mail/0/"
+  },
+  {
+    "id": "doctolib",
+    "title": "Doctolib",
+    "keywords": "messageries, doctolib, rdv, rendez-vous",
+    "route": "https://pro.doctolib.fr/signin"
+  },
+  {
+    "id": "pass region sud",
+    "title": "Pass Région SUD",
+    "keywords": "messageries, pass, region, sud, paca, région",
+    "route": "https://regionsudsante.up-epass.fr/login/partner"
+  },
+  {
+    "id": "les rosiers",
+    "title": "Les Rosiers",
+    "keywords": "laboratoires, préparatoire, les rosiers, rosiers, preparation",
+    "route": "https://pro.pharmacie-des-rosiers.com/index.php"
+  },
+  {
+    "id": "ocp",
+    "title": "OCP",
+    "keywords": "laboratoires, ocp, pharmalia, grossiste, commande",
+    "route": "https://www.ocp-pharmalia.fr/ocp-pharmacien/"
+  },
+  {
+    "id": "alliance",
+    "title": "Alliance",
+    "keywords": "laboratoires, alliance, healthcare, grossiste",
+    "route": "https://my.alliance-healthcare.fr/"
+  },
+  {
+    "id": "ameli",
+    "title": "Ameli PRO",
+    "keywords": "laboratoires, ameli, pro, ameli pro, cpam, secu, droits",
+    "route": "https://authps-espacepro.ameli.fr/"
+  },
+  {
+    "id": "abena",
+    "title": "Abena",
+    "keywords": "laboratoires, abena, incontinence, protection",
+    "route": "https://abena-soins.com/Login?returnUrl="
+  },
+  {
+    "id": "sy cegedim",
+    "title": "Sy Cegedim",
+    "keywords": "laboratoires, sy cegedim, cegedim, tiers-payant, facturation",
+    "route": "https://portal.sybycegedim.com/sy-foclient/#/dashboard"
+  },
+  {
+    "id": "thuanse",
+    "title": "Thuanse",
+    "keywords": "fournitures, orthopedie, orthopédie, thuasne, attelles, bas, collants",
+    "route": "https://partner.thuasne.com/fr-fr/"
+  },
+  {
+    "id": "donjoy",
+    "title": "Donjoy",
+    "keywords": "fournitures, orthopedie, orthopédie, donjoy, enovis, attelles",
+    "route": "https://enovis-select.fr/login"
+  },
+  {
+    "id": "fld",
+    "title": "F.L.D",
+    "keywords": "fournitures, f.l.d, fld, orthopedie, fauteuil, maintien",
+    "route": "https://www.fld.fr/"
+  },
+  {
+    "id": "locapharm",
+    "title": "Locapharm",
+    "keywords": "fournitures, locapharm, location, lit, me",
+    "route": "https://www.locapharm-sante.fr/"
+  },
+  {
+    "id": "lyreco",
+    "title": "Lyreco",
+    "keywords": "fournitures, lyreco, papeterie, bureau",
+    "route": "https://www.lyreco.com/webshop/FRFR/index.html?lc=FRFR"
+  },
+  {
+    "id": "maxiburo",
+    "title": "Maxiburo",
+    "keywords": "fournitures, maxiburo, bureau, encre, papier",
+    "route": "https://www.maxiburo.fr/"
+  },
+  {
+    "id": "viamedis",
+    "title": "Viamedis",
+    "keywords": "mutuelles, tiers-payant, viamedis",
+    "route": "https://www.viamedis.net/ViamedisNet/page/accueil/index"
+  },
+  {
+    "id": "almerys",
+    "title": "Almerys",
+    "keywords": "mutuelles, tiers-payant, almerys",
+    "route": "https://www.almerys.com/accueil/login"
+  },
+  {
+    "id": "solimut",
+    "title": "Solimut",
+    "keywords": "mutuelles, tiers-payant, solimut",
+    "route": "https://espaceprofessionneldesante.solimut.fr/extranetps/USMU/Identity/Account/Login"
+  },
+  {
+    "id": "choruspro",
+    "title": "ChorusPro",
+    "keywords": "comptabilité, facturation, choruspro",
+    "route": "https://chorus-pro.gouv.fr/"
+  }
+]
