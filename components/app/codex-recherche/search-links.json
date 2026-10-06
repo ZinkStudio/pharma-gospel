@@ -96,6 +96,12 @@
     "route": "https://www.maxiburo.fr/"
   },
   {
+    "id": "robotikdose",
+    "title": "Robotikdose",
+    "keywords": "fournitures, robotikdose, robot, dose, pilulier",
+    "route": "https://client.e-labtechnology.com/"
+  },
+  {
     "id": "viamedis",
     "title": "Viamedis",
     "keywords": "mutuelles, tiers-payant, viamedis",
