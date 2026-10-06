@@ -13,8 +13,10 @@ export class CodexApplication extends BaseLit {
               button-label-inactive="Open menu"></cds-header-menu-button>
             <cds-header-name href="/pharma-gospel/" prefix="Pharma">[Gospel]</cds-header-name>
             <cds-header-nav menu-bar-label="Pharma [Gospel]">
+              <!--
               <cds-header-nav-item href="#views/officine/officine.html">Officine</cds-header-nav-item>
               <cds-header-nav-item href="#views/atelier/atelier.html">Atelier</cds-header-nav-item>
+              -->
             </cds-header-nav>
             <codex-recherche design="ibm"></codex-recherche>
             <div class="cds--header__global">
@@ -36,9 +38,11 @@ export class CodexApplication extends BaseLit {
               </cds-header-global-action>
             </div>
             <cds-side-nav is-not-persistent="" aria-label="Side navigation" collapse-mode="responsive">
-              <cds-side-nav-items>
+              <cds-side-nav-items>              
+              <!--
                 <cds-side-nav-link href="#views/officine/officine.html">Officine</cds-side-nav-link>
                 <cds-side-nav-link href="#views/atelier/atelier.html">Atelier</cds-side-nav-link>
+              -->
               </cds-side-nav-items>
             </cds-side-nav>
           </cds-header>

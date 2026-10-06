@@ -27,7 +27,7 @@
     "id": "cuprior",
     "title": "Commander Cuprior",
     "keywords": "cuprior, bon, pdf, document, commande",
-    "route": "#views/documents/cuprior/cuprior.html"
+    "route": "#views/cuprior/cuprior.html"
   },
   {
     "id": "preparatoire",

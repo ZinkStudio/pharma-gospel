@@ -208,4 +208,23 @@ export class PdfLibEngine {
     const bytes = await pdfDoc.save();
     return new Blob([bytes], { type: 'application/pdf' });
   }
+  /**
+ * Overlay pur : dessine les valeurs aux positions fournies,
+ * en ignorant complètement les AcroForm du PDF (même s'il en a).
+ *
+ * @param {string} templateUrl
+ * @param {Object} fieldData — { fieldKey: value }
+ * @param {Object} layout — { positions: { fieldKey: { left, top, fontSize?, letterSpacing? } } }
+ */
+  static async overlayOnly(templateUrl, fieldData, layout, options = {}) {
+    if (!layout?.positions) {
+      throw new Error('[PdfLibEngine] overlayOnly : layout.positions requis.');
+    }
+
+    const pdfDoc = await this._loadPdf(templateUrl);
+    await this._applyOverlay(pdfDoc, fieldData, layout, options);
+
+    const bytes = await pdfDoc.save();
+    return new Blob([bytes], { type: 'application/pdf' });
+  }
 }

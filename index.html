@@ -4,6 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'wasm-unsafe-eval' 'sha256-cTM/W7Buku5I2HvNNnN/pBxFe+eiM2Ibwli0C39myts=';
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' data: blob:;
+        font-src 'self' https://1.www.s81c.com data:;
+        connect-src 'self';
+        frame-src blob:;
+        worker-src 'self' blob:;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+    ">
     <title>Pharma Gospel</title>
     <link rel="stylesheet" href="./vendor/carbon@2.24.0/css/plex-sans.css" />
     <link rel="stylesheet" href="./vendor/carbon@2.24.0/css/styles@1.113.0.min.css">
