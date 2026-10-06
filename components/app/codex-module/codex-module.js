@@ -3,8 +3,8 @@ import { html, css, BaseLit } from '/lit';
 const iconPath = new URL('../../../vendor/carbon@2.24.0/svg/', import.meta.url).href;
 
 /**
- * Icône de repli par variante — n'est utilisée que si `icon` et `image`
- * sont absents ou en échec. Les noms doivent exister dans Carbon :
+ * Icône de repli par variante — n'est utilisée que si `icon`, `logo` et
+ * `image` sont absents ou en échec. Les noms doivent exister dans Carbon :
  *   ../../../vendor/carbon@2.24.0/svg/<nom>.svg
  */
 const VARIANT_FALLBACK_ICON = {
@@ -26,19 +26,21 @@ export class CodexModule extends BaseLit {
     description:  { type: String },
     icon:         { type: String },
     image:        { type: String },
+    logo:         { type: String },
     variant:      { type: String },
     category:     { type: String },
     search:       { type: String },
     href:         { type: String },
     target:       { type: String },
     _imageFailed: { state: true },
+    _logoFailed:  { state: true },
   };
 
   static styles = css`
     :host { display: block; }
 
     /* ============================================================
-       Base — carte cliquable (icône OU image)
+       Base — carte cliquable (icône, logo ou image)
        ============================================================ */
     .module {
       position: relative;
@@ -130,6 +132,27 @@ export class CodexModule extends BaseLit {
     .module-icon.gray     { background: #EEEEEE; }
 
     /* ============================================================
+       Variante "logo" — image entière, centrée, texte en dessous
+       ============================================================ */
+    .module-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      height: 60px;
+      padding: 6px 0;
+    }
+
+    .module-logo img {
+      max-height: 100%;
+      max-width: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    /* ============================================================
        Variante "image" — couverture + dégradé + texte blanc
        ============================================================ */
     .module.has-image {
@@ -194,28 +217,30 @@ export class CodexModule extends BaseLit {
     super();
     this.title = '';
     this.description = '';
-    // Pas de valeur par défaut ici : _renderIcon() gère la chaîne
-    // icon → variant fallback → 'inventory-management'.
-    // Une valeur par défaut dans le constructor casserait le fallback
-    // par variante et le warning "pas d'icône explicite".
+    // Aucune valeur par défaut pour icon : _renderIcon() gère la
+    // chaîne icon → VARIANT_FALLBACK_ICON[variant] → 'inventory-management'.
     this.icon = '';
     this.image = '';
+    this.logo = '';
     this.variant = 'pharmacy';
     this.category = '';
     this.search = '';
     this.href = '';
     this.target = '';
+
+    // Flags internes — non exposés en attributs.
     this._imageFailed = false;
+    this._logoFailed = false;
     this._iconWarned = false;
+    this._ambiguousWarned = false;
   }
 
   willUpdate(changed) {
+    // Reset du flag d'échec si une nouvelle image arrive, et warning
+    // unique quand une image est utilisée sans icône de repli.
     if (changed.has('image') && this.image) {
-      // Reset du flag d'échec si une nouvelle image arrive.
       this._imageFailed = false;
 
-      // Warn une seule fois : un module qui utilise une image gagne à
-      // fournir un `icon` pour un fallback contextuellement pertinent.
       if (!this.hasAttribute('icon') && !this._iconWarned) {
         this._iconWarned = true;
         console.warn(
@@ -224,12 +249,47 @@ export class CodexModule extends BaseLit {
         );
       }
     }
+
+    // Reset symétrique pour un nouveau logo.
+    if (changed.has('logo') && this.logo) {
+      this._logoFailed = false;
+    }
+
+    // Ambiguïté : logo ET image fournis. On garde `logo` (plus contraint)
+    // et on prévient le développeur une seule fois.
+    if (this.logo && this.image && !this._ambiguousWarned) {
+      this._ambiguousWarned = true;
+      console.warn(
+        `[codex-module] "${this.title}" définit à la fois "logo" et "image". ` +
+        `"logo" est prioritaire (image intégrale) — retirez l'attribut inutilisé.`
+      );
+    }
+
+    // Reset du flag d'ambiguïté dès que l'un des deux attributs est retiré,
+    // pour qu'un nouveau conflit redéclenche le warning.
+    if ((changed.has('logo') || changed.has('image')) && !(this.logo && this.image)) {
+      this._ambiguousWarned = false;
+    }
   }
 
   render() {
-    const useImage = Boolean(this.image) && !this._imageFailed;
-    const content = useImage ? this._renderImage() : this._renderIcon();
-    const classes = ['module', useImage ? 'has-image' : ''].filter(Boolean).join(' ');
+    // Cascade de priorité : logo → image → icône.
+    // Chaque niveau peut basculer au suivant en cas d'échec de chargement.
+    let mode = 'icon';
+    if (this.logo && !this._logoFailed) mode = 'logo';
+    else if (this.image && !this._imageFailed) mode = 'image';
+
+    const content = {
+      icon:  () => this._renderIcon(),
+      logo:  () => this._renderLogo(),
+      image: () => this._renderImage(),
+    }[mode]();
+
+    const classes = [
+      'module',
+      mode === 'image' ? 'has-image' : '',
+      mode === 'logo'  ? 'has-logo'  : '',
+    ].filter(Boolean).join(' ');
 
     if (this.href) {
       return html`
@@ -278,6 +338,18 @@ export class CodexModule extends BaseLit {
     return html`
       <div class="module-icon ${this.variant}">
         <img src="${iconSrc}" alt="" aria-hidden="true">
+      </div>
+      <h2 class="module-title">${this.title}</h2>
+      <p class="module-description">${this.description}</p>
+      <span class="module-arrow" aria-hidden="true">→</span>
+    `;
+  }
+
+  _renderLogo() {
+    return html`
+      <div class="module-logo">
+        <img src="${this.logo}" alt="" aria-hidden="true"
+          @error=${() => { this._logoFailed = true; }}>
       </div>
       <h2 class="module-title">${this.title}</h2>
       <p class="module-description">${this.description}</p>
