@@ -1,0 +1,79 @@
+/* ============================================================
+   Styles de page — appliqués à la fois à la preview et à l'export PDF.
+   Les valeurs critiques de mise en page (largeurs, gaps, paddings)
+   sont posées en inline par le JS pour garantir un rendu identique
+   entre preview et HTML2Canvas.
+   ============================================================ */
+
+.pdf-page {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000;
+  background: #fff;
+  margin: 0 auto;
+  page-break-after: always;
+  break-after: page;
+}
+
+.pdf-page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+.page-header {
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+}
+
+.page-header h4 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.page-header p {
+  margin: 0;
+  font-size: 11px;
+  color: #666;
+}
+
+/* Flex plutôt que grid : html2canvas gère beaucoup mieux. */
+.page-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.datamatrix-item {
+  text-align: center;
+  border: 1px solid #eee;
+  box-sizing: border-box;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Le wrapper porte les dimensions fixes, le SVG remplit — évite que
+   les attributs width/height natifs du SVG (dim="36") ne cassent le ratio. */
+.barcode-svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.barcode-svg svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.datamatrix-item p {
+  font-size: 8px;
+  line-height: 1.4;
+  margin: 4px 0 0;
+  word-break: break-word;
+}
+
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+}
