@@ -1,0 +1,71 @@
+<link rel="stylesheet" href="./views/datamatrix/datamatrix.css">
+<link rel="stylesheet" href="./views/datamatrix/datamatrix-page.css">
+<codex-datamatrix assistants="masks">
+    <section class="view-shell">
+        <header class="view-header">
+            <h1 class="view-title">🏷️ Datamatrix</h1>
+            <p class="view-lead">
+                Générez des codes GS1 DataMatrix pour vos boîtes à partir de l'EAN13,
+                du lot et de la date limite d'utilisation.
+            </p>
+        </header>
+
+        <div class="datamatrix-layout">
+            <aside class="datamatrix-sidebar">
+                <codex-form id="formDatamatrix">
+                    <fieldset class="form-group">
+                        <legend class="form-legend">Code produit</legend>
+                        <div class="form-grid form-grid--single">
+                            <cds-text-input name="ean" label="Code EAN13" placeholder="3400933047467"
+                                inputmode="numeric" maxlength="13" pattern="[0-9]{13}" required>
+                            </cds-text-input>
+                            <p id="ean-feedback" class="field-feedback" aria-live="polite"></p>
+
+                            <cds-text-input name="lot" label="N° de lot" placeholder="XJ1012" required>
+                            </cds-text-input>
+
+                            <cds-text-input name="dlu" label="Date limite d'utilisation" placeholder="MM/AAAA"
+                                data-mask="dlu" pattern="(0[1-9]|1[0-2])\/[0-9]{4}" required>
+                            </cds-text-input>
+
+                            <div class="dlu-options">
+                                <cds-checkbox name="dluAuto" label-text="Utiliser le dernier jour du mois"
+                                    checked></cds-checkbox>
+                            </div>
+
+                            <cds-number-input id="dluJour" name="dluJour" label="Jour personnalisé" min="1" max="31"
+                                step="1" value="1" hidden>
+                            </cds-number-input>
+
+                            <cds-number-input name="quantite" label="Quantité (max 48)" min="1" max="48" step="1"
+                                value="12" required>
+                            </cds-number-input>
+
+                            <cds-number-input name="tailleMm" label="Taille du code (mm)" min="15" max="50" step="1"
+                                value="26" required>
+                            </cds-number-input>
+                        </div>
+                    </fieldset>
+
+                    <div class="form-actions">
+                        <cds-button type="submit" kind="primary">Générer</cds-button>
+                        <cds-button id="datamatrix-clear" type="button" kind="ghost">Effacer</cds-button>
+                    </div>
+                </codex-form>
+            </aside>
+
+            <div class="datamatrix-preview">
+                <div id="datamatrix-output" class="datamatrix-output" hidden>
+                    <codex-pdf-toolbar id="datamatrix-toolbar" filename="datamatrix.pdf" show-columns show-rows
+                        columns="4" rows="6">
+                    </codex-pdf-toolbar>
+                    <div id="datamatrix-pages" class="datamatrix-pages"></div>
+                </div>
+
+                <div id="datamatrix-empty" class="datamatrix-empty">
+                    <p>Renseignez les champs et cliquez sur <strong>Générer</strong> pour voir l'aperçu.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</codex-datamatrix>
