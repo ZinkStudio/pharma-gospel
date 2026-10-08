@@ -1,0 +1,61 @@
+<link rel="stylesheet" href="./views/couponpass/couponpass.css">
+<codex-couponpass>
+  <section class="view-shell">
+    <header class="view-header">
+      <h1 class="view-title">🎟️ CouponPass</h1>
+      <p class="view-lead">Extracteur de codes promo HighCo depuis une URL de campagne.</p>
+    </header>
+
+    <div class="callouts-container grid-2-cols">
+      <div class="callout callout-info">
+        <div class="callout-title">🚀 Comment ça marche ?</div>
+        <ol class="callout-list">
+          <li>Collez l'URL de la campagne HighCo (<code>https://opn.to/a/XXXXXX</code>)</li>
+          <li>Cliquez sur « Extraire le code »</li>
+          <li>Le code promo est affiché et copié automatiquement</li>
+        </ol>
+        <p class="callout-hint">
+          <strong>💡 Astuce :</strong> le code est copié dans votre presse-papiers,
+          vous n'avez plus qu'à le coller dans votre logiciel de caisse.
+        </p>
+      </div>
+
+      <div class="callout callout-secondary">
+        <div class="callout-title">📊 Journal d'activité</div>
+        <div id="couponpass-logs" class="couponpass-logs" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <codex-form id="formCouponPass" class="form-section">
+      <div class="form-grid">
+        <div class="grid-col-full">
+          <cds-text-input
+            name="url"
+            type="url"
+            label="URL de la campagne HighCo"
+            placeholder="https://opn.to/a/XXXXXX"
+            helper-text="Collez l'URL de la campagne reçue par mail ou SMS"
+            required>
+          </cds-text-input>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <cds-button id="couponpass-extract-btn" type="submit" kind="primary">
+          🔍 Extraire le code
+        </cds-button>
+      </div>
+    </codex-form>
+
+    <div id="couponpass-result" class="couponpass-result" hidden>
+      <p class="couponpass-result-label">Code promo extrait</p>
+      <div class="couponpass-result-row">
+        <input id="couponpass-code-input" class="couponpass-code-input" readonly>
+        <codex-copier target="#couponpass-code-input" design="ibm"></codex-copier>
+      </div>
+      <p class="couponpass-result-hint">
+        Ce code a été automatiquement copié dans votre presse-papiers.
+      </p>
+    </div>
+  </section>
+</codex-couponpass>

@@ -1,0 +1,165 @@
+.view-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.view-header { margin-bottom: 1.5rem; }
+
+.view-lead {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  max-width: 72ch;
+}
+
+/* ---------- Callouts ---------- */
+.callouts-container { margin-bottom: 1.5rem; }
+
+.grid-2-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 720px) {
+  .grid-2-cols { grid-template-columns: 1fr; }
+}
+
+.callout {
+  padding: 1rem 1.25rem;
+  border-radius: 4px;
+  border: 1px solid var(--pc-border);
+  background: var(--pc-surface);
+}
+
+.callout-info {
+  background: color-mix(in srgb, var(--pc-primary) 5%, transparent);
+  border-color: color-mix(in srgb, var(--pc-primary) 30%, transparent);
+}
+
+.callout-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--pc-text);
+}
+
+.callout-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--pc-text-secondary);
+  line-height: 1.55;
+}
+
+.callout-list li + li { margin-top: 0.25rem; }
+
+.callout-list code,
+.callout-hint code {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  background: var(--pc-surface-hover);
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  font-size: 0.85em;
+}
+
+.callout-hint {
+  margin: 0.75rem 0 0 0;
+  font-size: 0.85rem;
+  color: var(--pc-text-secondary);
+  line-height: 1.5;
+}
+
+/* ---------- Journal ---------- */
+.couponpass-logs {
+  background: var(--pc-surface-hover);
+  border: 1px solid var(--pc-border);
+  border-radius: 3px;
+  padding: 0.6rem 0.75rem;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.8rem;
+  max-height: 220px;
+  overflow-y: auto;
+  color: var(--pc-text-secondary);
+  line-height: 1.5;
+}
+
+.couponpass-log-entry {
+  margin-bottom: 0.25rem;
+  word-break: break-word;
+}
+
+.couponpass-log-entry .timestamp {
+  color: var(--pc-text-muted);
+  font-weight: 600;
+  margin-right: 0.35rem;
+}
+
+.couponpass-log-entry--success { color: var(--pc-primary-dark); }
+.couponpass-log-entry--error   { color: var(--cds-support-error, #da1e28); }
+.couponpass-log-entry--warn    { color: var(--cds-support-warning, #8d6e00); }
+
+/* ---------- Formulaire ---------- */
+.form-section { margin-bottom: 1.5rem; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.grid-col-full { grid-column: 1 / -1; }
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* ---------- Résultat ---------- */
+.couponpass-result {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: color-mix(in srgb, var(--pc-primary) 6%, transparent);
+  border-left: 4px solid var(--pc-primary);
+  border-radius: 4px;
+}
+
+.couponpass-result-label {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--pc-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.couponpass-result-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.couponpass-code-input {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  border: none;
+  border-bottom: 2px solid var(--pc-primary);
+  background: var(--pc-surface);
+  color: var(--pc-text);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  box-sizing: border-box;
+}
+
+.couponpass-code-input:focus {
+  outline: 2px solid var(--pc-primary);
+  outline-offset: -2px;
+}
+
+.couponpass-result-hint {
+  margin: 0.6rem 0 0 0;
+  font-size: 0.8rem;
+  color: var(--pc-text-muted);
+  font-style: italic;
+}
