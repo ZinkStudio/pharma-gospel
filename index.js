@@ -18,7 +18,9 @@ import '@components/ui/codex-field.js';
 import '@components/ui/codex-form.js';
 import '@components/ui/codex-smart-fill.js';
 import '@components/ui/codex-step-flow.js';
+import '@components/ui/codex-accueil-filtres.js';
 
+import '@views/accueil/codex-accueil.js';
 import '@views/nir/codex-calcul-nir.js';
 import '@views/ordonnancier/codex-ordonnancier.js';
 import '@views/calculazen/codex-calculazen.js';
@@ -33,6 +35,7 @@ import '@views/aerosol/codex-aerosol.js';
 import '@views/cuprior/codex-cuprior.js';
 import '@views/couponpass/codex-couponpass.js';
 import '@views/datamatrix/codex-datamatrix.js';
+import '@views/vaccination/codex-vaccination.js';
 
 import '@carbon/web-components/accordion.min.js'
 import '@carbon/web-components/settings-a9cb5e4b.js'

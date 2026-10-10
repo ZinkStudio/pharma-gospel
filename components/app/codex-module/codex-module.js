@@ -9,32 +9,42 @@ const iconPath = new URL('../../../vendor/carbon@2.24.0/svg/', import.meta.url).
  */
 const VARIANT_FALLBACK_ICON = {
   pharmacy: 'pill',
-  green:    'checkmark',
-  purple:   'chemistry',
-  orange:   'warning',
-  teal:     'data-visibility',
-  blue:     'document',
-  pink:     'heart',
-  yellow:   'lightbulb',
-  cyan:     'flow',
-  gray:     'settings',
+  green: 'checkmark',
+  purple: 'chemistry',
+  orange: 'warning',
+  teal: 'data-visibility',
+  blue: 'document',
+  pink: 'heart',
+  yellow: 'lightbulb',
+  cyan: 'flow',
+  gray: 'settings',
 };
 
 export class CodexModule extends BaseLit {
   static properties = {
-    title:        { type: String },
-    description:  { type: String },
-    icon:         { type: String },
-    image:        { type: String },
-    logo:         { type: String },
-    variant:      { type: String },
-    category:     { type: String },
-    search:       { type: String },
-    href:         { type: String },
-    target:       { type: String },
+    title: { type: String },
+    description: { type: String },
+    icon: { type: String },
+    image: { type: String },
+    logo: { type: String },
+    variant: { type: String },
+    category: { type: String },
+    search: { type: String },
+    href: { type: String },
+    target: { type: String },
     _imageFailed: { state: true },
-    _logoFailed:  { state: true },
+    _logoFailed: { state: true },
   };
+
+  /**
+   * Vrai si le module ouvre un lien externe (nouvel onglet ou URL absolue).
+   * Utilisé pour afficher un indicateur visuel distinct et éviter au
+   * développeur de répéter "ouvre dans un nouvel onglet" dans la description.
+   */
+  get _isExternal() {
+    if (this.target === '_blank') return true;
+    return /^https?:\/\//i.test(this.href || '');
+  }
 
   static styles = css`
     :host { display: block; }
@@ -211,6 +221,26 @@ export class CodexModule extends BaseLit {
       color: #fff;
       text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
     }
+    .module-external {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--pc-surface-hover);
+      color: var(--pc-text-muted);
+      z-index: 2;
+      pointer-events: none;   /* le clic passe à travers, atteint le <a> */
+    }
+
+    /* Sur les modules à image, le fond passe en sombre → on inverse */
+    .has-image .module-external {
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+    }
   `;
 
   constructor() {
@@ -273,44 +303,56 @@ export class CodexModule extends BaseLit {
   }
 
   render() {
-    // Cascade de priorité : logo → image → icône.
-    // Chaque niveau peut basculer au suivant en cas d'échec de chargement.
     let mode = 'icon';
     if (this.logo && !this._logoFailed) mode = 'logo';
     else if (this.image && !this._imageFailed) mode = 'image';
 
     const content = {
-      icon:  () => this._renderIcon(),
-      logo:  () => this._renderLogo(),
+      icon: () => this._renderIcon(),
+      logo: () => this._renderLogo(),
       image: () => this._renderImage(),
     }[mode]();
 
     const classes = [
       'module',
       mode === 'image' ? 'has-image' : '',
-      mode === 'logo'  ? 'has-logo'  : '',
+      mode === 'logo' ? 'has-logo' : '',
     ].filter(Boolean).join(' ');
+
+    const externalBadge = this._isExternal ? html`
+    <span class="module-external" aria-label="Ouvre dans un nouvel onglet"
+          title="Ouvre dans un nouvel onglet">
+      <svg focusable="false" preserveAspectRatio="xMidYMid meet"
+        xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+        width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M6 4v2h6.29L3 15.29 4.71 17 14 7.71V14h2V4H6z"></path>
+      </svg>
+    </span>
+  ` : '';
 
     if (this.href) {
       return html`
-        <a class="${classes}"
-          href="${this.href}"
-          target="${this.target || '_self'}"
-          data-category="${this.category || ''}"
-          data-search="${this.search || ''}">
-          ${content}
-        </a>
-      `;
-    }
-
-    return html`
-      <article class="${classes}"
-        tabindex="0"
+      <a class="${classes}"
+        href="${this.href}"
+        target="${this.target || '_self'}"
+        ${this._isExternal ? 'rel="noopener noreferrer"' : ''}
         data-category="${this.category || ''}"
         data-search="${this.search || ''}">
         ${content}
-      </article>
+        ${externalBadge}
+      </a>
     `;
+    }
+
+    return html`
+    <article class="${classes}"
+      tabindex="0"
+      data-category="${this.category || ''}"
+      data-search="${this.search || ''}">
+      ${content}
+      ${externalBadge}
+    </article>
+  `;
   }
 
   _renderImage() {

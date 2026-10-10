@@ -1,0 +1,51 @@
+<link rel="stylesheet" href="./views/vaccination/vaccination.css">
+<codex-vaccination>
+  <section class="view-shell">
+    <header class="view-header">
+      <h1 class="view-title">💉 Calendrier Vaccinal</h1>
+      <p class="view-lead">
+        Présentation du calendrier vaccinal 2025, compétences du pharmacien
+        et informations détaillées par maladie.
+      </p>
+    </header>
+
+    <cds-content-switcher id="vaccination-tabs" value="presentation">
+      <cds-content-switcher-item value="presentation" target="panel-presentation">
+        📅 Présentation
+      </cds-content-switcher-item>
+      <cds-content-switcher-item value="prescription" target="panel-prescription">
+        💊 Prescription
+      </cds-content-switcher-item>
+      <cds-content-switcher-item value="details" target="panel-details">
+        📋 Détails
+      </cds-content-switcher-item>
+    </cds-content-switcher>
+
+    <div id="panel-presentation" class="vaccination-panel" role="tabpanel">
+      <div id="vaccination-tableau" class="vaccination-content">
+        <p class="vaccination-loading">Chargement du tableau…</p>
+      </div>
+    </div>
+
+    <div id="panel-prescription" class="vaccination-panel" role="tabpanel" hidden>
+      <div id="vaccination-prescription" class="vaccination-content">
+        <p class="vaccination-loading">Chargement…</p>
+      </div>
+    </div>
+
+    <div id="panel-details" class="vaccination-panel" role="tabpanel" hidden>
+      <div id="vaccination-details" class="vaccination-content">
+        <p class="vaccination-loading">Chargement…</p>
+      </div>
+    </div>
+  </section>
+
+  <dialog id="vaccination-modal" class="vaccination-modal">
+    <div class="vaccination-modal__header">
+      <h2 id="vaccination-modal-title" class="vaccination-modal__title"></h2>
+      <button id="vaccination-modal-close" class="vaccination-modal__close"
+              type="button" aria-label="Fermer">✕</button>
+    </div>
+    <div id="vaccination-modal-body" class="vaccination-modal__body"></div>
+  </dialog>
+</codex-vaccination>

@@ -1,0 +1,215 @@
+.view-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.view-header { margin-bottom: 1.5rem; }
+
+.view-lead {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  max-width: 72ch;
+}
+
+/* ---------- Panneaux ---------- */
+.vaccination-panel {
+  margin-top: 1.5rem;
+}
+
+.vaccination-loading {
+  padding: 2rem;
+  text-align: center;
+  color: var(--pc-text-muted);
+  font-style: italic;
+}
+
+/* ---------- Tableaux ---------- */
+.vaccination-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: var(--pc-surface);
+}
+
+.vaccination-table caption {
+  caption-side: top;
+  text-align: left;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text);
+}
+
+.vaccination-table thead th {
+  padding: 0.5rem 0.6rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--pc-text-secondary);
+  background: var(--pc-surface-hover);
+  border: 1px solid var(--pc-border);
+}
+
+.vaccination-table tbody td,
+.vaccination-table tbody th[scope="row"] {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--pc-border);
+  text-align: center;
+  vertical-align: middle;
+}
+
+.vaccination-table tbody th[scope="row"] {
+  text-align: left;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.vaccination-table tbody td:first-child {
+  text-align: left;
+}
+
+/* Cellules cliquables */
+.vaccination-table td[data-vaccination-trigger] {
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.vaccination-table td[data-vaccination-trigger]:hover {
+  filter: brightness(0.85);
+  outline: 2px solid var(--pc-primary);
+  outline-offset: -2px;
+}
+
+/* ---------- Classes couleur (reprises du legacy) ---------- */
+.dtp-coq-hib { background-color: #4DBF9D; color: #fff; }
+.hepatite-b  { background-color: #FDC210; }
+.pneumo-acwy-b { background-color: #EE61A4; color: #fff; }
+.ror         { background-color: #ED314A; color: #fff; }
+.rotavirus   { background-color: #C59552; color: #fff; }
+.rotavirus-blur { background-color: #C5955299; color: #fff; }
+.hpv         { background-color: #F48221; color: #fff; }
+.bcg         { background-color: #B256A1; color: #fff; }
+.zona        { background-color: #A56653; color: #fff; }
+.vrs         { background-color: #008F4D; color: #fff; }
+.covid       { background-color: #4B4FA2; color: #fff; }
+.grippe      { background-color: #1EC4F4; color: #fff; }
+
+/* ---------- Détails (texte) ---------- */
+#vaccination-details h6 {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  margin: 1.25rem 0 0.5rem;
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+#vaccination-details p {
+  margin: 0 0 0.75rem 0;
+  color: var(--pc-text-secondary);
+  line-height: 1.55;
+}
+
+/* ---------- Modale ---------- */
+.vaccination-modal {
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  width: min(720px, 92vw);
+  max-height: 85vh;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  color: var(--pc-text);
+  background: var(--pc-surface);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.vaccination-modal::backdrop {
+  background: rgba(22, 22, 22, 0.5);
+}
+
+.vaccination-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--pc-border);
+}
+
+.vaccination-modal__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.vaccination-modal__close {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.35rem 0.6rem;
+  color: var(--pc-text-secondary);
+  border-radius: 3px;
+}
+
+.vaccination-modal__close:hover {
+  background: var(--pc-surface-hover);
+  color: var(--pc-text);
+}
+
+.vaccination-modal__body {
+  padding: 1.25rem;
+  overflow-y: auto;
+  max-height: calc(85vh - 4rem);
+  line-height: 1.6;
+}
+
+.vaccination-modal__body p {
+  margin: 0 0 0.75rem 0;
+}
+
+.vaccination-modal__body strong {
+  color: var(--pc-text);
+}
+/* Tableaux : entêtes de groupes centrés (colspan) */
+.vaccination-table .mandatoire,
+.vaccination-table tr.mandatoire th {
+  text-align: center;
+}
+
+/* Légende sous le tableau (petites italiques) */
+.vaccination-legend {
+  margin: 1rem 0 0.5rem;
+  font-size: 0.8rem;
+  color: var(--pc-text-secondary);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* Liste des renvois (a, b, c…) */
+.vaccination-notes {
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem;
+  background: var(--pc-surface-hover);
+  border-left: 3px solid var(--pc-border);
+  border-radius: 3px;
+  font-size: 0.8rem;
+  color: var(--pc-text-secondary);
+  line-height: 1.6;
+}
+
+.vaccination-notes dt {
+  margin: 0;
+}
+
+.vaccination-notes dt + dt {
+  margin-top: 0.35rem;
+}
+
+.vaccination-notes strong {
+  color: var(--pc-text);
+  margin-right: 0.35rem;
+  font-weight: 600;
+}
