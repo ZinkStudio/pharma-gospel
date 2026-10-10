@@ -1,0 +1,29 @@
+.accueil-toolbar {
+  position: sticky;
+  top: 3rem;                /* hauteur du header Carbon — ajuste si besoin */
+  z-index: 20;
+  padding: 0.75rem 1rem;
+  margin: 0 -1rem 1.5rem;
+  background: var(--pc-background, #fff);
+  border-bottom: 1px solid var(--pc-border, #e0e0e0);
+}
+
+.accueil-section {
+  margin-bottom: 2.5rem;
+}
+
+.accueil-section[hidden] {
+  display: none;
+}
+
+.accueil-section-title {
+  margin: 0 0 1rem 0;
+  padding: 0 1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--pc-text, #161616);
+}
+
+codex-module.filter-hidden {
+  display: none !important;
+}
