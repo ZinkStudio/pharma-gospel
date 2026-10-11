@@ -1,6 +1,7 @@
 import { PdfMakeEngine } from './engines/pdfmake-engine.js';
 import { PdfLibEngine } from './engines/pdf-lib-engine.js';
 import { Html2PdfEngine } from './engines/html2pdf-engine.js';
+import { JsPdfTableEngine } from './engines/jspdf-table-engine.js';
 import { printElement } from './print-service.js';
 import { downloadBlob, shareBlob, canShareFiles } from '../../utils/export-utils.js';
 export { PDF_PRESETS } from './engines/html2pdf-engine.js';
@@ -32,7 +33,17 @@ export class PDFService {
     const blob = await PdfMakeEngine.renderToBlob(docDefinition);
     return this._handleOutput(blob, options);
   }
-
+  /**
+   * Compose un PDF tabulaire (jsPDF + autotable) avec pagination native.
+   * Cas d'usage : bons de commande, récapitulatifs, listings.
+   *
+   * @param {Array<{ title, head, body }>} sections
+   * @param {Object} options — { title, subtitle, theme, filename, action }
+   */
+  static async composeTable(sections, options = {}) {
+    const blob = await JsPdfTableEngine.compose(sections, options);
+    return this._handleOutput(blob, options);
+  }
   // =============================================================
   // Remplissage de PDF officiels (pdf-lib)
   // =============================================================
@@ -88,7 +99,23 @@ export class PDFService {
   static async hasAcroForm(templateUrl) {
     return PdfLibEngine.hasAcroForm(templateUrl);
   }
+  // =============================================================
+  // Modification in-place (masquage + dessin, annotations, etc.)
+  // =============================================================
 
+  /**
+   * Charge un PDF existant, applique une modification, retourne le résultat.
+   * Utile pour : masquer/redessiner du contenu, ajouter des annotations,
+   * signer, tamponner à des positions fixes…
+   *
+   * @param {ArrayBuffer|Uint8Array} pdfBytes
+   * @param {(pdfDoc) => Promise<PDFDocument|void>} modifierFn
+   * @param {Object} [options] — { action, filename, … }
+   */
+  static async modify(pdfBytes, modifierFn, options = {}) {
+    const blob = await PdfLibEngine.modify(pdfBytes, modifierFn);
+    return this._handleOutput(blob, options);
+  }
   // =============================================================
   // Capture HTML → PDF image (html2pdf)
   // =============================================================

@@ -1,8 +1,46 @@
-<section class="view-shell">
-  <h1 class="view-title">Orthopédie</h1>
-  <p class="view-lead">
-    Gestion du stock orthèse et compression.
-    <a href="https://pharmaciesb.github.io/orthese/" target="_blank" rel="noopener">Ouvrir dans un nouvel onglet</a>
-  </p>
-  <iframe class="view-iframe" title="Module Orthopédie" src="https://pharmaciesb.github.io/orthese/"></iframe>
-</section>
+<link rel="stylesheet" href="./views/orthopedie/orthopedie.css">
+<codex-orthopedie>
+  <section class="view-shell">
+    <header class="view-header">
+      <h1 class="view-title">🦴 Orthopédie</h1>
+      <p class="view-lead">
+        Suivi d'inventaire des orthèses et contentions. Saisissez les quantités
+        vendues, en stock et à commander par taille et déclinaison.
+      </p>
+    </header>
+
+    <div class="ortho-toolbar">
+      <div id="ortho-tabs" class="ortho-tabs" role="tablist"></div>
+
+      <div class="ortho-actions">
+        <cds-button id="ortho-btn-pdf" kind="primary" size="sm" type="button">
+          📄 PDF Commandes
+        </cds-button>
+        <cds-button id="ortho-btn-export" kind="ghost" size="sm" type="button">
+          📤 Exporter
+        </cds-button>
+        <cds-button id="ortho-btn-import" kind="ghost" size="sm" type="button">
+          📥 Importer
+        </cds-button>
+        <input id="ortho-import-file" type="file" accept=".json" hidden>
+        <cds-button id="ortho-btn-reset-v" kind="ghost" size="sm" type="button">
+          🔄 Reset Ventes
+        </cds-button>
+        <cds-button id="ortho-btn-clear" kind="danger-ghost" size="sm" type="button">
+          🗑 Tout effacer
+        </cds-button>
+      </div>
+    </div>
+
+    <div id="ortho-content" class="ortho-content"></div>
+
+    <!-- Visionneuse image (overlay) -->
+    <div id="ortho-viewer" class="ortho-viewer" hidden>
+      <div class="ortho-viewer__content">
+        <img id="ortho-viewer__img" alt="">
+        <p id="ortho-viewer__caption"></p>
+        <small>Cliquer pour fermer</small>
+      </div>
+    </div>
+  </section>
+</codex-orthopedie>

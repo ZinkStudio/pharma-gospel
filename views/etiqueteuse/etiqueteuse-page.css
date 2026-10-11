@@ -1,0 +1,139 @@
+/* ============================================================
+   Styles de page — preview + export PDF.
+   Layout critique (largeurs, hauteurs, gaps) posé en inline
+   par le JS pour garantir la cohérence html2canvas.
+   ============================================================ */
+
+.pdf-page {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000;
+  background: #fff;
+  margin: 0 auto;
+  /* Pas de page-break ici : c'est .breaker (via pagebreak.before de
+     PDFService.capture) qui gère les sauts entre pages. */
+}
+
+.pdf-page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+/* Flex plutôt que grid — html2canvas-friendly. */
+.page-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.etiquette-item {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border: 1px dashed #d0d0d0;
+  background: #fff;
+  text-align: center;
+  overflow: hidden;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* ---------- En-tête visible (nom + dilution) ---------- */
+
+.etiquette-visible-header {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+
+.etiquette-visible-header .souche {
+  font-size: 9pt;
+  font-weight: bold;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 2px;
+}
+
+.etiquette-visible-header .dilution {
+  font-size: 9pt;
+  text-align: center;
+}
+
+/* ---------- Corps (DataMatrix + code) ---------- */
+
+.etiquette-hidden-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.etiquette-hidden-body .control-text {
+  flex: 0 0 auto;
+  font-size: 8pt;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 1px;
+}
+
+.datamatrix-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.datamatrix-container svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.etq-panel {
+  margin-top: 1rem;
+}
+
+.file-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--pc-text);
+  margin-bottom: 0.5rem;
+}
+
+.file-hint {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--pc-text-secondary);
+  line-height: 1.5;
+}
+
+.file-hint code {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  background: var(--pc-surface-hover);
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  font-size: 0.9em;
+}
+
+#etq-file {
+  width: 100%;
+  padding: 0.5rem 0;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+}

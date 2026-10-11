@@ -1,0 +1,101 @@
+<link rel="stylesheet" href="./views/chronoposo/chronoposo.css">
+<codex-chronoposo assistants="date-shortcuts">
+  <section class="view-shell">
+    <header class="view-header">
+      <h1 class="view-title">⏱️ ChronoPoso</h1>
+      <p class="view-lead">
+        Modifiez les dates d'un Plan de Posologie PDF : date de production
+        et dates de pilulier.
+      </p>
+    </header>
+
+    <!-- Stepper -->
+    <ol id="chronoposo-stepper" class="chronoposo-stepper" data-step="1">
+      <li class="step" data-step="1"><span>1</span> Importer</li>
+      <li class="step" data-step="2"><span>2</span> Modifier les dates</li>
+      <li class="step" data-step="3"><span>3</span> Télécharger</li>
+    </ol>
+
+    <!-- ============ ÉTAPE 1 — IMPORT ============ -->
+    <section id="chronoposo-panel-1" class="chronoposo-panel">
+      <codex-drop-zone
+        id="chronoposo-dropzone"
+        accept="application/pdf"
+        heading="📥 Glissez le Plan de Posologie ici, <strong>cliquez</strong> pour en choisir un"
+        hint="Format accepté : PDF uniquement">
+      </codex-drop-zone>
+
+      <div class="form-actions">
+        <cds-button id="chronoposo-btn-to-step2" kind="primary" disabled>
+          Continuer
+        </cds-button>
+      </div>
+    </section>
+
+    <!-- ============ ÉTAPE 2 — DATES ============ -->
+    <section id="chronoposo-panel-2" class="chronoposo-panel" hidden>
+      <codex-form id="formDates" class="form-section">
+        <div class="form-grid">
+          <div class="grid-col-full">
+            <cds-text-input
+              name="dateProduction"
+              type="date"
+              label="Date de production (optionnel)"
+              helper-text="Laissez vide pour ne pas modifier la date imprimée">
+            </cds-text-input>
+          </div>
+
+          <cds-text-input
+            name="dateDebut"
+            type="date"
+            label="Date de début (pilulier)"
+            required>
+          </cds-text-input>
+
+          <cds-text-input
+            name="dateFin"
+            type="date"
+            label="Date de fin (pilulier)"
+            required>
+          </cds-text-input>
+        </div>
+
+        <div class="form-actions">
+          <cds-button id="chronoposo-btn-back-to-1" kind="ghost" type="button">
+            ← Retour
+          </cds-button>
+          <cds-button type="submit" kind="primary">
+            Appliquer les changements
+          </cds-button>
+        </div>
+      </codex-form>
+    </section>
+
+    <!-- ============ ÉTAPE 3 — TÉLÉCHARGER ============ -->
+    <section id="chronoposo-panel-3" class="chronoposo-panel" hidden>
+      <div class="chronoposo-summary">
+        <p class="chronoposo-summary-title">Nouvelles dates appliquées</p>
+        <div class="chronoposo-summary-row">
+          <span class="chronoposo-summary-label">Production</span>
+          <span id="chronoposo-preview-production" class="chronoposo-summary-value">—</span>
+        </div>
+        <div class="chronoposo-summary-row">
+          <span class="chronoposo-summary-label">Début pilulier</span>
+          <span id="chronoposo-preview-debut" class="chronoposo-summary-value">—</span>
+        </div>
+        <div class="chronoposo-summary-row">
+          <span class="chronoposo-summary-label">Fin pilulier</span>
+          <span id="chronoposo-preview-fin" class="chronoposo-summary-value">—</span>
+        </div>
+      </div>
+
+      <codex-pdf-preview id="chronoposo-preview" design="ibm"></codex-pdf-preview>
+
+      <div class="form-actions">
+        <cds-button id="chronoposo-btn-restart" kind="ghost" type="button">
+          🔄 Recommencer
+        </cds-button>
+      </div>
+    </section>
+  </section>
+</codex-chronoposo>

@@ -1,0 +1,242 @@
+.view-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.view-header { margin-bottom: 1.5rem; }
+.view-lead {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  max-width: 72ch;
+}
+
+/* ============================================================
+   Toolbar sticky (onglets + actions)
+   ============================================================ */
+
+.ortho-toolbar {
+  position: sticky;
+  top: 3rem;
+  z-index: 20;
+  background: var(--pc-background);
+  padding: 0.75rem 0;
+  margin: 0 -1rem 1.5rem;
+  border-bottom: 1px solid var(--pc-border);
+}
+
+.ortho-tabs {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  padding: 0 1rem 0.75rem;
+}
+
+.ortho-tab {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--pc-border);
+  background: var(--pc-surface);
+  color: var(--pc-text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: border-color .15s ease, background-color .15s ease, color .15s ease;
+}
+
+.ortho-tab:hover {
+  border-color: var(--pc-primary);
+  color: var(--pc-primary);
+}
+
+.ortho-tab.is-active {
+  background: var(--pc-primary);
+  border-color: var(--pc-primary);
+  color: #fff;
+}
+
+.ortho-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0 1rem;
+}
+
+/* ============================================================
+   Tableaux
+   ============================================================ */
+
+.ortho-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.ortho-table-wrapper {
+  background: var(--pc-surface);
+  border: 1px solid var(--pc-border);
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.ortho-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.ortho-table th,
+.ortho-table td {
+  border: 1px solid var(--pc-border);
+  padding: 0.4rem 0.5rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.ortho-table thead th {
+  background: var(--pc-text);        /* header sombre cohérent avec le legacy */
+  color: #fff;
+  font-weight: 600;
+}
+
+.ortho-header-denom {
+  background: var(--pc-primary-dark) !important;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  padding-left: 1rem !important;
+}
+
+.ortho-coeff {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-left: 0.5rem;
+}
+
+.ortho-img-trigger {
+  cursor: pointer;
+  margin-left: 0.6rem;
+  font-size: 0.9rem;
+  opacity: 0.6;
+  transition: opacity .15s ease, transform .15s ease;
+}
+
+.ortho-img-trigger:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.ortho-row-taille {
+  text-align: left;
+  font-weight: 600;
+  background: var(--pc-surface-hover);
+  padding-left: 1rem !important;
+  white-space: nowrap;
+}
+
+.ortho-cell-excluded {
+  background: var(--pc-surface-hover);
+  color: var(--pc-text-muted);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+/* ============================================================
+   Inputs V / S / C
+   ============================================================ */
+
+.ortho-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+}
+
+.ortho-inputs__row {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.ortho-inputs input {
+  width: 40px;
+  padding: 4px;
+  border: 1px solid var(--pc-border);
+  border-radius: 3px;
+  text-align: center;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 0.85rem;
+  background: var(--pc-surface);
+  color: var(--pc-text);
+}
+
+.ortho-inputs input:focus {
+  outline: 2px solid var(--pc-primary);
+  outline-offset: -2px;
+}
+
+/* Couleurs indicatives sous les inputs */
+.ortho-inputs input[data-role="vendu"] { border-bottom: 3px solid #0f62fe; }
+.ortho-inputs input[data-role="stock"] { border-bottom: 3px solid var(--pc-primary); }
+.ortho-inputs input[data-role="cmd"]   { border-bottom: 3px solid #8d6e00; }
+
+.ortho-inputs__labels {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.ortho-inputs__labels span {
+  width: 40px;
+  text-align: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--pc-text-muted);
+}
+
+/* ============================================================
+   Visionneuse image
+   ============================================================ */
+
+.ortho-viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(22, 22, 22, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.ortho-viewer[hidden] { display: none; }
+
+.ortho-viewer__content {
+  background: var(--pc-surface);
+  padding: 1rem;
+  border-radius: 6px;
+  text-align: center;
+  max-width: 90vw;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.ortho-viewer__content img {
+  max-width: min(400px, 80vw);
+  max-height: 60vh;
+  border-radius: 4px;
+  display: block;
+  margin: 0 auto 0.5rem;
+}
+
+.ortho-viewer__content p {
+  margin: 0.25rem 0;
+  font-weight: 600;
+  color: var(--pc-text);
+}
+
+.ortho-viewer__content small {
+  color: var(--pc-text-muted);
+}
