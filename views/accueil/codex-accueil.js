@@ -2,13 +2,17 @@ import { BaseView } from '../../core/base-view.js';
 
 /**
  * Mapping chip → catégories autorisées.
- * Un chip peut regrouper plusieurs `category` d'origine.
+ * Depuis la réorganisation de l'accueil en 5 sections distinctes
+ * (Liens / Documents / Applications / Atelier / Planning), chaque
+ * chip correspond exactement à une catégorie.
  */
 const FILTER_MAP = {
-  all:          null,      // null = aucune restriction
+  all:          null,             // null = aucune restriction
   officine:     ['officine'],
-  documents:    ['documents', 'vaccination', 'aerosol', 'infirmerie'],
-  applications: ['applications', 'atelier', 'planning'],
+  documents:    ['documents'],
+  applications: ['applications'],
+  atelier:      ['atelier'],
+  planning:     ['planning'],
 };
 
 export class CodexAccueil extends BaseView {
