@@ -36,6 +36,8 @@ import '@views/cuprior/codex-cuprior.js';
 import '@views/couponpass/codex-couponpass.js';
 import '@views/datamatrix/codex-datamatrix.js';
 import '@views/vaccination/codex-vaccination.js';
+import '@views/trombinoscope/codex-trombinoscope.js';
+import '@views/purificateur/codex-purificateur.js';
 
 import '@carbon/web-components/accordion.min.js'
 import '@carbon/web-components/settings-a9cb5e4b.js'

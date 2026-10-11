@@ -1,11 +1,10 @@
 import { BaseView } from '../../core/base-view.js';
 import { downloadBlob, canShareFiles, shareBlob } from '../../utils/export-utils.js';
+import { loadPdfJs } from '../../utils/pdfjs-loader.js';
 import { tampons } from './tampons-data.js';
 
 const FABRIC_URL = new URL('../../vendor/fabric@7.4.0/fabric.js', import.meta.url).href;
 const PDFLIB_URL = new URL('../../vendor/pdf/pdf-lib@1.17.1.js', import.meta.url).href;
-const PDFJS_URL = new URL('../../vendor/pdfjs@6.3.289/pdf.min.js', import.meta.url).href;
-const PDFJS_WORKER_URL = new URL('../../vendor/pdfjs@6.3.289/pdf.worker.min.js', import.meta.url).href;
 
 let fabricModulePromise = null;
 function loadFabric() {
@@ -26,17 +25,6 @@ function loadPdfLib() {
     });
   }
   return pdfLibLoadPromise;
-}
-
-let pdfjsModulePromise = null;
-function loadPdfJs() {
-  if (!pdfjsModulePromise) {
-    pdfjsModulePromise = import(PDFJS_URL).then(mod => {
-      mod.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
-      return mod;
-    });
-  }
-  return pdfjsModulePromise;
 }
 
 const PREFS_KEY = 'endossaire-prefs';

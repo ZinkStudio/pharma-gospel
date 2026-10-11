@@ -1,0 +1,208 @@
+.view-shell {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.view-header { margin-bottom: 1.5rem; }
+
+.view-lead {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  max-width: 72ch;
+}
+
+/* ---------- Layout 2 colonnes ---------- */
+.trombi-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .trombi-layout { grid-template-columns: 1fr; }
+}
+
+.trombi-sidebar { position: sticky; top: 1rem; }
+
+.trombi-panel { margin-top: 1rem; }
+
+/* ---------- File upload (label natif, cds-file-uploader est overkill) ---------- */
+.file-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--pc-text);
+  margin-bottom: 0.5rem;
+}
+
+.file-hint {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--pc-text-secondary);
+  line-height: 1.5;
+}
+
+.file-hint code {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  background: var(--pc-surface-hover);
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  font-size: 0.9em;
+}
+
+#trombi-file {
+  width: 100%;
+  padding: 0.5rem 0;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+/* ---------- Formulaires ---------- */
+.form-section { margin-bottom: 1rem; }
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.grid-col-full { width: 100%; }
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* ---------- Colonne de droite ---------- */
+.trombi-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.trombi-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.trombi-list-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trombi-count {
+  display: inline-block;
+  min-width: 1.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--pc-primary-light);
+  color: var(--pc-primary-dark);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.trombi-list-wrap {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--pc-border);
+  border-radius: 4px;
+  background: var(--pc-surface);
+}
+
+.trombi-empty {
+  margin: 0;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--pc-text-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+/* ---------- Table de liste ---------- */
+.trombi-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.trombi-list-table thead th {
+  position: sticky;
+  top: 0;
+  padding: 0.5rem 0.75rem;
+  background: var(--pc-surface-hover);
+  border-bottom: 1px solid var(--pc-border);
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pc-text-secondary);
+  z-index: 1;
+}
+
+.trombi-list-table tbody td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--pc-border);
+  color: var(--pc-text);
+}
+
+.trombi-list-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.trombi-list-table tbody tr:hover {
+  background: var(--pc-surface-hover);
+}
+
+.trombi-delete {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--cds-support-error, #da1e28);
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-family: inherit;
+}
+
+.trombi-delete:hover {
+  background: color-mix(in srgb, var(--cds-support-error, #da1e28) 10%, transparent);
+  border-color: color-mix(in srgb, var(--cds-support-error, #da1e28) 30%, transparent);
+}
+
+/* ---------- Preview PDF ---------- */
+.trombi-output {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.trombi-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: auto;
+  max-height: 70vh;
+  background: #e0e0e0;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.trombi-pages .pdf-page {
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  background: white;
+}
