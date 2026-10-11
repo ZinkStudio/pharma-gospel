@@ -116,35 +116,61 @@
       </codex-module>
     </codex-module-grille>
   </section>
-
-  <!-- ============ SECTION 2 : APPLICATIONS ============ -->
+  <!-- ============ SECTION 2 : DOCUMENTS ============ -->
   <section class="accueil-section">
-    <h2 class="accueil-section-title">🧰 Applications</h2>
+    <h2 class="accueil-section-title">📄 Documents</h2>
     <codex-module-grille taille="250" max="8">
-      <!-- Documents -->
-      <codex-module title="Tarifs Préparatoire" description="Grille tarifaire des préparations et du vrac" icon="apps"
-        variant="pink" category="documents" search="préparatoire, tarifs, tableau, document"
-        image="/pharma-gospel/views/accueil/images/documents/preparatoire.png"
-        href="#views/preparatoire/preparatoire.html">
-      </codex-module>
-      <!-- Infirmerie -->
+      <!-- Documents : Infirmerie -->
       <codex-module title="Cartes" description="Générer, Imprimer des cartes d'IDE" icon="apps" variant="teal"
-        category="infirmerie" search="infirmerie, cartes, ide, infirmier, infirmière, domicile"
+        category="documents" search="infirmerie, cartes, ide, infirmier, infirmière, domicile"
         href="#views/cartes/cartes.html">
       </codex-module>
       <codex-module title="Facture" description="Générer, Imprimer des factures de produits pharmaceutiques" icon="apps"
-        variant="teal" category="infirmerie" search="infirmerie, facture, produit, pharmaceutique, ide"
+        variant="teal" category="documents" search="infirmerie, facture, produit, pharmaceutique, ide"
         href="#views/facture/facture.html">
       </codex-module>
       <codex-module title="Ordonnancier" description="Atelier pour Imprimer des ordonnances IDE" icon="apps"
-        variant="teal" category="infirmerie" search="infirmerie, ordonnancier, ordonnance, pansemant, ide"
+        variant="teal" category="documents" search="infirmerie, ordonnancier, ordonnance, pansemant, ide"
         href="#views/ordonnancier/ordonnancier.html">
       </codex-module>
       <codex-module title="Cuprior" description="Générer un bon de commande pour le cuprior" icon="delivery"
         variant="gray" category="documents" search="cuprior, bon, pdf, document, commande"
         image="/pharma-gospel/views/accueil/images/documents/orphalan.png" href="#views/cuprior/cuprior.html">
       </codex-module>
-      <!-- Applications -->
+      <codex-module title="Grippe : Bon de prise en charge"
+        description="Générer un bon de prise en charge pour le vaccin grippe" icon="eyedropper" variant="cyan"
+        category="documents" search="grippe, bon, pdf, document, vaccin"
+        image="/pharma-gospel/views/accueil/images/documents/grippe.png" href="#views/grippe/grippe.html">
+      </codex-module>
+      <codex-module title="Vaccin : Bon de prise en charge"
+        description="Générer un bon de prise en charge pour les vaccins (Hors grippe et COVID)" icon="eyedropper"
+        variant="cyan" category="documents" search="grippe, bon, pdf, document, vaccin"
+        image="/pharma-gospel/views/accueil/images/documents/vaccin.png" href="#views/vaccin/vaccin.html">
+      </codex-module>
+      <!-- Documents : Informations -->
+      <codex-module title="Informations Vaccination" description="Calendrier, Compétences, Schema Vaccinal 2025"
+        icon="eyedropper" icon="eyedropper" variant="cyan" category="documents"
+        search="vaccin, calendrier, prescription, schema"
+        image="/pharma-gospel/views/accueil/images/documents/calendrier-vaccinal.png"
+        href="#views/vaccination/vaccination.html">
+      </codex-module>
+      <codex-module title="Aérosol : Prescription hors AMM"
+        description="Informations sur la prescription hors AMM d'un médicament" icon="eyedropper" variant="cyan"
+        category="documents" search="aerosol, prescription, hors, amm, amms, médicament, medicament"
+        href="#views/aerosol/aerosol.html">
+      </codex-module>
+      <codex-module title="Tarifs Préparatoire" description="Grille tarifaire des préparations et du vrac" icon="apps"
+        variant="pink" category="documents" search="préparatoire, tarifs, tableau, document"
+        image="/pharma-gospel/views/accueil/images/documents/preparatoire.png"
+        href="#views/preparatoire/preparatoire.html">
+      </codex-module>
+    </codex-module-grille>
+  </section>
+
+  <!-- ============ SECTION 3 : APPLICATIONS ============ -->
+  <section class="accueil-section">
+    <h2 class="accueil-section-title">🧰 Applications</h2>
+    <codex-module-grille taille="250" max="8">
       <codex-module title="Ordoscan" description="Transformation d'ordonnances photo en document numérisable"
         icon="apps" variant="green" category="applications"
         search="ordoscan, photo, ordonnance, scan, recadrage, perspective, fond, arriere-plan"
@@ -177,51 +203,41 @@
       <codex-module title="CouponPass" description="Extrait automatiquement les codes promo HighCo" icon="apps"
         variant="green" category="applications" search="coupon, remise" href="#views/couponpass/couponpass.html">
       </codex-module>
-      <!-- Vaccination -->
-      <codex-module title="Grippe : Bon de prise en charge"
-        description="Générer un bon de prise en charge pour le vaccin grippe" icon="eyedropper" variant="cyan"
-        category="vaccination" search="grippe, bon, pdf, document, vaccin"
-        image="/pharma-gospel/views/accueil/images/documents/grippe.png" href="#views/grippe/grippe.html">
+    </codex-module-grille>
+  </section>
+  <!-- ============ SECTION 4 : ATELIER ============ -->
+  <section class="accueil-section">
+    <h2 class="accueil-section-title">🎨 Atelier</h2>
+    <codex-module-grille taille="250" max="8">
+      <codex-module title="Trombinoscope" description="Outil pour générer les vignettes pour la PDA" icon="delivery"
+        variant="gray" category="atelier" search="trombinoscope, pda, vignettes, qr code, qrcode, barre, atelier"
+        href="#views/trombinoscope/trombinoscope.html">
       </codex-module>
-      <codex-module title="Vaccin : Bon de prise en charge"
-        description="Générer un bon de prise en charge pour les vaccins (Hors grippe et COVID)" icon="eyedropper"
-        variant="cyan" category="vaccination" search="grippe, bon, pdf, document, vaccin"
-        image="/pharma-gospel/views/accueil/images/documents/vaccin.png" href="#views/vaccin/vaccin.html">
+      <codex-module title="Purificateur"
+        description="Purifier le Bon de Livraison de la PDA, et économiser de l'encre à l'impression" icon="delivery"
+        variant="gray" category="atelier" search="purificateur, pda, bon, livraison, nettoyer, simplifier, atelier"
+        href="#views/purificateur/purificateur.html">
       </codex-module>
-      <codex-module title="Informations Vaccination" description="Calendrier, Compétences, Schema Vaccinal 2025"
-        icon="eyedropper" icon="eyedropper" variant="cyan" category="vaccination"
-        search="vaccin, calendrier, prescription, schema"
-        image="/pharma-gospel/views/accueil/images/documents/calendrier-vaccinal.png"
-        href="#views/vaccination/vaccination.html">
-        <!-- Aerosol -->
-        <codex-module title="Aérosol : Prescription hors AMM"
-          description="Informations sur la prescription hors AMM d'un médicament" icon="eyedropper" variant="cyan"
-          category="aerosol" search="aerosol, prescription, hors, amm, amms, médicament, medicament"
-          href="#views/aerosol/aerosol.html">
-        </codex-module>
-        <!-- Atelier -->
-        <codex-module title="Trombinoscope" description="Outil pour générer les vignettes pour la PDA" icon="delivery"
-          variant="gray" category="atelier" search="trombinoscope, pda, vignettes, qr code, qrcode, barre, atelier">
-        </codex-module>
-        <codex-module title="Purificateur"
-          description="Purifier le Bon de Livraison de la PDA, et économiser de l'encre à l'impression" icon="delivery"
-          variant="gray" category="atelier" search="purificateur, pda, bon, livraison, nettoyer, simplifier, atelier">
-        </codex-module>
-        <codex-module title="ChronoPoso" description="Modifie les dates du Plan de Posologie" icon="delivery"
-          variant="gray" category="atelier" search="atelier, posologie, chrono, plan, date">
-        </codex-module>
-        <codex-module title="Etiqueteuse Homéopathique" description="Étique étique étique...aie aie aie" icon="delivery"
-          variant="gray" category="atelier" search="etiquette, homeo">
-        </codex-module>
-        <codex-module title="Orthopédie" description="Gestion du stock orthèse et compression" icon="delivery"
-          variant="gray" category="atelier"
-          search="orthopedie, orthopédie, semelles, chaussures, attelles, corsets, bas, collants"
-          href="#views/orthopedie/orthopedie.html">
-        </codex-module>
-        <!-- Planning -->
-        <codex-module title="Planning" description="Consultation et Gestion du Planning des employés" icon="delivery"
-          variant="gray" category="planning" search="calendrier, planning" href="#views/planning/planning.html">
-        </codex-module>
+      <codex-module title="ChronoPoso" description="Modifie les dates du Plan de Posologie" icon="delivery"
+        variant="gray" category="atelier" search="atelier, posologie, chrono, plan, date">
+      </codex-module>
+      <codex-module title="Etiqueteuse Homéopathique" description="Étique étique étique...aie aie aie" icon="delivery"
+        variant="gray" category="atelier" search="etiquette, homeo">
+      </codex-module>
+      <codex-module title="Orthopédie" description="Gestion du stock orthèse et compression" icon="delivery"
+        variant="gray" category="atelier"
+        search="orthopedie, orthopédie, semelles, chaussures, attelles, corsets, bas, collants"
+        href="#views/orthopedie/orthopedie.html">
+      </codex-module>
+    </codex-module-grille>
+  </section>
+  <!-- ============ SECTION 5 : PLANNING ============ -->
+  <section class="accueil-section">
+    <h2 class="accueil-section-title">📅 Planning</h2>
+    <codex-module-grille taille="250" max="8">
+      <codex-module title="Planning" description="Consultation et Gestion du Planning des employés" icon="delivery"
+        variant="gray" category="planning" search="calendrier, planning" href="#views/planning/planning.html">
+      </codex-module>
     </codex-module-grille>
   </section>
 </codex-accueil>

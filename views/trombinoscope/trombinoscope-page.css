@@ -1,0 +1,39 @@
+/* ============================================================
+   Styles de page — preview + export PDF.
+   Layout critique posé en inline par le JS (dimensions en px).
+   ============================================================ */
+
+.pdf-page {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #000;
+  background: #fff;
+  margin: 0 auto;
+}
+
+.pdf-page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+/* Flex plutôt que grid — html2canvas-friendly. */
+.page-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.trombi-item {
+  text-align: center;
+  box-sizing: border-box;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.trombi-item svg {
+  display: block;
+  margin: 0 auto;
+}
+
+@media print {
+  body { margin: 0; padding: 0; }
+}

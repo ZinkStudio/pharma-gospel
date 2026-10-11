@@ -7,20 +7,8 @@
 // HEIC peut contenir plusieurs images (rafale, séquence), exactement comme
 // un PDF peut avoir plusieurs pages. libheif-js expose le tableau complet.
 
-const PDFJS_URL = new URL('../../vendor/pdfjs@6.3.289/pdf.min.js', import.meta.url).href;
-const PDFJS_WORKER_URL = new URL('../../vendor/pdfjs@6.3.289/pdf.worker.min.js', import.meta.url).href;
+import { loadPdfJs } from '../../utils/pdfjs-loader.js';
 const LIBHEIF_URL = new URL('../../vendor/libheif-js@1.23.2/libheif-bundle.js', import.meta.url).href;
-
-let pdfjsModulePromise = null;
-function loadPdfJs() {
-  if (!pdfjsModulePromise) {
-    pdfjsModulePromise = import(PDFJS_URL).then(mod => {
-      mod.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
-      return mod;
-    });
-  }
-  return pdfjsModulePromise;
-}
 
 let libheifInstancePromise = null;
 export function loadLibheif() {

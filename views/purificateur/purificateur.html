@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="./views/purificateur/purificateur.css">
+<codex-purificateur assistants="date-shortcuts">
+  <section class="view-shell">
+    <header class="view-header">
+      <h1 class="view-title">🧹 Purificateur de Bon de Livraison</h1>
+      <p class="view-lead">
+        Extrait et simplifie les données d'un bon de livraison PDF — seul
+        le tableau des productions est conservé, pour l'impression ou l'archivage.
+      </p>
+    </header>
+
+    <div class="callout callout-info">
+      <div class="callout-title">📋 Comment ça marche ?</div>
+      <ol class="callout-list">
+        <li>Téléchargez le BL depuis la PDA (format <code>BLxxxxxxxxxxxxxxxx.pdf</code>)</li>
+        <li>Déposez-le ci-dessous, cliquez sur <strong>Purifier</strong></li>
+        <li>Récupérez un PDF épuré, prêt à imprimer</li>
+      </ol>
+    </div>
+
+    <codex-form id="formPurificateur" class="form-section">
+      <div class="form-grid">
+        <div class="grid-col-full">
+          <label class="file-label" for="purif-file">
+            Fichier PDF du Bon de Livraison
+            <span class="file-hint">
+              Le nom de fichier doit respecter le format <code>BLxxxxxxxxxxxxxxxx.pdf</code>.<br>
+              Seuls les fichiers PDF de la PDA sont supportés.
+            </span>
+          </label>
+          <input id="purif-file" name="file" type="file" accept="application/pdf" required>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <cds-button type="submit" kind="primary">🧹 Purifier le PDF</cds-button>
+      </div>
+    </codex-form>
+
+    <div id="purif-result" class="purif-result" hidden>
+      <div class="purif-summary">
+        <div class="purif-summary-line">
+          <span class="purif-summary-label">BL n°</span>
+          <span id="purif-bl" class="purif-summary-value">—</span>
+        </div>
+        <div class="purif-summary-line">
+          <span class="purif-summary-label">Productions</span>
+          <span id="purif-count" class="purif-summary-value">—</span>
+        </div>
+        <div id="purif-validation" class="purif-validation"></div>
+      </div>
+
+      <!-- Ajout manuel -->
+      <details class="purif-add">
+        <summary class="purif-add-summary">
+          ➕ Ajouter une production manquante
+        </summary>
+
+        <codex-form id="formAddProd" class="purif-add-form">
+          <div class="purif-add-grid">
+            <cds-text-input name="id" label="ID Production" placeholder="2025000000000000"
+              helper-text="16 chiffres (facultatif)">
+            </cds-text-input>
+
+            <cds-text-input name="patient" label="Nom patient" placeholder="DUPONT Jean">
+            </cds-text-input>
+
+            <cds-text-input name="start" type="date" label="Début" required>
+            </cds-text-input>
+
+            <cds-text-input name="end" type="date" label="Fin" required>
+            </cds-text-input>
+          </div>
+
+          <div class="form-actions">
+            <cds-button type="submit" kind="secondary" size="sm">Ajouter</cds-button>
+          </div>
+        </codex-form>
+
+        <ul id="purif-manual-list" class="purif-manual-list" hidden></ul>
+      </details>
+
+      <codex-pdf-preview id="purif-preview" design="ibm"></codex-pdf-preview>
+    </div>
+  </section>
+</codex-purificateur>

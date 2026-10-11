@@ -59,9 +59,11 @@ export class CodexAccueilFiltres extends BaseLit {
     this.active = 'all';
     this.groups = [
       { id: 'all',          label: 'Tout' },
-      { id: 'officine',     label: '🔗 Officine' },
+      { id: 'officine',     label: '🔗 Liens externes' },
       { id: 'documents',    label: '📄 Documents' },
       { id: 'applications', label: '🧰 Applications' },
+      { id: 'atelier',      label: '🎨 Atelier' },
+      { id: 'planning',     label: '📅 Planning' }
     ];
   }
 

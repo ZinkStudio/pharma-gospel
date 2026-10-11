@@ -1,0 +1,93 @@
+<link rel="stylesheet" href="./views/trombinoscope/trombinoscope.css">
+<link rel="stylesheet" href="./views/trombinoscope/trombinoscope-page.css">
+<codex-trombinoscope>
+  <section class="view-shell">
+    <header class="view-header">
+      <h1 class="view-title">🗂️ Trombinoscope</h1>
+      <p class="view-lead">
+        Générez un annuaire visuel au format PDF pour la PDA, à partir d'un
+        fichier Excel / JSON ou d'une saisie manuelle.
+      </p>
+    </header>
+
+    <div class="trombi-layout">
+      <!-- ============ COLONNE GAUCHE : saisie ============ -->
+      <aside class="trombi-sidebar">
+        <cds-content-switcher id="trombi-tabs" value="auto">
+          <cds-content-switcher-item value="auto" target="panel-auto">
+            💾 Import fichier
+          </cds-content-switcher-item>
+          <cds-content-switcher-item value="manuel" target="panel-manuel">
+            ✒️ Ajout manuel
+          </cds-content-switcher-item>
+        </cds-content-switcher>
+
+        <div id="panel-auto" class="trombi-panel" role="tabpanel">
+          <codex-form id="formImport" class="form-section">
+            <div class="form-grid">
+              <div class="grid-col-full">
+                <label class="file-label" for="trombi-file">
+                  Fichier Excel ou JSON
+                  <span class="file-hint">
+                    Formats : .xlsx, .xls, .xlsm, .json<br>
+                    Le fichier doit contenir les colonnes <code>NOM</code> et <code>PRENOM</code>.
+                  </span>
+                </label>
+                <input id="trombi-file" name="file" type="file"
+                  accept=".xlsx,.xls,.xlsm,.json" required>
+              </div>
+            </div>
+            <div class="form-actions">
+              <cds-button type="submit" kind="primary">Importer</cds-button>
+            </div>
+          </codex-form>
+        </div>
+
+        <div id="panel-manuel" class="trombi-panel" role="tabpanel" hidden>
+          <codex-form id="formManuel" class="form-section">
+            <div class="form-grid">
+              <div class="grid-col-full">
+                <cds-text-input name="nom" label="Nom" placeholder="Dupont" required></cds-text-input>
+              </div>
+              <div class="grid-col-full">
+                <cds-text-input name="prenom" label="Prénom" placeholder="Jean" required></cds-text-input>
+              </div>
+            </div>
+            <div class="form-actions">
+              <cds-button type="submit" kind="primary">➕ Ajouter</cds-button>
+            </div>
+          </codex-form>
+        </div>
+      </aside>
+
+      <!-- ============ COLONNE DROITE : liste + preview ============ -->
+      <div class="trombi-main">
+        <div class="trombi-list-header">
+          <h2 class="trombi-list-title">
+            Liste actuelle
+            <span id="trombi-count" class="trombi-count">0</span>
+          </h2>
+          <cds-button id="trombi-clear" kind="danger-ghost" size="sm" type="button">
+            🗑 Vider la liste
+          </cds-button>
+        </div>
+
+        <div id="trombi-list-wrap" class="trombi-list-wrap">
+          <p class="trombi-empty">Aucune entrée pour le moment.</p>
+        </div>
+
+        <div id="trombi-output" class="trombi-output" hidden>
+          <codex-pdf-toolbar
+            id="trombi-toolbar"
+            filename="Trombinoscope.pdf"
+            show-columns
+            show-rows
+            columns="3"
+            rows="3">
+          </codex-pdf-toolbar>
+          <div id="trombi-pages" class="trombi-pages"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</codex-trombinoscope>
