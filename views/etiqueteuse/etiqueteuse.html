@@ -1,0 +1,104 @@
+<link rel="stylesheet" href="./views/etiqueteuse/etiqueteuse.css">
+<link rel="stylesheet" href="./views/etiqueteuse/etiqueteuse-page.css">
+<codex-etiqueteuse>
+  <section class="view-shell">
+    <header class="view-header">
+      <h1 class="view-title">🏷️ Étiqueteuse Homéopathique</h1>
+      <p class="view-lead">
+        Générez une planche d'étiquettes pour vos souches homéopathiques
+        (7 × 5 par page A4).
+      </p>
+    </header>
+
+    <div class="etq-layout">
+      <!-- ============ Colonne gauche : formulaire ============ -->
+      <div class="etq-sidebar">
+        <cds-content-switcher id="etq-tabs" value="manuel">
+          <cds-content-switcher-item value="manuel" target="panel-manuel">
+            ✒️ Manuel
+          </cds-content-switcher-item>
+          <cds-content-switcher-item value="import" target="panel-import">
+            💾 Import fichier
+          </cds-content-switcher-item>
+        </cds-content-switcher>
+
+        <!-- ============ Onglet Manuel ============ -->
+        <div id="panel-manuel" class="etq-panel" role="tabpanel">
+          <codex-form id="formEtiquette" class="form-section">
+            <fieldset class="form-group">
+              <legend class="form-legend">Nouvelle souche</legend>
+
+              <div class="form-grid">
+                <div class="grid-col-full">
+                  <cds-text-input name="denomination" label="Dénomination" placeholder="Belladonna" required>
+                  </cds-text-input>
+                </div>
+
+                <div class="grid-col-full">
+                  <codex-field label="Dosage">
+                    <input type="text" name="dosage" id="etq-dosage" list="dosages-list" placeholder="9 CH"
+                      autocomplete="off" required>
+                    <datalist id="dosages-list"></datalist>
+                  </codex-field>
+                </div>
+
+                <div class="grid-col-full">
+                  <cds-text-input name="codeBarre" label="Code EAN13 (DataMatrix)" placeholder="3400933047467"
+                    inputmode="numeric" maxlength="13" pattern="[0-9]{13}"
+                    helper-text="13 chiffres — laissez vide si non applicable">
+                  </cds-text-input>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <cds-button type="submit" kind="primary">➕ Ajouter</cds-button>
+              </div>
+            </fieldset>
+          </codex-form>
+        </div>
+        <!-- ============ Onglet Import ============ -->
+        <div id="panel-import" class="etq-panel" role="tabpanel" hidden>
+          <codex-form id="formImport" class="form-section">
+            <div class="form-grid">
+              <div class="grid-col-full">
+                <label class="file-label" for="etq-file">
+                  Fichier Excel ou JSON
+                  <span class="file-hint">
+                    Formats : .xlsx, .xls, .xlsm, .json<br>
+                    Colonnes attendues : <code>denomination</code>, <code>dosage</code>, <code>code</code> (optionnel).
+                  </span>
+                </label>
+                <input id="etq-file" name="file" type="file" accept=".xlsx,.xls,.xlsm,.json" required>
+              </div>
+            </div>
+            <div class="form-actions">
+              <cds-button type="submit" kind="primary">Importer</cds-button>
+            </div>
+          </codex-form>
+        </div>
+      </div>
+      <!-- ============ Colonne droite : liste + preview ============ -->
+      <div class="etq-main">
+        <div class="etq-list-header">
+          <h2 class="etq-list-title">
+            Souches
+            <span id="etq-count" class="etq-count">0</span>
+          </h2>
+          <cds-button id="etq-clear" kind="danger-ghost" size="sm" type="button">
+            🗑 Vider la liste
+          </cds-button>
+        </div>
+
+        <div id="etq-list-wrap" class="etq-list-wrap">
+          <p class="etq-empty">Aucune souche pour le moment.</p>
+        </div>
+
+        <div id="etq-output" class="etq-output" hidden>
+          <codex-pdf-toolbar id="etq-toolbar" filename="Etiquettes.pdf" show-rows rows="5">
+          </codex-pdf-toolbar>
+          <div id="etq-pages" class="etq-pages"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</codex-etiqueteuse>

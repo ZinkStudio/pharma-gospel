@@ -227,4 +227,29 @@ export class PdfLibEngine {
     const bytes = await pdfDoc.save();
     return new Blob([bytes], { type: 'application/pdf' });
   }
+
+  /**
+ * Charge un PDF depuis des bytes, applique une fonction de modification,
+ * retourne le Blob PDF résultant.
+ *
+ * @param {ArrayBuffer|Uint8Array} pdfBytes
+ * @param {(pdfDoc: PDFDocument) => Promise<PDFDocument|void>} modifierFn
+ *   Reçoit le document chargé. Peut muter le doc directement (pas de
+ *   retour attendu) ou retourner un nouveau PDFDocument. Tout appel à
+ *   page.drawText / drawRectangle / drawImage est valide.
+ * @returns {Promise<Blob>}
+ */
+  static async modify(pdfBytes, modifierFn) {
+    if (!pdfBytes) throw new Error('[PdfLibEngine] pdfBytes requis.');
+    if (typeof modifierFn !== 'function') throw new Error('[PdfLibEngine] modifierFn requis.');
+
+    const { PDFDocument } = await this._ensureLib();
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+
+    const result = await modifierFn(pdfDoc);
+    const finalDoc = result instanceof PDFDocument ? result : pdfDoc;
+
+    const bytes = await finalDoc.save();
+    return new Blob([bytes], { type: 'application/pdf' });
+  }
 }

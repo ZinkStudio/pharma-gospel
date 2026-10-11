@@ -1,0 +1,181 @@
+.view-shell {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.view-header { margin-bottom: 1.5rem; }
+
+.view-lead {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  max-width: 72ch;
+}
+
+/* ---------- Layout 2 colonnes ---------- */
+.etq-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .etq-layout { grid-template-columns: 1fr; }
+}
+
+.etq-sidebar { position: sticky; top: 1rem; }
+
+/* ---------- Formulaire ---------- */
+.form-section { margin: 0; }
+
+.form-group {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.form-legend {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text);
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.grid-col-full { width: 100%; }
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* ---------- Liste ---------- */
+.etq-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.etq-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.etq-list-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--pc-text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.etq-count {
+  display: inline-block;
+  min-width: 1.75rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--pc-primary-light);
+  color: var(--pc-primary-dark);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.etq-list-wrap {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--pc-border);
+  border-radius: 4px;
+  background: var(--pc-surface);
+}
+
+.etq-empty {
+  margin: 0;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--pc-text-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.etq-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.etq-list-table thead th {
+  position: sticky;
+  top: 0;
+  padding: 0.5rem 0.75rem;
+  background: var(--pc-surface-hover);
+  border-bottom: 1px solid var(--pc-border);
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--pc-text-secondary);
+  z-index: 1;
+}
+
+.etq-list-table tbody td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--pc-border);
+  color: var(--pc-text);
+}
+
+.etq-list-table tbody tr:last-child td { border-bottom: none; }
+.etq-list-table tbody tr:hover { background: var(--pc-surface-hover); }
+
+.etq-delete {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--cds-support-error, #da1e28);
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  font-family: inherit;
+}
+
+.etq-delete:hover {
+  background: color-mix(in srgb, var(--cds-support-error, #da1e28) 10%, transparent);
+  border-color: color-mix(in srgb, var(--cds-support-error, #da1e28) 30%, transparent);
+}
+
+/* ---------- Preview PDF ---------- */
+.etq-output {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.etq-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: auto;
+  max-height: 70vh;
+  background: #e0e0e0;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.etq-pages .pdf-page {
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  background: white;
+}
