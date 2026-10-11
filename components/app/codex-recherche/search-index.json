@@ -1,45 +1,9 @@
 [
   {
-    "id": "officine",
-    "title": "Module Officine",
-    "keywords": "dashboard, officine, messageries, laboratoires, orthopedie, fournitures, mutuelles, tiers-payant",
-    "route": "#views/officine/officine.html"
-  },
-  {
-    "id": "documents",
-    "title": "Module Documents",
-    "keywords": "dashboard,  document, pdf, bon, commande, vaccin, grippe, cuprior",
-    "route": "#views/documents/documents.html"
-  },
-  {
-    "id": "grippe",
-    "title": "Générer Bon Grippe",
-    "keywords": "grippe, bon, pdf, document",
-    "route": "#views/grippe/grippe.html"
-  },
-  {
-    "id": "vaccin",
-    "title": "Générer Bon Vaccin",
-    "keywords": "vaccin, bon, pdf, document",
-    "route": "#views/vaccin/vaccin.html"
-  },
-  {
-    "id": "cuprior",
-    "title": "Commander Cuprior",
-    "keywords": "cuprior, bon, pdf, document, commande",
-    "route": "#views/cuprior/cuprior.html"
-  },
-  {
-    "id": "preparatoire",
-    "title": "Tarifs Préparatoire",
-    "keywords": "préparatoire, tarifs, tableau, document",
-    "route": "#views/preparatoire/preparatoire.html"
-  },
-  {
-    "id": "applications",
-    "title": "Module Applications",
-    "keywords": "dashboard,  application, utilitaire, outils, gestion, calcul, assistant",
-    "route": "#views/applications/applications.html"
+    "id": "aerosol",
+    "title": "Aérosol : Prescription hors AMM",
+    "keywords": "aerosol, aérosol,prescription, hors, amm, amms, médicament, medicament",
+    "route": "#views/aerosol/aerosol.html"
   },
   {
     "id": "calculazen",
@@ -48,34 +12,34 @@
     "route": "#views/calculazen/calculazen.html"
   },
   {
-    "id": "nir",
-    "title": "Calcul clé sécu",
-    "keywords": "nir, utilitaire, outils, gestion, calcul, assistant, numéro, secu, vitale, ins, cle, clé",
-    "route": "#views/nir/nir.html"
+    "id": "cartes",
+    "title": "Cartes Infirmiers",
+    "keywords": "infirmerie, cartes, ide, infirmier, infirmière, domicile",
+    "route": "#views/cartes/cartes.html"
   },
   {
-    "id": "renouvellement",
-    "title": "Renouvellement (R1,R2..)",
-    "keywords": "renouvellement, utilitaire, outils, gestion, calcul, assistant, jours, feries, fériés, attente, date, vacances",
-    "route": "#views/renouvellement/renouvellement.html"
-  },
-  {
-    "id": "datamatrix",
-    "title": "Etiquette Datamatrix",
-    "keywords": "datamatrix, utilitaire, outils, gestion, assistant, qr code, qrcode, barre",
-    "route": "#views/applications/datamatrix/datamatrix.html"
+    "id": "chronoposo",
+    "title": "Chronoposo : Modifie les dates du Plan de Posologie",
+    "keywords": "atelier, posologie, chrono, plan, date",
+    "route": "#views/chronoposo/chronoposo.html"
   },
   {
     "id": "coupon",
     "title": "Coupon Pass",
     "keywords": "coupon, remise",
-    "route": "#views/applications/couponpass/couponpass.html"
+    "route": "#views/couponpass/couponpass.html"
   },
   {
-    "id": "ordoscan",
-    "title": "Ordoscan - Nettoyage d'ordonnance photo",
-    "keywords": "ordoscan, photo, ordonnance, scan, recadrage, perspective, fond, arriere-plan",
-    "route": "#views/ordoscan/ordoscan.html"
+    "id": "cuprior",
+    "title": "Commander Cuprior",
+    "keywords": "cuprior, bon, pdf, document, commande",
+    "route": "#views/cuprior/cuprior.html"
+  },
+  {
+    "id": "datamatrix",
+    "title": "Etiquette Datamatrix",
+    "keywords": "datamatrix, utilitaire, outils, gestion, assistant, qr code, qrcode, barre",
+    "route": "#views/datamatrix/datamatrix.html"
   },
   {
     "id": "endossaire",
@@ -84,22 +48,28 @@
     "route": "#views/endossaire/endossaire.html"
   },
   {
-    "id": "infirmerie",
-    "title": "Module Infirmerie",
-    "keywords": "dashboard, infirmerie, soins, patients, dossiers, facture, ordonnance, ordonnancier, ide",
-    "route": "#views/infirmerie/infirmerie.html"
-  },
-  {
-    "id": "cartes",
-    "title": "Cartes Infirmiers",
-    "keywords": "infirmerie, cartes, ide, infirmier, infirmière, domicile",
-    "route": "#views/cartes/cartes.html"
+    "id": "etiqueteuse",
+    "title": "Etiquette Homeopathie",
+    "keywords": "etiquette, homeo",
+    "route": "#views/etiqueteuse/etiqueteuse.html"
   },
   {
     "id": "facture",
     "title": "Facture produits pharmaceutiques",
     "keywords": "infirmerie, facture, produit, pharmaceutique, ide",
-    "route": "#views/infirmerie/facture/facture.html"
+    "route": "#views/facture/facture.html"
+  },
+  {
+    "id": "grippe",
+    "title": "Générer Bon Grippe",
+    "keywords": "grippe, bon, pdf, document",
+    "route": "#views/grippe/grippe.html"
+  },
+  {
+    "id": "nir",
+    "title": "Calcul clé sécu",
+    "keywords": "nir, utilitaire, outils, gestion, calcul, assistant, numéro, secu, vitale, ins, cle, clé",
+    "route": "#views/nir/nir.html"
   },
   {
     "id": "ordonnancier",
@@ -108,57 +78,57 @@
     "route": "#views/ordonnancier/ordonnancier.html"
   },
   {
-    "id": "Vaccination",
-    "title": "Calendrier Vaccinal",
-    "keywords": "dashboard, vaccin, calendrier, prescription, schema",
-    "route": "#views/vaccination/vaccination.html"
-  },
-  {
-    "id": "Aerosol",
-    "title": "Aérosol : Prescription hors AMM",
-    "keywords": "aerosol, aérosol,prescription, hors, amm, amms, médicament, medicament",
-    "route": "#views/aerosol/aerosol.html"
-  },
-  {
-    "id": "atelier",
-    "title": "Module atelier",
-    "keywords": "dashboard, atelier, outils",
-    "route": "#views/atelier/atelier.html"
-  },
-  {
-    "id": "trombinoscope",
-    "title": "Trombinoscope PDA",
-    "keywords": "trombinoscope, pda, vignettes, qr code, qrcode, barre, atelier",
-    "route": "#views/atelier/trombinoscope/trombinoscope.html"
-  },
-  {
-    "id": "purificateur",
-    "title": "Purificateur PDA",
-    "keywords": "purificateur, pda, bon, livraison, nettoyer, simplifier, atelier",
-    "route": "#views/atelier/purificateur/purificateur.html"
-  },
-  {
-    "id": "etiqueteuse",
-    "title": "Etiquette Homeopathie",
-    "keywords": "etiquette, homeo",
-    "route": "#views/atelier/etiqueteuse/etiqueteuse.html"
-  },
-  {
-    "id": "uberml",
-    "title": "Commande Samedi",
-    "keywords": "commande, samedi, ocp, uberml",
-    "route": "#views/atelier/uberml/uberml.html"
+    "id": "ordoscan",
+    "title": "Ordoscan - Nettoyage d'ordonnance photo",
+    "keywords": "ordoscan, photo, ordonnance, scan, recadrage, perspective, fond, arriere-plan",
+    "route": "#views/ordoscan/ordoscan.html"
   },
   {
     "id": "orthopedie",
     "title": "Module Orthopédie",
     "keywords": "dashboard, orthopedie, orthopédie, semelles, chaussures, attelles, corsets, bas, collants",
-    "route": "#views/atelier/orthopedie/orthopedie.html"
+    "route": "#views/orthopedie/orthopedie.html"
   },
   {
     "id": "planning",
     "title": "Affichage Planning",
     "keywords": "calendrier, planning",
     "route": "#views/planning/planning.html"
+  },
+  {
+    "id": "preparatoire",
+    "title": "Tarifs Préparatoire",
+    "keywords": "préparatoire, tarifs, tableau, document",
+    "route": "#views/preparatoire/preparatoire.html"
+  },
+  {
+    "id": "purificateur",
+    "title": "Purificateur PDA",
+    "keywords": "purificateur, pda, bon, livraison, nettoyer, simplifier, atelier",
+    "route": "#views/purificateur/purificateur.html"
+  },
+  {
+    "id": "renouvellement",
+    "title": "Renouvellement (R1,R2..)",
+    "keywords": "renouvellement, utilitaire, outils, gestion, calcul, assistant, jours, feries, fériés, attente, date, vacances",
+    "route": "#views/renouvellement/renouvellement.html"
+  },
+  {
+    "id": "trombinoscope",
+    "title": "Trombinoscope PDA",
+    "keywords": "trombinoscope, pda, vignettes, qr code, qrcode, barre, atelier",
+    "route": "#views/trombinoscope/trombinoscope.html"
+  },
+  {
+    "id": "vaccin",
+    "title": "Générer Bon Vaccin",
+    "keywords": "vaccin, bon, pdf, document",
+    "route": "#views/vaccin/vaccin.html"
+  },
+  {
+    "id": "Vaccination",
+    "title": "Calendrier Vaccinal",
+    "keywords": "dashboard, vaccin, calendrier, prescription, schema",
+    "route": "#views/vaccination/vaccination.html"
   }
 ]
