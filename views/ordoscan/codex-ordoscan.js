@@ -1,6 +1,6 @@
 import { BaseView } from '../../core/base-view.js';
 import { downloadBlob, canShareFiles, shareBlob } from '../../utils/export-utils.js';
-import { removeImageBackground } from '../../utils/ordoscan-bgremoval.js';
+import { removeImageBackground, preloadBackgroundRemoval } from '../../utils/ordoscan-bgremoval.js';
 import { detectDocumentCorners, mountCornerEditor, extractFlattenedImage } from './scanic-adapter.js';
 import { analyserFichier, tenterConversionHeicDeSecours } from './format-convert.js';
 import { redimensionnerPourTraitement, ajusterAuFormat } from './smart-resize.js';
@@ -46,6 +46,89 @@ export class CodexOrdoscan extends BaseView {
     this.querySelector('#ordoscan-btn-share')?.addEventListener('click', () => this.#shareCurrent());
     this.querySelector('#ordoscan-btn-cancel')?.addEventListener('click', () => this.#resetAll());
     this.querySelector('#ordoscan-btn-restart')?.addEventListener('click', () => this.#handleRestartOuSuivant());
+
+    // Précharge le modèle en arrière-plan — logique extraite dans
+    // #prechargerModele() pour lisibilité.
+    this.#prechargerModele();
+  }
+
+  /**
+   * Précharge le modèle de suppression d'arrière-plan en tâche de fond.
+   *
+   * Le coût (88 Mo + compilation des shaders GPU, ~10 s la première fois)
+   * n'est payé qu'une seule fois par session. Ensuite, chaque clic sur
+   * « Supprimer l'arrière-plan » déclenche une inférence à ~500 ms.
+   *
+   * Le préchargement est planifié sur `requestIdleCallback` pour ne pas
+   * concurrencer l'affichage initial de la vue. Un timeout (5 s) force
+   * son démarrage si la page reste occupée (ex. détection de coins Scanic
+   * qui tourne en parallèle pour un premier fichier).
+   *
+   * `proxy: false` : le backend WebGPU ne s'initialise pas correctement
+   * derrière le proxy worker d'onnxruntime-web via esm.sh
+   * (« worker not ready »). À réévaluer quand onnxruntime-web sera servi
+   * depuis un chemin local.
+   */
+  #prechargerModele() {
+    const hint = this.querySelector('#ordoscan-preload-hint');
+    const idleCb = window.requestIdleCallback ?? ((cb) => setTimeout(cb, 1500));
+    const options = {
+      device: navigator.gpu ? 'gpu' : 'cpu',
+      proxy: false,
+      model: 'medium',
+    };
+
+    idleCb(async () => {
+      if (hint) hint.hidden = false;
+      const t0 = performance.now();
+
+      // 1. Téléchargement + création session ONNX.
+      // Toléré si ça échoue (modèle déjà en cache, config déjà validée, etc.) —
+      // on veut quand même tenter le warm-up, qui est ce qui compile réellement
+      // les shaders WebGPU.
+      try {
+        await preloadBackgroundRemoval(null, options);
+      } catch (err) {
+        console.warn('[CodexOrdoscan] preload ignoré (non bloquant) :', err);
+      }
+
+      // 2. Warm-up d'inférence (compilation shaders + init kernels).
+      try {
+        await this.#warmUpInference(options);
+      } catch (err) {
+        console.warn('[CodexOrdoscan] Warm-up inférence échoué (non bloquant) :', err);
+      } finally {
+        if (hint) hint.hidden = true;
+        const dt = ((performance.now() - t0) / 1000).toFixed(2);
+        console.log(`⏱️ [CodexOrdoscan] Préchargement IA terminé en ${dt} s`);
+      }
+    }, { timeout: 5000 });
+  }
+
+  /**
+   * Inférence à vide sur une image blanche 1024×1024.
+   * Compile les shaders WebGPU et initialise les kernels internes
+   * d'onnxruntime — tout ce qu'il faut pour que la première inférence
+   * utilisateur soit à ~500 ms.
+   *
+   * Le Blob résultat est jeté (garbage collector). Le coût CPU est
+   * négligeable : la passe complète sur une image unie reste dominée par
+   * l'init shader, pas par le traitement.
+   */
+  async #warmUpInference(options) {
+    const SIZE = 1024;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = SIZE;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, SIZE, SIZE);
+
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/jpeg', 0.8));
+
+    await removeImageBackground(blob, null, options.model, {
+      device: options.device,
+      proxy: options.proxy,
+    });
   }
 
   #showPhase(phase) {
@@ -155,6 +238,13 @@ export class CodexOrdoscan extends BaseView {
     });
   }
 
+  #devicePourModele(modele) {
+    // Modèle quantifié int8 → CPU + WASM SIMD (le GPU perd du temps en
+    // déquantification aller-retour).
+    // Modèle fp16 → WebGPU (natif, plus rapide sur transfert et compute).
+    if (modele === 'small') return 'cpu';
+    return navigator.gpu ? 'gpu' : 'cpu';
+  }
   // =============================================================
   // Recadrage + perspective (Scanic)
   // =============================================================
@@ -256,55 +346,37 @@ export class CodexOrdoscan extends BaseView {
     btn.disabled = true;
     progress.hidden = false;
 
-    // ⏱️ Démarrage du chronomètre
     const startTime = performance.now();
 
     try {
-      const modele = this.querySelector('#ordoscan-model-switcher')?.value || 'small';
+      const modele = this.querySelector('#ordoscan-model-switcher')?.value || 'medium';
+
+      const device = modele === 'small'
+        ? 'cpu'
+        : (navigator.gpu ? 'gpu' : 'cpu');
+
+      const proxy = device === 'cpu';
+
       const croppedBlob = await this.#canvasToBlob(this._croppedCanvas, 'image/jpeg', 0.95);
-      const transparentPng = await removeImageBackground(croppedBlob, (key, current, total) => {
-        const percent = total ? Math.round((current / total) * 100) : 0;
-        progress.textContent = `⏳ Traitement en cours (${key})… (${percent}%)`;
-      }, modele);
 
-      // ⏱️ Fin du chronomètre
-      const endTime = performance.now();
-      const durationMs = endTime - startTime;
-      const durationSeconds = (durationMs / 1000).toFixed(2);
+      const transparentPng = await removeImageBackground(
+        croppedBlob,
+        (key, current, total) => {
+          const percent = total ? Math.round((current / total) * 100) : 0;
+          progress.textContent = `⏳ Traitement en cours (${key})… (${percent}%)`;
+        },
+        modele,
+        { device, proxy }
+      );
 
-      console.log(`⏱️ [OrdoscanBgRemoval] Temps de traitement total : ${durationSeconds} s (${durationMs.toFixed(0)} ms)`);
+      const durationSeconds = ((performance.now() - startTime) / 1000).toFixed(2);
+      console.log(
+        `⏱️ [OrdoscanBgRemoval] ${durationSeconds} s (device=${device}, model=${modele}, proxy=${proxy})`
+      );
 
       this._currentBlob = transparentPng;
       this.#afficherResultat();
-
-      // Vous pouvez même l'inclure dans la notification si vous le souhaitez !
       this.notify.success(`Arrière-plan supprimé en ${durationSeconds}s`);
-      btn.hidden = true;
-    } catch (err) {
-      console.error('[CodexOrdoscan] Erreur suppression du fond :', err);
-      this.notify.error('Erreur lors de la suppression du fond : ' + err.message);
-      btn.disabled = false;
-    } finally {
-      progress.hidden = true;
-    }
-  }
-  async #runBackgroundRemovalOld() {
-    const btn = this.querySelector('#ordoscan-btn-remove-bg');
-    const progress = this.querySelector('#ordoscan-bg-progress');
-    if (!this._croppedCanvas) return;
-
-    btn.disabled = true;
-    progress.hidden = false;
-
-    try {
-      const croppedBlob = await this.#canvasToBlob(this._croppedCanvas, 'image/jpeg', 0.95);
-      const transparentPng = await removeImageBackground(croppedBlob, (key, current, total) => {
-        progress.textContent = `⏳ Traitement en cours… (${Math.round((current / total) * 100)}%)`;
-      });
-
-      this._currentBlob = transparentPng;
-      this.#afficherResultat();
-      this.notify.success("Arrière-plan supprimé");
       btn.hidden = true;
     } catch (err) {
       console.error('[CodexOrdoscan] Erreur suppression du fond :', err);

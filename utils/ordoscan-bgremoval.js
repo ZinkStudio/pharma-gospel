@@ -1,10 +1,10 @@
 // /static/js/assistants/assistant-ordoscan-bgremoval.js
 
 const IMGLY_VERSION = '1.5.8';
-const IMGLY_MODULE_URL = `https://esm.sh/@imgly/background-removal@${IMGLY_VERSION}?bundle`;
-const IMGLY_PUBLIC_PATH = `https://staticimgly.com/@imgly/background-removal-data/${IMGLY_VERSION}/dist/`;
-// const IMGLY_MODULE_URL = new URL(`../vendor/imgly@1.5.8/background-removal.mjs`, import.meta.url).href; // Chargement local pour éviter les problèmes de CORS et de CDN
-// const IMGLY_PUBLIC_PATH = new URL(`../vendor/imgly@1.5.8/dist/`, import.meta.url).href;
+// const IMGLY_MODULE_URL = `https://esm.sh/@imgly/background-removal@${IMGLY_VERSION}?bundle`;
+// const IMGLY_PUBLIC_PATH = `https://staticimgly.com/@imgly/background-removal-data/${IMGLY_VERSION}/dist/`;
+const IMGLY_MODULE_URL = new URL(`../vendor/imgly@1.5.8/background-removal.mjs`, import.meta.url).href; // Chargement local pour éviter les problèmes de CORS et de CDN
+const IMGLY_PUBLIC_PATH = new URL(`../vendor/imgly@1.5.8/dist/`, import.meta.url).href;
 
 let _imglyModulePromise = null;
 function loadImgly() {
@@ -24,25 +24,52 @@ function resolveFn(mod, ...names) {
   return fn;
 }
 
-export async function preloadBackgroundRemoval(onProgress) {
+export async function preloadBackgroundRemoval(onProgress, options = {}) {
   try {
     const mod = await loadImgly();
     const preload = resolveFn(mod, 'preload');
-    await preload({ publicPath: IMGLY_PUBLIC_PATH, progress: onProgress });
+
+    const {
+      device = 'cpu',
+      proxy  = false,
+      model  = 'small',
+    } = options;
+
+    const config = {
+      publicPath: IMGLY_PUBLIC_PATH,
+      model,
+      device,
+      proxyToWorker: proxy,
+    };
+    // Le schéma zod d'imgly valide `progress` comme fonction optionnelle :
+    // passer `null` explicitement le fait échouer. On n'ajoute la clé que
+    // si un callback réel est fourni.
+    if (typeof onProgress === 'function') config.progress = onProgress;
+
+    await preload(config);
   } catch (err) {
     console.warn('[assistant-ordoscan-bgremoval] Préchargement impossible (non bloquant)', err);
   }
 }
 
-export async function removeImageBackground(imageBlob, onProgress, model = 'medium') {
+export async function removeImageBackground(imageBlob, onProgress, model = 'small', options = {}) {
   const mod = await loadImgly();
   const removeBackground = resolveFn(mod, 'removeBackground');
 
-  return await removeBackground(imageBlob, {
+  const {
+    device = 'cpu',
+    proxy  = false,
+  } = options;
+
+  const config = {
     publicPath: IMGLY_PUBLIC_PATH,
-    progress: onProgress,
-    model // 'small' (~40 Mo, plus rapide) ou 'medium' (~80 Mo, par défaut, meilleure qualité)
-  });
+    model,
+    device,
+    proxyToWorker: proxy,
+  };
+  if (typeof onProgress === 'function') config.progress = onProgress;
+
+  return await removeBackground(imageBlob, config);
 }
 
 export async function compositeOnWhite(transparentPngBlob) {
