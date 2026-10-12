@@ -9,6 +9,9 @@
 
     <!-- ===== PHASE IMPORT ===== -->
     <div id="ordoscan-phase-import">
+      <p id="ordoscan-preload-hint" class="ordoscan-preload-hint">
+        ⏳ Préparation de l'IA en arrière-plan… (une seule fois par session, ~10 s)
+      </p>
       <codex-drop-zone design="ibm" id="ordoscan-dropzone" accept="image/*,.pdf,.heic,.heif"
         heading="📥 Glissez une photo, un PDF ou un HEIC ici, <strong>cliquez</strong> pour choisir un fichier"
         hint="ou <strong>collez</strong> une image copiée (Ctrl+V / Cmd+V)" formats="JPG, PNG, WEBP, PDF, HEIC"
@@ -42,9 +45,11 @@
 
           <div class="ordoscan-fieldset">
             <p class="view-subtitle">Modèle de suppression de fond</p>
-            <cds-content-switcher id="ordoscan-model-switcher" value="small">
-              <cds-content-switcher-item value="small">Rapide (small, ~40 Mo)</cds-content-switcher-item>
-              <cds-content-switcher-item value="medium">Qualité (medium, ~80 Mo)</cds-content-switcher-item>
+            <cds-content-switcher id="ordoscan-model-switcher" value="medium">
+              <cds-content-switcher-item value="medium">🚀 Rapide (medium, ~0,5 s après
+                préparation)</cds-content-switcher-item>
+              <cds-content-switcher-item value="small">🔋 Compatibilité (small, ~7 s, ~40
+                Mo)</cds-content-switcher-item>
             </cds-content-switcher>
           </div>
 

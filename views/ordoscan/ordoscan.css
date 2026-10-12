@@ -43,3 +43,13 @@
   color: var(--pc-text);
   cursor: pointer;
 }
+
+.ordoscan-preload-hint {
+  margin: 0 0 0.75rem 0;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--pc-text-secondary);
+  background: var(--pc-surface-hover);
+  border-left: 3px solid var(--pc-primary);
+  border-radius: 3px;
+}
