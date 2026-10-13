@@ -1,6 +1,6 @@
 import { BaseView } from '../../core/base-view.js';
 import { downloadBlob, canShareFiles, shareBlob } from '../../utils/export-utils.js';
-import { removeImageBackground, preloadBackgroundRemoval } from '../../utils/ordoscan-bgremoval.js';
+import { removeImageBackground, preloadBackgroundRemoval, isPreloaded } from '../../utils/ordoscan-bgremoval.js';
 import { detectDocumentCorners, mountCornerEditor, extractFlattenedImage } from './scanic-adapter.js';
 import { analyserFichier, tenterConversionHeicDeSecours } from './format-convert.js';
 import { redimensionnerPourTraitement, ajusterAuFormat } from './smart-resize.js';
@@ -34,13 +34,6 @@ export class CodexOrdoscan extends BaseView {
       if (file) this.#handleFile(file);
     });
 
-    // Assistant clipboard-paste (glisser-déposer + coller) attaché via
-    // l'attribut `assistants="clipboard-paste"` sur l'hôte.
-    this.addEventListener('files-captured', (e) => {
-      const file = e.detail?.file;
-      if (file) this.#handleFile(file);
-    });
-
     this.querySelector('#ordoscan-btn-remove-bg')?.addEventListener('click', () => this.#runBackgroundRemoval());
     this.querySelector('#ordoscan-btn-download')?.addEventListener('click', () => this.#downloadSelectedFormats());
     this.querySelector('#ordoscan-btn-share')?.addEventListener('click', () => this.#shareCurrent());
@@ -56,27 +49,36 @@ export class CodexOrdoscan extends BaseView {
    * Précharge le modèle de suppression d'arrière-plan en tâche de fond.
    *
    * Le coût (88 Mo + compilation des shaders GPU, ~10 s la première fois)
-   * n'est payé qu'une seule fois par session. Ensuite, chaque clic sur
-   * « Supprimer l'arrière-plan » déclenche une inférence à ~500 ms.
+   * n'est payé qu'une seule fois par session de page. Ensuite, chaque clic
+   * sur « Supprimer l'arrière-plan » déclenche une inférence à ~500 ms.
+   *
+   * ⚠️ Idempotence : cette méthode est appelée à CHAQUE montage de la vue
+   * (navigation SPA aller-retour). Sans garde, le warm-up relancerait une
+   * inférence sur une session dont les buffers WebGPU ont été invalidés
+   * entre-temps → erreurs de validation « Buffer with '' label is invalid ».
+   * On s'appuie donc sur `isPreloaded()` du module bgremoval pour ne faire
+   * le travail qu'une seule fois par config (model/device/proxy).
    *
    * Le préchargement est planifié sur `requestIdleCallback` pour ne pas
    * concurrencer l'affichage initial de la vue. Un timeout (5 s) force
    * son démarrage si la page reste occupée (ex. détection de coins Scanic
    * qui tourne en parallèle pour un premier fichier).
-   *
-   * `proxy: false` : le backend WebGPU ne s'initialise pas correctement
-   * derrière le proxy worker d'onnxruntime-web via esm.sh
-   * (« worker not ready »). À réévaluer quand onnxruntime-web sera servi
-   * depuis un chemin local.
    */
   #prechargerModele() {
+    const model = 'medium'; // valeur par défaut du switcher
+    const options = this.#optionsPourModele(model);
+
+    // Déjà préchargé + warm-up lors d'un précédent montage ? On ne refait
+    // rien : ni preload, ni warm-up. La session imgly reste vivante tant
+    // que la page n'est pas rechargée.
+    if (isPreloaded(options)) {
+      console.log('[CodexOrdoscan] Modèle déjà préchargé, préchargement ignoré.');
+      return;
+    }
+    console.log('[CodexOrdoscan] Préchargement nécessaire (module rechargé ou 1ère visite).');
+
     const hint = this.querySelector('#ordoscan-preload-hint');
     const idleCb = window.requestIdleCallback ?? ((cb) => setTimeout(cb, 1500));
-    const options = {
-      device: navigator.gpu ? 'gpu' : 'cpu',
-      proxy: false,
-      model: 'medium',
-    };
 
     idleCb(async () => {
       if (hint) hint.hidden = false;
@@ -239,12 +241,22 @@ export class CodexOrdoscan extends BaseView {
   }
 
   #devicePourModele(modele) {
-    // Modèle quantifié int8 → CPU + WASM SIMD (le GPU perd du temps en
+    // small = quantifié int8 → CPU + WASM SIMD (le GPU perd du temps en
     // déquantification aller-retour).
-    // Modèle fp16 → WebGPU (natif, plus rapide sur transfert et compute).
+    // medium = fp16 → WebGPU si dispo, sinon CPU.
     if (modele === 'small') return 'cpu';
     return navigator.gpu ? 'gpu' : 'cpu';
   }
+
+  #optionsPourModele(modele) {
+    const device = this.#devicePourModele(modele);
+    return {
+      device,
+      proxy: device === 'cpu', // cohérent avec #runBackgroundRemoval
+      model: modele,
+    };
+  }
+
   // =============================================================
   // Recadrage + perspective (Scanic)
   // =============================================================
@@ -338,6 +350,7 @@ export class CodexOrdoscan extends BaseView {
     const shareBtn = this.querySelector('#ordoscan-btn-share');
     shareBtn?.toggleAttribute('hidden', !canShareFiles(this._currentBlob, 'ordonnance.png'));
   }
+
   async #runBackgroundRemoval() {
     const btn = this.querySelector('#ordoscan-btn-remove-bg');
     const progress = this.querySelector('#ordoscan-bg-progress');
@@ -350,12 +363,7 @@ export class CodexOrdoscan extends BaseView {
 
     try {
       const modele = this.querySelector('#ordoscan-model-switcher')?.value || 'medium';
-
-      const device = modele === 'small'
-        ? 'cpu'
-        : (navigator.gpu ? 'gpu' : 'cpu');
-
-      const proxy = device === 'cpu';
+      const { device, proxy } = this.#optionsPourModele(modele);
 
       const croppedBlob = await this.#canvasToBlob(this._croppedCanvas, 'image/jpeg', 0.95);
 

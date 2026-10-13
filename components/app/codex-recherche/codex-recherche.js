@@ -166,10 +166,10 @@ export class CodexRecherche extends BaseLit {
         return true;
       });
 
-      console.info(
-        `[CodexRecherche] ${this.searchIndex.length} entrées ` +
-        `(source: ${INDEX_SOURCES.length} fichiers)`
-      );
+      // console.info(
+      //   `[CodexRecherche] ${this.searchIndex.length} entrées ` +
+      //   `(source: ${INDEX_SOURCES.length} fichiers)`
+      // );
     } catch (err) {
       console.error('[CodexRecherche] Erreur chargement index :', err);
       this.searchIndex = [];
