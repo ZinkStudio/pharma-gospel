@@ -9,9 +9,12 @@
 
     <!-- ===== PHASE IMPORT ===== -->
     <div id="ordoscan-phase-import">
-      <p id="ordoscan-preload-hint" class="ordoscan-preload-hint">
-        ⏳ Préparation de l'IA en arrière-plan… (une seule fois par session, ~10 s)
-      </p>
+      <div id="ordoscan-preload-hint" class="ordoscan-preload-hint" hidden>
+        <cds-loading active description="Préparation de l'IA en arrière-plan"></cds-loading>
+        <span class="ordoscan-preload-text">
+          Préparation de l'IA en arrière-plan… (une seule fois par session, ~10 s)
+        </span>
+      </div>
       <codex-drop-zone design="ibm" id="ordoscan-dropzone" accept="image/*,.pdf,.heic,.heif"
         heading="📥 Glissez une photo, un PDF ou un HEIC ici, <strong>cliquez</strong> pour choisir un fichier"
         hint="ou <strong>collez</strong> une image copiée (Ctrl+V / Cmd+V)" formats="JPG, PNG, WEBP, PDF, HEIC"

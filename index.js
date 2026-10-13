@@ -1,3 +1,10 @@
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .catch(err => console.warn('[SW] Échec enregistrement :', err));
+  });
+}
+
 import '@components/app/codex-application/codex-application.js';
 import '@components/app/codex-copier/codex-copier.js';
 import '@components/app/codex-missives/codex-missives.js';
