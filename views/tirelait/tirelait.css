@@ -1,0 +1,76 @@
+.tirelait-section {
+  margin-bottom: 2rem;
+}
+
+.tirelait-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--pc-primary);
+  border-bottom: 2px solid var(--pc-primary);
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.tirelait-subtitle {
+  font-size: 0.9rem;
+  color: var(--pc-text-secondary);
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.tirelait-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.tirelait-card {
+  background: var(--pc-surface);
+  border: 1px solid var(--pc-border);
+  border-radius: 6px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.tirelait-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.tirelait-card-header strong {
+  font-size: 1.05rem;
+  color: var(--pc-text);
+}
+
+.tirelait-phone {
+  font-weight: 600;
+  color: #0f62fe; /* Carbon Blue */
+}
+
+.tirelait-desc {
+  font-size: 0.85rem;
+  color: var(--pc-text-secondary);
+  line-height: 1.4;
+}
+
+.tirelait-info-box {
+  background: var(--pc-surface-hover);
+  border-left: 4px solid var(--pc-primary);
+  padding: 1.5rem;
+  border-radius: 4px;
+  margin-top: 2rem;
+}
+
+.tirelait-list {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.2rem;
+  font-size: 0.9rem;
+  color: var(--pc-text);
+  line-height: 1.6;
+}
+
+.tirelait-list li {
+  margin-bottom: 0.5rem;
+}

@@ -18,6 +18,12 @@
     "route": "#views/cartes/cartes.html"
   },
   {
+    "id": "tirelait",
+    "title": "Location Tirelait",
+    "keywords": "document, tirelait, location",
+    "route": "#views/tirelait/tirelait.html"
+  },
+  {
     "id": "chronoposo",
     "title": "Chronoposo : Modifie les dates du Plan de Posologie",
     "keywords": "atelier, posologie, chrono, plan, date",
