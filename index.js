@@ -48,6 +48,7 @@ import '@views/purificateur/codex-purificateur.js';
 import '@views/chronoposo/codex-chronoposo.js';
 import '@views/etiqueteuse/codex-etiqueteuse.js';
 import '@views/orthopedie/codex-orthopedie.js';
+import '@views/tirelait/codex-tirelait.js';
 
 import '@carbon/web-components/accordion.min.js'
 import '@carbon/web-components/settings-a9cb5e4b.js'
