@@ -37,22 +37,26 @@ export class CodexVue extends LitElement {
       } else {
         const response = await fetch(routePath);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
+
         htmlContent = await response.text();
         this._cache.set(routePath, htmlContent);
       }
-      
+
       // 3. Injection du contenu dans le Light DOM
-      this.innerHTML = htmlContent;
+      //this.innerHTML = htmlContent;
+
+      const tpl = document.createElement('template');
+      tpl.innerHTML = htmlContent;
+      this.replaceChildren(tpl.content);
 
       // 4. Mise à jour de l'accessibilité de la navigation
       this._updateActiveNav(routePath);
 
       // 5. Notification de fin de chargement de la route
-      this.dispatchEvent(new CustomEvent('route-loaded', { 
-        detail: { route: routePath }, 
-        bubbles: true, 
-        composed: true 
+      this.dispatchEvent(new CustomEvent('route-loaded', {
+        detail: { route: routePath },
+        bubbles: true,
+        composed: true
       }));
 
     } catch (error) {
