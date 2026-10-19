@@ -48,6 +48,13 @@
     "route": "https://authps-espacepro.ameli.fr/"
   },
   {
+    "id":"sanofipro",
+    "title":"Sanofi Pro",
+    "keywords":"laboratoire, sanofi, pro, dupixent, synvisc, vaccins, dispositifs médicaux, commande",
+    "route" : "https://www.sanofipro.fr/fr/fr/EUR/my-account/account-overview"
+  }
+  ,
+  {
     "id": "abena",
     "title": "Abena",
     "keywords": "laboratoires, abena, incontinence, protection",
