@@ -46,5 +46,15 @@ export const tampons = [
       center: 'Protocole PAI',
       bottom: "Projet d'Accueil Individualisé"
     }
+  },
+  {
+    id: 'ald',
+    label: 'ALD 100%',
+    tag: 'codex-tampon-rectangle',
+    props: {
+      top: 'Prescription',
+      center: 'ALD 100%',
+      bottom: "AFFECTION EXONÉRANTE"
+    }
   }
 ];
