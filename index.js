@@ -1,3 +1,29 @@
+// Gestion de l'ouverture de fichiers via la PWA (Windows "Ouvrir avec")
+if ('launchQueue' in window) {
+  launchQueue.setConsumer(async (launchParams) => {
+    console.log('[PWA] Fichier reçu de Windows', launchParams);
+    if (!launchParams.files || launchParams.files.length === 0) return;
+    
+    try {
+      const fileHandle = launchParams.files[0];
+      const file = await fileHandle.getFile();
+      
+      // On stocke TOUJOURS le fichier dans une variable globale au cas où la vue ne soit pas prête
+      window._ordoscanPendingFile = file;
+      
+      // Si on n'est pas sur ordoscan, on y va
+      if (!window.location.hash.includes('ordoscan')) {
+        window.location.hash = '#views/ordoscan/ordoscan.html';
+      } else {
+        // Si on est DÉJÀ sur ordoscan, on prévient le composant qu'un nouveau fichier est arrivé
+        window.dispatchEvent(new CustomEvent('ordoscan-pwa-file', { detail: file }));
+      }
+    } catch (err) {
+      console.error('[PWA] Erreur lecture fichier :', err);
+    }
+  });
+}
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js', { scope: './' })
