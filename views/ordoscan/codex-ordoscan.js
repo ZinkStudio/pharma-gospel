@@ -23,6 +23,7 @@ export class CodexOrdoscan extends BaseView {
     this._croppedCanvas = null;
     this._currentBlob = null;
     this._objectUrls = [];
+    this._boundPwaFile = null;
   }
 
   onReady() {
@@ -40,9 +41,37 @@ export class CodexOrdoscan extends BaseView {
     this.querySelector('#ordoscan-btn-cancel')?.addEventListener('click', () => this.#resetAll());
     this.querySelector('#ordoscan-btn-restart')?.addEventListener('click', () => this.#handleRestartOuSuivant());
 
-    // Précharge le modèle en arrière-plan — logique extraite dans
-    // #prechargerModele() pour lisibilité.
+    // 1. Gérer le fichier en attente (si Windows a lancé l'app)
+    if (window._ordoscanPendingFile) {
+      const file = window._ordoscanPendingFile;
+      delete window._ordoscanPendingFile;
+
+      // On attend un peu que le DOM (la drop-zone) soit totalement peint
+      setTimeout(() => {
+        console.log('[CodexOrdoscan] Traitement du fichier en attente (PWA)');
+        this.#handleFile(file);
+      }, 300);
+    }
+
+    // 2. Écouter si un fichier est ouvert alors qu'on est DÉJÀ sur la vue
+    this._boundPwaFile = (e) => {
+      if (e.detail) {
+        console.log('[CodexOrdoscan] Nouveau fichier reçu via événement (PWA)');
+        this.#handleFile(e.detail);
+      }
+    };
+    window.addEventListener('ordoscan-pwa-file', this._boundPwaFile);
+
+
+    // Précharge le modèle
     this.#prechargerModele();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback?.();
+    if (this._boundPwaFile) {
+      window.removeEventListener('ordoscan-pwa-file', this._boundPwaFile);
+    }
   }
 
   /**
