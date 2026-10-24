@@ -3,6 +3,10 @@ import { PDFService } from '../../services/pdf/pdf-service.js';
 import { PDF_PRESETS } from '../../services/pdf/engines/html2pdf-engine.js';
 import { formatFR, initTodayInputs } from '../../utils/date-utils.js';
 
+// Nos nouveaux imports pour le tampon
+import { TamponGenerator } from '../../utils/tampon-generator.js';
+import { TAMPON_OFFICINE, SIGNATURE_URL } from '../../config/officine.js';
+
 const TEMPLATES = {
   satisfait: './partials/satisfait.html',
   vierge: './partials/vierge.html',
@@ -41,7 +45,7 @@ export class CodexFacture extends BaseView {
   }
 
   // =============================================================
-  // Chargement de template avec substitution ${ns.key}
+  // Chargement de template avec substitution
   // =============================================================
 
   async #loadTemplate(relativePath, data = {}) {
@@ -52,6 +56,15 @@ export class CodexFacture extends BaseView {
     return html.replace(/\$\{(\w+)\.(\w+)\}/g, (_, ns, key) =>
       escapeHtml(data?.[ns]?.[key] ?? '')
     );
+  }
+
+  /**
+   * Génère la DataURL du tampon pour l'injecter dans les templates HTML
+   */
+  async #getTamponUrl() {
+    return await TamponGenerator.generer(TAMPON_OFFICINE, {
+      signatureUrl: SIGNATURE_URL
+    });
   }
 
   // =============================================================
@@ -73,7 +86,20 @@ export class CodexFacture extends BaseView {
     if (!isValid) return;
 
     try {
-      const html = await this.#loadTemplate(TEMPLATES.satisfait, { facture: values });
+      this.notify.info('Préparation de la facture...');
+      
+      // 1. On génère le tampon
+      const tamponUrl = await this.#getTamponUrl();
+      
+      // 2. On l'ajoute aux données du template
+      const data = { 
+        facture: { 
+          ...values, 
+          tamponUrl 
+        } 
+      };
+
+      const html = await this.#loadTemplate(TEMPLATES.satisfait, data);
       if (!this.#preview) return;
 
       this.#preview.innerHTML = html;
@@ -133,7 +159,11 @@ export class CodexFacture extends BaseView {
 
   async #downloadVierge() {
     try {
-      const html = await this.#loadTemplate(TEMPLATES.vierge);
+      this.notify.info('Génération de la facture vierge...');
+      
+      const tamponUrl = await this.#getTamponUrl();
+      const html = await this.#loadTemplate(TEMPLATES.vierge, { facture: { tamponUrl } });
+      
       const temp = document.createElement('div');
       temp.innerHTML = html;
 
@@ -159,7 +189,11 @@ export class CodexFacture extends BaseView {
 
   async #downloadViergeDouble() {
     try {
-      const html = await this.#loadTemplate(TEMPLATES.viergeDouble);
+      this.notify.info('Génération de la double facture...');
+      
+      const tamponUrl = await this.#getTamponUrl();
+      const html = await this.#loadTemplate(TEMPLATES.viergeDouble, { facture: { tamponUrl } });
+      
       const temp = document.createElement('div');
       temp.innerHTML = html;
 
