@@ -72,9 +72,11 @@
             <cds-select-item value="Efluelda">Efluelda</cds-select-item>
           </cds-select>
 
-          <div class="checkbox-container">
-            <cds-checkbox name="avecInjection" label-text="Prendre en charge l'injection (Volet 2)" checked>
-            </cds-checkbox>
+          <div class="checkbox-container"
+            style="display: flex; flex-direction: column; gap: 0.5rem; grid-column: 1 / -1;">
+            <cds-checkbox name="isAld" label-text="Prise en charge au titre de l'ALD"></cds-checkbox>
+            <cds-checkbox name="avecInjection" label-text="Prendre en charge l'injection (Volet 2)"
+              checked></cds-checkbox>
           </div>
         </div>
       </fieldset>

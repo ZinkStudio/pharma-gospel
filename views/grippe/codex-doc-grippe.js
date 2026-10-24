@@ -4,10 +4,12 @@ import { parseGS1 } from '../../utils/gs1-parser.js';
 import { PDFService } from '../../services/pdf/pdf-service.js';
 import { GRIPPE_610D_LAYOUT } from '../../services/pdf/presets/grippe-610d.js';
 import { VACCINS_LIST } from './data/vaccins.js';
+import { TamponGenerator } from '../../utils/tampon-generator.js';
+import { TAMPON_OFFICINE, SIGNATURE_URL } from '../../config/officine.js';
 
 const TEMPLATES = {
   standard: './views/grippe/pdf/610d.pdf',
-  injection: './views/grippe/pdf/610d-injection.pdf'
+  ald: './views/grippe/pdf/610d-ALD.pdf'
 };
 
 export class CodexDocGrippe extends BaseView {
@@ -115,7 +117,7 @@ export class CodexDocGrippe extends BaseView {
     );
     return null;
   }
-  
+
   #setupSmartFill() {
     const modal = this.querySelector('#grippe-smart-fill');
     const btn = this.querySelector('#grippe-btn-smart-fill');
@@ -135,15 +137,13 @@ export class CodexDocGrippe extends BaseView {
       const nb = Object.values(fields).filter((v) => v).length;
       this.notify.success(`${nb} champ${nb > 1 ? 's' : ''} pré-rempli${nb > 1 ? 's' : ''} depuis LGPI.`);
 
-      // Focus le premier champ non rempli restant (lot, spécialité…)
       const firstEmpty = ['lot', 'specialite'].find((n) => !this.#form.getValue(n));
       if (firstEmpty) this.#form.focusField(firstEmpty);
     });
 
-    modal.addEventListener('smart-fill-cancelled', () => {
-      // Silencieux — l'utilisateur a juste fermé la modal
-    });
+    modal.addEventListener('smart-fill-cancelled', () => { });
   }
+
   // =============================================================
   // Soumission
   // =============================================================
@@ -157,45 +157,32 @@ export class CodexDocGrippe extends BaseView {
     if (!isValid) return;
 
     const {
-      nom,
-      prenom,
-      dateNaissance,
-      immatriculation,
-      codeOrganisme,
-      specialite,
-      lot,
-      avecInjection
+      nom, prenom, dateNaissance, immatriculation, codeOrganisme,
+      specialite, lot, avecInjection, isAld
     } = values;
 
     try {
       this.notify.info('Génération du bon de prise en charge...');
 
-      const templateUrl = avecInjection === true
-        ? TEMPLATES.injection
-        : TEMPLATES.standard;
+      // 1. Choix du PDF de base UNIQUEMENT selon l'ALD
+      const templateUrl = isAld ? TEMPLATES.ald : TEMPLATES.standard;
 
-      const filename = avecInjection
-        ? 'bon-grippe-injection.pdf'
-        : 'bon-grippe.pdf';
+      // 2. Nom du fichier final
+      let filename = isAld ? 'bon-grippe-ALD.pdf' : 'bon-grippe.pdf';
+      if (avecInjection) {
+        filename = filename.replace('.pdf', '-avec-injection.pdf');
+      }
 
       const dateJour = new Date().toLocaleDateString('fr-FR');
 
-      // =========================================================
-      // Répartition hybride
-      //   1. acroForm : champs intégrés au PDF (remplissage natif)
-      //   2. overlay  : champs dessinés (positions du preset)
-      // =========================================================
-
-      // Le Volet 2 reçoit TOUJOURS le lot (le vaccin délivré doit être
-      // identifiable, même si l'injection est différée). En revanche la
-      // date d'exécution n'est écrite que si la case "avec injection" est
-      // cochée — sinon un autre praticien complètera le bon plus tard.
+      // 3. Données pour le Volet 1 (toujours rempli)
       const overlay = {
         specialite: specialite.trim(),
         dateDelivrance: dateJour,
         lot: lot.trim()
       };
 
+      // 4. Données pour le Volet 2 (uniquement si injection)
       if (avecInjection === true) {
         overlay.dateExecution = dateJour;
       }
@@ -206,19 +193,24 @@ export class CodexDocGrippe extends BaseView {
           'Bénéficiaire': `${nom.toUpperCase()} ${prenom}`,
           'Date': dateNaissance || '',
           'Code organisme': (codeOrganisme || '').replace(/\s/g, '')
-          // 'Expéditeur Caisse' : laissé vide — la caisse traitante le remplit
         },
         overlay
       };
 
-      const { blob } = await PDFService.fillAndOverlay(
+      // 5. Génération du PDF de base
+      const { blob: baseBlob } = await PDFService.fillAndOverlay(
         templateUrl,
         data,
         GRIPPE_610D_LAYOUT,
-        { action: 'preview', filename }
+        { action: 'none' }
       );
 
-      this.#preview?.setPdfBlob(blob, filename);
+      // 6. Apposition des tampons
+      const pdfBytes = await baseBlob.arrayBuffer();
+      const finalBlob = await this.#apposerTampon(pdfBytes, avecInjection);
+
+      // 7. Affichage
+      this.#preview?.setPdfBlob(finalBlob, filename);
       this.querySelector('#previewContainer')?.classList.remove('hidden');
       this.querySelector('#previewContainer')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
@@ -230,16 +222,43 @@ export class CodexDocGrippe extends BaseView {
   }
 
   // =============================================================
+  // Gestion du Tampon (Canvas + Image + PDF-lib)
+  // =============================================================
+
+  async #apposerTampon(pdfBytes, avecInjection) {
+    // 1. On génère l'image du tampon via notre service
+    // Ici on veut tout inclure, on peut donc passer uniquement les données.
+    const stampDataUrl = await TamponGenerator.generer(TAMPON_OFFICINE, {
+      include: ['pharmacien','finess'],
+      signatureUrl: SIGNATURE_URL
+    });
+
+    // 2. On l'appose sur le PDF
+    const { blob } = await PDFService.modify(pdfBytes, async (pdfDoc) => {
+      const pngImage = await pdfDoc.embedPng(stampDataUrl);
+      const firstPage = pdfDoc.getPages()[0];
+
+      const stampHaut = GRIPPE_610D_LAYOUT.stamps.pharmacien;
+      const stampBas = GRIPPE_610D_LAYOUT.stamps.infirmier;
+
+      firstPage.drawImage(pngImage, stampHaut);
+
+      if (avecInjection) {
+        firstPage.drawImage(pngImage, stampBas);
+      }
+    }, { action: 'none' });
+
+    return blob;
+  }
+
+  // =============================================================
   // Actions barre d'outils preview
   // =============================================================
 
   #setupPreviewActions() {
     const preview = this.querySelector('#pdfPreview');
     if (!preview) return;
-
-    // Les boutons Télécharger / Imprimer sont internes à <codex-pdf-preview>.
-    // On n'a rien à faire ici — l'élément gère ses propres actions.
-    // Ce hook existe pour de futures interactions (par ex. log, analytics).
+    // Hook prêt pour de futures interactions
   }
 }
 
