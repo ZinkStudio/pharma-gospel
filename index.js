@@ -45,6 +45,7 @@ import '@components/ui/pdf/codex-pdf-preview.js';
 import '@components/ui/pdf/codex-pdf-toolbar.js';
 import '@components/ui/tampon/codex-tampon-rond.js';
 import '@components/ui/tampon/codex-tampon-rectangle.js';
+import '@components/ui/codex-aqueduc.js';
 import '@components/ui/codex-crop-editor.js';
 import '@components/ui/codex-drop-zone.js';
 import '@components/ui/codex-field.js';

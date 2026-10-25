@@ -1,4 +1,5 @@
 import { BaseView } from '../../core/base-view.js';
+import { mediaBridge } from '../../utils/media-bridge.js';
 import { downloadBlob, canShareFiles, shareBlob } from '../../utils/export-utils.js';
 import { removeImageBackground, preloadBackgroundRemoval, isPreloaded } from '../../utils/ordoscan-bgremoval.js';
 import { detectDocumentCorners, mountCornerEditor, extractFlattenedImage } from './scanic-adapter.js';
@@ -62,6 +63,7 @@ export class CodexOrdoscan extends BaseView {
     };
     window.addEventListener('ordoscan-pwa-file', this._boundPwaFile);
 
+    mediaBridge.receiveInto(this, (file) => this.#handleFile(file));
 
     // Précharge le modèle
     this.#prechargerModele();
@@ -375,6 +377,8 @@ export class CodexOrdoscan extends BaseView {
     const url = URL.createObjectURL(this._currentBlob);
     this._objectUrls.push(url);
     img.src = url;
+    
+    mediaBridge.updateAqueduc(this, this._currentBlob);
 
     const shareBtn = this.querySelector('#ordoscan-btn-share');
     shareBtn?.toggleAttribute('hidden', !canShareFiles(this._currentBlob, 'ordonnance.png'));
