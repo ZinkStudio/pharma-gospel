@@ -60,8 +60,8 @@ export class CodexAccueilFiltres extends BaseLit {
     this.groups = [
       { id: 'all',          label: 'Tout' },
       { id: 'officine',     label: '🔗 Liens externes' },
-      { id: 'documents',    label: '📄 Documents' },
       { id: 'applications', label: '🧰 Applications' },
+      { id: 'documents',    label: '📄 Documents' },
       { id: 'atelier',      label: '🎨 Atelier' },
       { id: 'planning',     label: '📅 Planning' }
     ];
