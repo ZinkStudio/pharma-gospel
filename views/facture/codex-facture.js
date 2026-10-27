@@ -2,10 +2,10 @@ import { BaseView } from '../../core/base-view.js';
 import { PDFService } from '../../services/pdf/pdf-service.js';
 import { PDF_PRESETS } from '../../services/pdf/engines/html2pdf-engine.js';
 import { formatFR, initTodayInputs } from '../../utils/date-utils.js';
-
-// Nos nouveaux imports pour le tampon
 import { TamponGenerator } from '../../utils/tampon-generator.js';
-import { TAMPON_OFFICINE, SIGNATURE_URL } from '../../config/officine.js';
+
+// NOUVEL IMPORT
+import { getOfficineData, getImageBlobUrl } from '../../services/coffre-api.js';
 
 const TEMPLATES = {
   satisfait: './partials/satisfait.html',
@@ -44,10 +44,6 @@ export class CodexFacture extends BaseView {
     this.querySelector('#pdf-vierge-double')?.addEventListener('click', () => this.#downloadViergeDouble());
   }
 
-  // =============================================================
-  // Chargement de template avec substitution
-  // =============================================================
-
   async #loadTemplate(relativePath, data = {}) {
     const url = new URL(relativePath, import.meta.url);
     const response = await fetch(url);
@@ -59,17 +55,17 @@ export class CodexFacture extends BaseView {
   }
 
   /**
-   * Génère la DataURL du tampon pour l'injecter dans les templates HTML
+   * Génère la DataURL du tampon en récupérant les données sécurisées
    */
   async #getTamponUrl() {
-    return await TamponGenerator.generer(TAMPON_OFFICINE, {
-      signatureUrl: SIGNATURE_URL
+    // Récupération des données via le Worker
+    const officine = await getOfficineData();
+    const signatureUrl = await getImageBlobUrl('/signature');
+
+    return await TamponGenerator.generer(officine, {
+      signatureUrl: signatureUrl
     });
   }
-
-  // =============================================================
-  // Validation du formulaire
-  // =============================================================
 
   #onInvalid({ invalidFields }) {
     this.notify.warning(
@@ -78,20 +74,14 @@ export class CodexFacture extends BaseView {
     this.#form.focusField(invalidFields[0]);
   }
   
-  // =============================================================
-  // Soumission du formulaire → prévisualisation
-  // =============================================================
-
   async #onSubmit({ values, isValid }) {
     if (!isValid) return;
 
     try {
       this.notify.info('Préparation de la facture...');
       
-      // 1. On génère le tampon
       const tamponUrl = await this.#getTamponUrl();
       
-      // 2. On l'ajoute aux données du template
       const data = { 
         facture: { 
           ...values, 
@@ -105,7 +95,6 @@ export class CodexFacture extends BaseView {
       this.#preview.innerHTML = html;
       this.#preview.classList.remove('hidden');
 
-      // Active le bouton de téléchargement de la facture renseignée
       const btn = this.querySelector('#pdf-renseignee');
       if (btn) btn.disabled = false;
 
@@ -117,10 +106,6 @@ export class CodexFacture extends BaseView {
     }
   }
 
-  // =============================================================
-  // Téléchargement — facture renseignée
-  // =============================================================
-
   async #downloadRenseignee() {
     try {
       const facture = this.#preview?.querySelector('#facture-pdf');
@@ -129,10 +114,8 @@ export class CodexFacture extends BaseView {
         return;
       }
 
-      // Clone pour ne pas altérer le DOM visible
       const clone = facture.cloneNode(true);
 
-      // Remplace l'input date par sa valeur formatée FR
       const dateInput = clone.querySelector('#facture-pdf-date input');
       if (dateInput) {
         const fr = formatFR(dateInput.value);
@@ -152,10 +135,6 @@ export class CodexFacture extends BaseView {
       this.notify.error('Impossible de générer la facture renseignée.');
     }
   }
-
-  // =============================================================
-  // Téléchargement — facture vierge A4
-  // =============================================================
 
   async #downloadVierge() {
     try {
@@ -182,10 +161,6 @@ export class CodexFacture extends BaseView {
       this.notify.error('Impossible de générer la facture vierge.');
     }
   }
-
-  // =============================================================
-  // Téléchargement — facture vierge A5 (x2)
-  // =============================================================
 
   async #downloadViergeDouble() {
     try {

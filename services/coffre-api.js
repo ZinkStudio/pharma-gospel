@@ -1,32 +1,51 @@
 const WORKER_URL = 'https://pharma-worker.zink13013.workers.dev';
 const TOKEN_KEY = 'pharma_jwt_token';
 
-// Fonction pour demander le mot de passe (une seule fois tous les 30 jours)
-async function login() {
-  const password = prompt("Entrez le mot de passe pour accéder aux données sécurisées :");
-  if (!password) throw new Error("Mot de passe requis");
+let loginPromise = null; // Évite les popups multiples
 
-  const res = await fetch(`${WORKER_URL}/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password })
+// Déclenche l'événement pour demander le mot de passe à l'UI
+function demanderMotDePasse() {
+  return new Promise((resolve) => {
+    const event = new CustomEvent('coffre:auth-required', {
+      detail: { resolve },
+      bubbles: true,
+      composed: true
+    });
+    document.dispatchEvent(event);
   });
-
-  if (!res.ok) {
-    alert("Mot de passe incorrect !");
-    throw new Error("Login échoué");
-  }
-
-  const data = await res.json();
-  localStorage.setItem(TOKEN_KEY, data.token); // On garde le token en mémoire pour 30 jours
-  return data.token;
 }
 
-// Fonction générique pour faire des requêtes protégées
+async function login() {
+  if (loginPromise) return loginPromise;
+
+  loginPromise = new Promise(async (resolve, reject) => {
+    try {
+      const password = await demanderMotDePasse();
+      if (!password) throw new Error("Authentification annulée");
+
+      const res = await fetch(`${WORKER_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+
+      if (!res.ok) throw new Error("Mot de passe incorrect");
+
+      const data = await res.json();
+      localStorage.setItem(TOKEN_KEY, data.token);
+      resolve(data.token);
+    } catch (err) {
+      reject(err);
+    } finally {
+      loginPromise = null;
+    }
+  });
+
+  return loginPromise;
+}
+
 async function fetchWithAuth(endpoint) {
   let token = localStorage.getItem(TOKEN_KEY);
-  
-  // Si pas de token, on demande le mot de passe
   if (!token) token = await login();
 
   const options = {
@@ -36,7 +55,6 @@ async function fetchWithAuth(endpoint) {
 
   let response = await fetch(`${WORKER_URL}${endpoint}`, options);
 
-  // Si le token a expiré (401), on redemande le mot de passe et on réessaie
   if (response.status === 401) {
     localStorage.removeItem(TOKEN_KEY);
     token = await login();
@@ -68,8 +86,6 @@ export async function getOfficineData() {
   }
 }
 
-// Les images (signature/tampon) nécessitent aussi le token.
-// On les télécharge en blob pour les afficher avec l'en-tête d'authentification.
 export async function getImageBlobUrl(endpoint) {
   try {
     const response = await fetchWithAuth(endpoint);

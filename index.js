@@ -40,6 +40,7 @@ import '@components/app/codex-recherche/codex-recherche.js';
 import '@components/app/codex-routeur/codex-routeur.js';
 import '@components/app/codex-theme/codex-theme.js';
 import '@components/app/codex-vue/codex-vue.js';
+import '@components/app/codex-nexus/codex-nexus.js';
 
 import '@components/ui/pdf/codex-pdf-preview.js';
 import '@components/ui/pdf/codex-pdf-toolbar.js';
