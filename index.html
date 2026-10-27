@@ -4,20 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self';
-        script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval' 'sha256-cTM/W7Buku5I2HvNNnN/pBxFe+eiM2Ibwli0C39myts=';
-        script-src-elem 'self' 'unsafe-inline' blob:;
-        style-src 'self' 'unsafe-inline';
-        img-src 'self' data: blob:;
-        font-src 'self' https://1.www.s81c.com data:;
-        connect-src 'self' https://crimson-lake-17be.pharmaciesaintbarthelemy.workers.dev blob:;
-        frame-src blob:;
-        worker-src 'self' blob:;
-        object-src 'none';
-        base-uri 'self';
-        form-action 'self';
-    ">
+<meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval' 'sha256-cTM/W7Buku5I2HvNNnN/pBxFe+eiM2Ibwli0C39myts=';
+    script-src-elem 'self' 'unsafe-inline' blob:;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: blob: https://pharma-worker.zink13013.workers.dev;
+    font-src 'self' https://1.www.s81c.com data:;
+    connect-src 'self' 
+                https://crimson-lake-17be.pharmaciesaintbarthelemy.workers.dev 
+                https://pharma-worker.zink13013.workers.dev 
+                https://zinkstudio-pharma-1708.cloudflareaccess.com 
+                https://calendrier.api.gouv.fr 
+                blob:;
+    frame-src 'self' blob: https://pharma-planning.firebaseapp.com;
+    worker-src 'self' blob:;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+">
     <title>Pharma Gospel</title>
     <link rel="manifest" href="./manifest.json">
     <link rel="stylesheet" href="./vendor/carbon@2.24.0/css/plex-sans.css" />

@@ -1,7 +1,7 @@
 import { BaseView } from '../../core/base-view.js';
 import { PDFService } from '../../services/pdf/pdf-service.js';
 import { PDF_PRESETS } from '../../services/pdf/engines/html2pdf-engine.js';
-import { infirmiers } from './cartes-data.js';
+import { getCartesData } from '../../services/coffre-api.js';
 
 const CARDS_PER_PAGE = 10; // 5 rangées × 2 colonnes
 
@@ -132,10 +132,10 @@ const CARD_PREVIEW_STYLE = `
 export class CodexCartes extends BaseView {
   constructor() {
     super();
-    this.data = infirmiers;
+    this.data = [];
   }
 
-  onReady() {
+  async onReady() {
     this._tbody = this.querySelector('#cartes-liste');
     this._selectGenre = this.querySelector('#cartes-filtre-genre');
     this._preview = this.querySelector('#cartes-preview');
@@ -165,6 +165,13 @@ export class CodexCartes extends BaseView {
     });
 
     this._tbody?.addEventListener('click', (e) => this._handleRowClick(e));
+    // --- CHARGEMENT DES DONNÉES SÉCURISÉES ---
+    if (this._tbody) {
+      this._tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:1rem;">🔐 Chargement des données sécurisées...</td></tr>`;
+    }
+
+    this.data = await getCartesData();
+    this._renderTable(this.data);
   }
 
   disconnectedCallback() {
@@ -185,7 +192,7 @@ export class CodexCartes extends BaseView {
     if (!this._tbody) return;
 
     if (!list.length) {
-      this._tbody.innerHTML = `<tr><td colspan="6">Aucun infirmier trouvé.</td></tr>`;
+      this._tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Aucun infirmier trouvé.</td></tr>`;
       return;
     }
 

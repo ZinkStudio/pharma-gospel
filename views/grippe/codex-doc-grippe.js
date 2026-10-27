@@ -5,7 +5,7 @@ import { PDFService } from '../../services/pdf/pdf-service.js';
 import { GRIPPE_610D_LAYOUT } from '../../services/pdf/presets/grippe-610d.js';
 import { VACCINS_LIST } from './data/vaccins.js';
 import { TamponGenerator } from '../../utils/tampon-generator.js';
-import { TAMPON_OFFICINE, SIGNATURE_URL } from '../../config/officine.js';
+import { getOfficineData, getImageBlobUrl } from '../../services/coffre-api.js';
 
 const TEMPLATES = {
   standard: './views/grippe/pdf/610d.pdf',
@@ -226,11 +226,14 @@ export class CodexDocGrippe extends BaseView {
   // =============================================================
 
   async #apposerTampon(pdfBytes, avecInjection) {
+    const officineData = await getOfficineData();
+    const signatureUrl = await getImageBlobUrl('/signature');
+
     // 1. On génère l'image du tampon via notre service
     // Ici on veut tout inclure, on peut donc passer uniquement les données.
-    const stampDataUrl = await TamponGenerator.generer(TAMPON_OFFICINE, {
+    const stampDataUrl = await TamponGenerator.generer(officineData, {
       include: ['pharmacien','finess'],
-      signatureUrl: SIGNATURE_URL
+      signatureUrl: signatureUrl
     });
 
     // 2. On l'appose sur le PDF
