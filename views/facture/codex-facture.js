@@ -3,7 +3,7 @@ import { PDFService } from '../../services/pdf/pdf-service.js';
 import { PDF_PRESETS } from '../../services/pdf/engines/html2pdf-engine.js';
 import { formatFR, initTodayInputs } from '../../utils/date-utils.js';
 import { TamponGenerator } from '../../utils/tampon-generator.js';
-
+// check pour forcer l'update
 // NOUVEL IMPORT
 import { getOfficineData, getImageBlobUrl } from '../../services/coffre-api.js';
 
@@ -60,6 +60,7 @@ export class CodexFacture extends BaseView {
   async #getTamponUrl() {
     // Récupération des données via le Worker
     const officine = await getOfficineData();
+
     const signatureUrl = await getImageBlobUrl('/signature');
 
     return await TamponGenerator.generer(officine, {
